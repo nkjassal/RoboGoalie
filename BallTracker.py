@@ -1,33 +1,46 @@
 import time # for fps counter
-import colorsys
 
 import numpy as np
 import cv2 as cv2
-from IPython import embed
+from IPython import embed # for debugging
+
+import colors as color # application-specific constants
 
 class BallTracker:
 
-  # for trackbar
-  def nothing(self, x):
-    pass
+  """
+  @brief inits default tracking parameters
 
-  def __init__(self, window_name='Object Tracking', scale=0.5, debug=0):
+  @param window_name The name of the window to be displayed on screen
+  @param scale Webcam frame gets scaled by this much (0 to 1).
+  @param track_color The color (from colors.py) to be tracked. TODO: SUPPORT MULTIPLE COLORS IN A LIST
+  @param radius The min radius circle to be detected
+  """
+  def __init__(self, window_name='Object Tracking', scale=0.5, 
+    track_color=color.Blue, radius=10, debug=0):
     # The name of the window to be displayed
     self.window_name = window_name
     cv2.namedWindow(self.window_name)
     self.scale = scale
+
     # The number of frames to average fps over
     self.FPS_FRAMES = 50
 
-
-    self.hsv_blue_low = (75, 90, 90)
-    self.hsv_blue_high = (135, 255, 255)
-    # HSV FOR DECENT BLUE RANGE
-   # self.hsv_blue_low = (80,220,100)
-    #self.hsv_blue_high = (128,255,255)  
+    # color to track - TODO support multiple
+    self.color = track_color
 
     self.debug = debug
 
+  """
+  @brief Finds circle(s) in the frame based on input params, displays on-screen
+
+  Detects circles of the given minimum radius, displays a circle around them 
+  and the centroid of each.
+
+  @param img The frame to detect circles in
+
+  @return The processed frame with circles drawn on it
+  """
   def track_ball(self, img):
     
     blur = cv2.GaussianBlur(img, (11,11), 0) # -0 frames
@@ -35,7 +48,7 @@ class BallTracker:
 
     # Mask with range of HSV values - for blue, will return white where blue
     # is and black otherwise
-    mask = cv2.inRange(img_hsv, self.hsv_blue_low, self.hsv_blue_high)
+    mask = cv2.inRange(img_hsv, self.color.lower, self.color.upper)
     mask = cv2.erode(mask, None, iterations=2)
     mask = cv2.dilate(mask, None, iterations=2)
 
@@ -65,7 +78,6 @@ class BallTracker:
           (0,255,255), 2)
         cv2.circle(img, center, 5, (0,0,255), -1)
 
-
     return img
 
   """
@@ -79,7 +91,7 @@ class BallTracker:
   """  
   def setup_frame(self, frame, scale=0.5, blur_window=11):
 
-    h_scaled,w_scaled = tuple(scale * np.asarray(frame.shape[:2]))
+    h_scaled,w_scaled = tuple(self.scale * np.asarray(frame.shape[:2]))
    
     # scale is a tuple, not two separate arguments (w, h)
     frame = cv2.resize(frame, (int(w_scaled), int(h_scaled)), 
@@ -87,13 +99,11 @@ class BallTracker:
 
     cv2.flip(src=frame,dst=frame, flipCode=1) # flip across y for correctness
 
-    # Median blur seems to be better for detecting edges, but is significantly 
-    # slower than the gaussian blur (lose ~10fps at 0.5 scaling)
-    #frame = cv2.GaussianBlur(frame, (blur_window,blur_window), 0) # -0 frames
-    #frame = cv2.medianBlur(frame, blur_window) # -10 frames
-
     return frame
 
+  """ 
+  @brief Runs video capture and tracking with FPS counter
+  """
   def stream(self):
     # create video capture object for first video cam (mac webcam)
     cap = cv2.VideoCapture(0)
@@ -108,12 +118,10 @@ class BallTracker:
       if count is 0:
         old_time = time.time()
 
-      # Capture frame-by-frame, reduce image size to process faster
+      # Capture frame-by-frame and process
       ret, frame = cap.read()
-
-      scaled = self.setup_frame(frame=frame, scale=self.scale, blur_window=11)
-    
-      frame = self.track_ball(scaled)
+      frame = self.setup_frame(frame=frame, blur_window=11)
+      frame = self.track_ball(frame)
 
       #### FPS COUNTER ####
       # if correct number of frames have elapsed
@@ -125,17 +133,14 @@ class BallTracker:
       else:
        count += 1
 
-      # Display FPS on screen
+
+      #### DISPLAY FRAME ON SCREEN ####
+      # Display FPS on screen every frame
       font = cv2.FONT_HERSHEY_SIMPLEX # no idea what font this is
       cv2.putText(frame, fps, (10, 30), font, 0.8, (0,255,0),2,cv2.LINE_AA)
 
-
       # display resulting frame
       cv2.imshow(self.window_name,frame)
-
-      if self.debug:
-        cv2.moveWindow('Scaled Frame', 0,500)
-        cv2.imshow('Scaled Frame', scaled)
 
       # quit option with q
       if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -147,7 +152,7 @@ class BallTracker:
 
 def main():
 
-  tracker = BallTracker(window_name='test', debug=0) 
+  tracker = BallTracker(track_color=color.Blue, radius=10) 
 
   tracker.stream() # begin tracking and object detection
 
