@@ -127,7 +127,7 @@ class BallTracker:
 
       # Display FPS on screen
       font = cv2.FONT_HERSHEY_SIMPLEX # no idea what font this is
-      cv2.putText(frame, fps, (10, 30), font, 0.8, (0,0,255),2,cv2.LINE_AA)
+      cv2.putText(frame, fps, (10, 30), font, 0.8, (0,255,0),2,cv2.LINE_AA)
 
 
       # display resulting frame
