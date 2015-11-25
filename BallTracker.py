@@ -152,7 +152,7 @@ class BallTracker:
 
 def main():
 
-  tracker = BallTracker(track_color=color.Blue, radius=10) 
+  tracker = BallTracker(track_color=color.Orange, radius=10) 
 
   tracker.stream() # begin tracking and object detection
 
