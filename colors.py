@@ -1,7 +1,7 @@
 """
 @name colors.py
 
-@brief A list of colors and associated hsv bounds
+@brief A list of colors and associated hsv bounds and bgr value
 
 Contains HSV ranges for the following colors:
   Blue, Green, Red, White
@@ -36,6 +36,8 @@ class Blue:
   @brief HSV range for blue. H = 119
   Works well
   """
+  bgr = (255,0,0)
+
   lower0 = (75, 90, 90)
   upper0 = (163, 255, 255)
 
@@ -47,6 +49,8 @@ class Green:
   """
   @brief HSV range for green. H = 60
   """
+  bgr = (0,255,0)
+
   lower0 = (16, 90, 90)
   upper0 = (104, 255, 255)
 
@@ -57,6 +61,8 @@ class Red:
   """
   @brief HSV range for red. H = 0
   """
+  bgr = (0,0,255)
+
   lower0 = (0, 150, 150)
   upper0 = (20, 255, 255)
 
@@ -69,6 +75,8 @@ class White:
   Works alright, but other objects in high light environments can also be
   detected as white, causing potential problems.
   """
+  bgr = (255, 255, 255)
+  
   lower0 = (0, 0, 220)
   upper0 = (180, 50, 255)
 
@@ -79,8 +87,9 @@ class White:
 
 class Orange:
   """
-  @brief HSV range for orange. TODO: Fix
+  @brief HSV range for orange. TODO: Fix (all values wrong)
   """
+  bgr = (240, 100, 0)
   lower0 = (5, 90, 90)
   upper0 = (25, 255, 255)
   lower1 = (0,0,0)
