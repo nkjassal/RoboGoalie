@@ -8,16 +8,17 @@ import colors as color # application-specific constants
 
 class BallTracker:
 
-  """
-  @brief inits default tracking parameters
-
-  @param window_name The name of the window to be displayed on screen
-  @param scale Webcam frame gets scaled by this much (0 to 1).
-  @param track_color The color (from colors.py) to be tracked. TODO: SUPPORT MULTIPLE COLORS IN A LIST
-  @param radius The min radius circle to be detected
-  """
   def __init__(self, window_name='Object Tracking', scale=0.5, 
     track_color=color.Blue, radius=10, debug=0):
+    """
+    @brief inits default tracking parameters
+
+    @param window_name The name of the window to be displayed on screen
+    @param scale Webcam frame gets scaled by this much (0 to 1).
+    @param track_color The color (from colors.py) to be tracked. 
+      TODO: SUPPORT MULTIPLE COLORS IN A LIST
+    @param radius The min radius circle to be detected
+    """
     # The name of the window to be displayed
     self.window_name = window_name
     cv2.namedWindow(self.window_name)
@@ -31,24 +32,27 @@ class BallTracker:
 
     self.debug = debug
 
-  """
-  @brief Finds circle(s) in the frame based on input params, displays on-screen
 
-  Detects circles of the given minimum radius, displays a circle around them 
-  and the centroid of each.
-
-  @param img The frame to detect circles in
-
-  @return The processed frame with circles drawn on it
-  """
   def track_ball(self, img):
+    """
+    @brief Finds circle(s) in the frame based on input params, displays 
+    on-screen
+
+    Detects circles of the given minimum radius, displays a circle around them 
+    and the centroid of each.
+
+    @param img The frame to detect circles in
+
+    @return The processed frame with circles drawn on it
+    """
     
     blur = cv2.GaussianBlur(img, (11,11), 0) # -0 frames
     img_hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
 
     # Mask with range of HSV values - for blue, will return white where blue
     # is and black otherwise
-    mask = cv2.inRange(img_hsv, self.color.lower, self.color.upper)
+    mask = cv2.inRange(img_hsv, self.color.lower0, self.color.upper0)
+    
     mask = cv2.erode(mask, None, iterations=2)
     mask = cv2.dilate(mask, None, iterations=2)
 
@@ -80,16 +84,17 @@ class BallTracker:
 
     return img
 
-  """
-  @brief Rescales and blurs frame for clarity and faster operations
 
-  @param frame The frame to be operated on and returned
-  @param scale The frame will be scaled multiplicatively by this much (0-1)
-  @param blur_window The window size used for the median blur
-
-  @return The updated frame
-  """  
   def setup_frame(self, frame, scale=0.5, blur_window=11):
+    """
+    @brief Rescales and blurs frame for clarity and faster operations
+
+    @param frame The frame to be operated on and returned
+    @param scale The frame will be scaled multiplicatively by this much (0-1)
+    @param blur_window The window size used for the median blur
+
+    @return The updated frame
+    """  
 
     h_scaled,w_scaled = tuple(self.scale * np.asarray(frame.shape[:2]))
    
@@ -101,10 +106,11 @@ class BallTracker:
 
     return frame
 
-  """ 
-  @brief Runs video capture and tracking with FPS counter
-  """
+
   def stream(self):
+    """ 
+    @brief Runs video capture and tracking with FPS counter
+    """
     # create video capture object for first video cam (mac webcam)
     cap = cv2.VideoCapture(0)
 
@@ -150,9 +156,11 @@ class BallTracker:
     cap.release()
     cv2.destroyAllWindows()
 
-def main():
 
-  tracker = BallTracker(track_color=color.Orange, radius=10) 
+
+def main():
+    
+  tracker = BallTracker(track_color=color.Blue, radius=10) 
 
   tracker.stream() # begin tracking and object detection
 
