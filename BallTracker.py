@@ -1,4 +1,5 @@
 import time # for fps counter
+import heapq # for getting max n contours
 
 import numpy as np
 import cv2 as cv2
@@ -8,21 +9,27 @@ import colors as color # application-specific constants
 
 class BallTracker:
 
-  def __init__(self, window_name='Object Tracking', scale=0.5, 
-    robot_marker=color.Red, track_colors=[color.Blue], radius=10, debug=0):
+  def __init__(self, window_name='Object Tracking', 
+    scale=0.5, 
+    robot_color=color.Red, 
+    track_colors=[color.Blue], 
+    radius=10, 
+    num_per_color = 1,
+    debug=0):
     """
     @brief inits default tracking parameters
 
     @param window_name The name of the window to be displayed on screen
     @param scale Webcam frame gets scaled by this much (0 to 1).
-    @param robot_marker The color (from colors.py) of the robot marker
+    @param robot_color The color (from colors.py) of the robot marker
     @param track_colors List of colors (from colors.py) to be tracked. 
-      TODO: SUPPORT MULTIPLE COLORS IN A LIST
     @param radius The min radius circle to be detected
+    @param num_per_color The number of objects to detect for one color.
+    @param debug enable debug mode
     """
 
     # if robot marker and track color are the same, won't be able to tell apart
-    if robot_marker in track_colors:
+    if robot_color in track_colors:
       print 'Unable to discern robot marker from some objects (same color). Ensure robot marker color is different from colors to be tracked'
       exit()
 
@@ -34,7 +41,9 @@ class BallTracker:
     # The number of frames to average fps over
     self.FPS_FRAMES = 50
 
-    self.robot_marker = robot_marker
+    self.num_per_color = num_per_color
+
+    self.robot_color = robot_color
     self.track_colors = track_colors
 
     self.debug = debug
@@ -57,7 +66,7 @@ class BallTracker:
 
     return img
 
-  def find_circles(self, img_hsv):
+  def find_circles(self, img_hsv, colors, num_per_color):
     """
     @brief Finds circle(s) in the frame based on input params, displays 
     on-screen
@@ -66,13 +75,14 @@ class BallTracker:
     and the centroid of each.
 
     @param img_hsv The frame in HSV to detect circles in
+    @param colors The list of colors to be tracked
 
     @return circle_list List of detected circles (x,y,radius,center)
     #@return img The processed frame with circles drawn on it
     """
     circle_list = []
 
-    for color in self.track_colors:
+    for color in colors:
       # Mask with range of HSV values - for blue, will return white where blue
       # is and black otherwise. Uses both color bounds and combines.
       mask = cv2.bitwise_or(
@@ -92,21 +102,47 @@ class BallTracker:
       if len(cnts) > 0:
         # find largest contour in mask, then use it to compute min enclosing
         # circle and centroid
-        c = max(cnts, key=cv2.contourArea)
-        ((x,y), radius) = cv2.minEnclosingCircle(c)
-        M = cv2.moments(c)
+        contours = heapq.nlargest(num_per_color, cnts, 
+          key=cv2.contourArea)
+        for c in contours:
+          ((x,y), radius) = cv2.minEnclosingCircle(c)
 
-        # if divide by 0 will occur skip circle this frame
-        if int(M["m00"]) is 0:
-          return img
-        center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-
-        # only proceed if radius meets certain size
-        if radius > 10:
-          circle_list.append((int(x), int(y), int(radius), center))
+          # only proceed if radius meets certain size
+          if radius > 10:
+            M = cv2.moments(c)
+            # if divide by 0 will occur, skip circle
+            if int(M["m00"]) is not 0:
+              center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+              circle_list.append((int(x), int(y), int(radius), center))
 
 
     return circle_list
+
+  def draw_robot(self, img, robot_pos):
+    """
+    @brief draws a circle around the robot
+
+    @param frame The frame to draw the circle on
+    @param robot_pos A single element list containing the tuple of 
+      (x,y,radius,center) of the robot
+
+    @return img The updated image with the robot drawn on
+    """
+    img = self.draw_circles(img, robot_pos)
+    return img
+
+  def find_robot(self, img_hsv, color):
+    """ 
+    @brief Finds the robot circle of the specified color
+
+    @param img_hsv The HSV image to find robot in
+    @param color The color to detect
+
+    @return robot_pos A single-element list with the tuple of 
+      (x,y,radius,center) of the robot
+    """
+    robot_pos = self.find_circles(img_hsv, [color], 1)
+    return robot_pos
 
 
   def setup_frame(self, frame, scale=0.5, blur_window=11):
@@ -153,8 +189,14 @@ class BallTracker:
       frame,img_hsv = self.setup_frame(frame=frame, blur_window=11)
 
       # use the HSV image to detect circles, then draw on the original frame
-      circle_list = self.find_circles(img_hsv)
+      circle_list = self.find_circles(img_hsv.copy(), self.track_colors,
+        self.num_per_color)
       frame = self.draw_circles(frame, circle_list)
+      #cv2.imshow(self.window_name,frame)
+      
+      robot_pos = self.find_robot(img_hsv.copy(), self.robot_color)
+      frame = self.draw_robot(frame, robot_pos)
+
 
       #### FPS COUNTER ####
       # if correct number of frames have elapsed
@@ -165,7 +207,6 @@ class BallTracker:
         fps = str(round(fps_val, 1))
       else:
        count += 1
-
 
       #### DISPLAY FRAME ON SCREEN ####
       # Display FPS on screen every frame
@@ -188,9 +229,12 @@ class BallTracker:
 def main():
   """ Initializes the tracker object and Runs
   """    
-  track_colors = [color.Blue, color.Red]
-  tracker = BallTracker(robot_marker=color.White, track_colors=track_colors, 
-    radius=10) 
+  robot_color = color.Red
+  track_colors = [color.Blue]
+  tracker = BallTracker(robot_color=robot_color, 
+    track_colors=track_colors, 
+    radius=10,
+    num_per_color = 2) 
 
   tracker.stream() # begin tracking and object detection
 
