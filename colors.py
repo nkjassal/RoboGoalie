@@ -13,8 +13,7 @@ red). As such, two sets of bounds can be specified on the ranges:
 [lower1, upper1]
 
 If only one color range is needed, use lower0 and upper0, then lower1 and
-upper1 will be 0s
-
+upper1 will be the tuple (0,0,0)
 
 When determining HSV colors, it is important to note that OpenCV uses the
 following color ranges when HSV is calculated with the cv2.COLOR_BGR2HSV macro:
@@ -37,8 +36,6 @@ class Blue:
   @brief HSV range for blue. H = 119
   Works well
   """
-  #lower = (97, 90, 90)
-  #upper = (141, 255, 255)
   lower0 = (75, 90, 90)
   upper0 = (163, 255, 255)
 
@@ -50,8 +47,6 @@ class Green:
   """
   @brief HSV range for green. H = 60
   """
-  #lower = (38, 90, 90)
-  #upper = (82, 255, 255)
   lower0 = (16, 90, 90)
   upper0 = (104, 255, 255)
 
