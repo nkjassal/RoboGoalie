@@ -4,7 +4,7 @@
 @brief A list of colors and associated hsv bounds
 
 Contains HSV ranges for the following colors:
-  Blue, White
+  Blue, Green, Red, White
 
 HSV color detection by using two sets of range. Due to how HSV values work,
 colors on the red spectrum have Hue values that wrap (H=179 and H=0 are both 
@@ -27,12 +27,15 @@ NOTE: For standard colors with an Hue of H, a decent color range seems
  (H - 44) to (H + 44)
 The +/- scale of 22 works alright.
 
+NOTE: The Saturation value S should be specifically determined on a 
+color-by-color basis. S=90 or S=150 seem to work decently, as starting points.
+
 """
 
 class Blue:
   """
   @brief HSV range for blue. H = 119
-  Works decently well
+  Works well
   """
   #lower = (97, 90, 90)
   #upper = (141, 255, 255)
@@ -55,34 +58,41 @@ class Green:
   lower1 = (0,0,0)
   upper1 = (0,0,0)
 
+class Red:
+  """
+  @brief HSV range for red. H = 0
+  """
+  lower0 = (0, 150, 150)
+  upper0 = (20, 255, 255)
+
+  lower1 = (160, 150, 150)
+  upper1 = (179,255, 255)
+
 class White:
   """
   @brief HSV range for white. 
-  Works reasonably, but other objects in high light environments can also be
-  detected as white.
+  Works alright, but other objects in high light environments can also be
+  detected as white, causing potential problems.
   """
   lower0 = (0, 0, 220)
   upper0 = (180, 50, 255)
 
-
+  lower1 = (0,0,0)
+  upper1 = (0,0,0)
 
 
 
 class Orange:
   """
-  @brief HSV range for orange. Not very effective
+  @brief HSV range for orange. TODO: Fix
   """
   lower0 = (5, 90, 90)
   upper0 = (25, 255, 255)
+  lower1 = (0,0,0)
+  upper1 = (0,0,0)
 
-class Red:
-  """
-  @brief HSV range for red. DOES NOT WORK
-  """
-  lower0 = (170, 90, 90)
-  upper0 = (20, 255, 255)
- # lower = (240, 90, 90)
-  #upper = (28, 255, 255)
+
+
 
 
 

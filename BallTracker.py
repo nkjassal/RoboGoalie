@@ -50,9 +50,11 @@ class BallTracker:
     img_hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
 
     # Mask with range of HSV values - for blue, will return white where blue
-    # is and black otherwise
+    # is and black otherwise. Uses both color bounds and combines.
     mask = cv2.inRange(img_hsv, self.color.lower0, self.color.upper0)
-    
+    mask2 = cv2.inRange(img_hsv, self.color.lower1, self.color.upper1)
+    mask = cv2.bitwise_or(mask, mask2)
+
     mask = cv2.erode(mask, None, iterations=2)
     mask = cv2.dilate(mask, None, iterations=2)
 
@@ -160,7 +162,7 @@ class BallTracker:
 
 def main():
     
-  tracker = BallTracker(track_color=color.Blue, radius=10) 
+  tracker = BallTracker(track_color=color.Red, radius=10) 
 
   tracker.stream() # begin tracking and object detection
 
