@@ -9,7 +9,7 @@ import numpy as np
 
 import BallTracker as bt
 import colors as color
-
+from shapes import Circle
 
 def stream(tracker):
   """ 
@@ -84,9 +84,11 @@ def main():
   """    
   robot_color = color.White
   track_colors = [color.Blue]
-  tracker = bt.BallTracker(robot_color=robot_color, 
+  tracker = bt.BallTracker(
+    window_name="Robot Goalie Display",
+    robot_color=robot_color, 
     track_colors=track_colors, 
-    radius=10,
+    radius=20,
     num_per_color = 2) 
 
   stream(tracker) # begin tracking and object detection

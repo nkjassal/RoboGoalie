@@ -9,7 +9,7 @@ import shapes
 
 class BallTracker:
 
-  def __init__(self, 
+  def __init__(self, window_name="Ball Tracking",
     scale=0.5, 
     robot_color=color.Red, 
     track_colors=[color.Blue], 
@@ -32,6 +32,7 @@ class BallTracker:
       print 'Unable to discern robot marker from some objects (same color). Ensure robot marker color is different from colors to be tracked'
       exit()
 
+    self.window_name = window_name
     self.scale = scale
 
     # The number of frames to average fps over
@@ -41,6 +42,8 @@ class BallTracker:
 
     self.robot_color = robot_color
     self.track_colors = track_colors
+
+    self.radius = radius
 
     self.debug = debug
 
@@ -111,7 +114,7 @@ class BallTracker:
           ((x,y), radius) = cv2.minEnclosingCircle(c)
 
           # only proceed if radius meets certain size
-          if radius > 10:
+          if radius > self.radius:
             M = cv2.moments(c)
             # if divide by 0 will occur, skip circle
             if int(M["m00"]) is not 0:
@@ -145,7 +148,7 @@ class BallTracker:
       robot_pos[0].color = color.Red # set robot circle display color
       return robot_pos[0]
 
-      
+
   def draw_circles(self, img, circle_list):
     """
     @brief Draws circles/centroid from the given circle list onto the frame
