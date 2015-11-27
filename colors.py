@@ -1,5 +1,5 @@
 """
-@name colors.py
+@file colors.py
 
 @brief A list of colors and associated hsv bounds and bgr value
 
@@ -76,7 +76,7 @@ class White:
   detected as white, causing potential problems.
   """
   bgr = (255, 255, 255)
-  
+
   lower0 = (0, 0, 220)
   upper0 = (180, 50, 255)
 

@@ -6,6 +6,7 @@ import cv2 as cv2
 from IPython import embed # for debugging
 
 import colors as color # application-specific constants
+import shapes 
 
 class BallTracker:
 
@@ -49,20 +50,19 @@ class BallTracker:
     self.debug = debug
 
 
-  def draw_circles(self, img, circle_list, display_color=color.Green):
+  def draw_circles(self, img, circle_list):
     """
     @brief Draws circles/centroid from the given circle list onto the frame
 
     @param img The image to have circles drawn on
     @param circle_list List of tuples containing (x,y,radius)
-    @param display_color The color.py class of the desired circle color
 
     @return img The updated image with drawn circles
     """
-    for circle in circle_list:
-      x,y,radius,center = circle[0], circle[1], circle[2], circle[3]
+    for c in circle_list:
+      x,y,radius,center = c.x, c.y, c.radius, c.center
       cv2.circle(img, (int(x),int(y)), int(radius),
-        display_color.bgr, 2)
+        c.color.bgr, 2)
       cv2.circle(img, center, 5, (0,0,255), -1) # centroid   
 
     return img
@@ -77,9 +77,9 @@ class BallTracker:
 
     @param img_hsv The frame in HSV to detect circles in
     @param colors The list of colors to be tracked
+    @param num_per_color The number of objects of each color to detect
 
     @return circle_list List of detected circles (x,y,radius,center)
-    #@return img The processed frame with circles drawn on it
     """
     circle_list = []
 
@@ -116,7 +116,9 @@ class BallTracker:
             # if divide by 0 will occur, skip circle
             if int(M["m00"]) is not 0:
               center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
-              circle_list.append((int(x), int(y), int(radius), center))
+              circle = shapes.Circle(x=int(x), y=int(y), 
+                radius=int(radius), center=center)
+              circle_list.append(circle)
 
     return circle_list
 
@@ -130,11 +132,10 @@ class BallTracker:
 
     @return img The updated image with the robot drawn on
     """
-    img = self.draw_circles(img=img, circle_list=[robot_pos], 
-      display_color=color.Red)
+    img = self.draw_circles(img=img, circle_list=[robot_pos])
     return img
 
-  def find_robot(self, img_hsv, color):
+  def find_robot(self, img_hsv, robot_color):
     """ 
     @brief Finds the robot circle of the specified color
 
@@ -148,11 +149,12 @@ class BallTracker:
     if color is None:
       return None
 
-    robot_pos = self.find_circles(img_hsv, colors=[color], 
+    robot_pos = self.find_circles(img_hsv, colors=[robot_color], 
       num_per_color=1)
     if robot_pos == []:
       return None
     else:
+      robot_pos[0].color = color.Red # set robot circle display color
       return robot_pos[0]
 
 
@@ -240,7 +242,7 @@ class BallTracker:
 
 def main():
   """ 
-  Initializes the tracker object and Runs
+  Initializes the tracker object and run
   """    
   robot_color = color.Red
   track_colors = [color.Green]
