@@ -50,23 +50,6 @@ class BallTracker:
     self.debug = debug
 
 
-  def draw_circles(self, img, circle_list):
-    """
-    @brief Draws circles/centroid from the given circle list onto the frame
-
-    @param img The image to have circles drawn on
-    @param circle_list List of tuples containing (x,y,radius)
-
-    @return img The updated image with drawn circles
-    """
-    for c in circle_list:
-      x,y,radius,center = c.x, c.y, c.radius, c.center
-      cv2.circle(img, (int(x),int(y)), int(radius),
-        c.color.bgr, 2)
-      cv2.circle(img, center, 5, (0,0,255), -1) # centroid   
-
-    return img
-
   def find_circles(self, img_hsv, colors, num_per_color):
     """
     @brief Finds circle(s) in the frame based on input params, displays 
@@ -122,18 +105,24 @@ class BallTracker:
 
     return circle_list
 
-  def draw_robot(self, img, robot_pos):
-    """
-    @brief draws a circle around the robot
 
-    @param frame The frame to draw the circle on
-    @param robot_pos A single element list containing the tuple of 
-      (x,y,radius,center) of the robot
-
-    @return img The updated image with the robot drawn on
+  def draw_circles(self, img, circle_list):
     """
-    img = self.draw_circles(img=img, circle_list=[robot_pos])
+    @brief Draws circles/centroid from the given circle list onto the frame
+
+    @param img The image to have circles drawn on
+    @param circle_list List of tuples containing (x,y,radius)
+
+    @return img The updated image with drawn circles
+    """
+    for c in circle_list:
+      x,y,radius,center = c.x, c.y, c.radius, c.center
+      cv2.circle(img, (int(x),int(y)), int(radius),
+        c.color.bgr, 2)
+      cv2.circle(img, center, 5, (0,0,255), -1) # centroid   
+
     return img
+
 
   def find_robot(self, img_hsv, robot_color):
     """ 
@@ -156,6 +145,20 @@ class BallTracker:
     else:
       robot_pos[0].color = color.Red # set robot circle display color
       return robot_pos[0]
+  
+
+  def draw_robot(self, img, robot_pos):
+    """
+    @brief draws a circle around the robot
+
+    @param frame The frame to draw the circle on
+    @param robot_pos A single element list containing the tuple of 
+      (x,y,radius,center) of the robot
+
+    @return img The updated image with the robot drawn on
+    """
+    img = self.draw_circles(img=img, circle_list=[robot_pos])
+    return img
 
 
   def setup_frame(self, frame, scale=0.5, blur_window=11):
