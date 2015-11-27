@@ -16,7 +16,7 @@ class Circle:
     @param y the y coordinate of the circle center. From finding minimum
       enclosing circle.
     @param radius The radius of the circle
-    @param center A tuple of (x,y) coordinates of the circle. Comes from 
+    @param center A tuple of (x,y) coordinates of the centroid. Comes from 
       calcuation of center using moments.
     @param color The color to display the circle in
     """

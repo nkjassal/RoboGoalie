@@ -117,7 +117,7 @@ class BallTracker:
     """
     for c in circle_list:
       x,y,radius,center = c.x, c.y, c.radius, c.center
-      cv2.circle(img, (int(x),int(y)), int(radius),
+      cv2.circle(img, (x, y), radius,
         c.color.bgr, 2)
       cv2.circle(img, center, 5, (0,0,255), -1) # centroid   
 
@@ -135,7 +135,7 @@ class BallTracker:
 
     @return robot_pos The tuple of (x,y,radius,center) of the robot
     """
-    if color is None:
+    if robot_color is None:
       return None
 
     robot_pos = self.find_circles(img_hsv, colors=[robot_color], 
@@ -157,6 +157,8 @@ class BallTracker:
 
     @return img The updated image with the robot drawn on
     """
+    if robot_pos is None:
+      return img
     img = self.draw_circles(img=img, circle_list=[robot_pos])
     return img
 
@@ -183,82 +185,5 @@ class BallTracker:
     return frame, img_hsv
 
 
-  def stream(self):
-    """ 
-    @brief Runs video capture and tracking with FPS counter
-    """
-    # create video capture object for first video cam (mac webcam)
-    cap = cv2.VideoCapture(0)
 
-    # FPS Counters
-    count = 0
-    old_time = 0
-    fps = '' # for display
-
-    while(True):
-      # start fps timer
-      if count is 0:
-        old_time = time.time()
-
-      # Capture frame-by-frame and process
-      ret, frame = cap.read()
-      frame,img_hsv = self.setup_frame(frame=frame, blur_window=11)
-
-      # use the HSV image to detect circles, then draw on the original frame
-      circle_list = self.find_circles(img_hsv.copy(), self.track_colors,
-        self.num_per_color)
-      frame = self.draw_circles(frame, circle_list)
-
-      # same goal for the robot      
-      robot_pos = self.find_robot(img_hsv.copy(), self.robot_color)
-      if robot_pos is not None:
-        frame = self.draw_robot(frame, robot_pos)
-
-
-      #### FPS COUNTER ####
-      # if correct number of frames have elapsed
-      if count is self.FPS_FRAMES:
-        elapsed_time = time.time() - old_time # get time elapsed
-        fps_val = 1.0 * self.FPS_FRAMES / elapsed_time
-        count = 0 # reset count
-        fps = str(round(fps_val, 1))
-      else:
-       count += 1
-
-      #### DISPLAY FRAME ON SCREEN ####
-      # Display FPS on screen every frame
-      font = cv2.FONT_HERSHEY_SIMPLEX # no idea what font this is
-      cv2.putText(frame, fps, (10, 30), font, 0.8, (0,255,0),2,cv2.LINE_AA)
-
-      # display resulting frame
-      cv2.imshow(self.window_name,frame)
-
-      # quit option with q
-      if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-
-    # release capture
-    cap.release()
-    cv2.destroyAllWindows()
-
-
-
-def main():
-  """ 
-  Initializes the tracker object and run
-  """    
-  robot_color = color.Red
-  track_colors = [color.Green]
-  tracker = BallTracker(robot_color=robot_color, 
-    track_colors=track_colors, 
-    radius=10,
-    num_per_color = 1) 
-
-  tracker.stream() # begin tracking and object detection
-
-  
-
-
-if __name__ == "__main__":
-  main()
 
