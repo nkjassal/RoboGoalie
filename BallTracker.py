@@ -110,7 +110,6 @@ class BallTracker:
       # destructive, so copy mask if needed later
       cnts = cv2.findContours(mask, cv2.RETR_EXTERNAL,
         cv2.CHAIN_APPROX_SIMPLE)[-2]
-      center = None
 
       # only proceed if at least one contour found
       if len(cnts) > 0:
@@ -147,12 +146,12 @@ class BallTracker:
     @return robot_pos The tuple of (x,y,radius,center) of the robot
     """
     if robot_color is None:
-      return None
+      return []
 
     robot_pos = self.find_circles(img_hsv, colors=[robot_color], 
       num_per_color=2)
     if len(robot_pos) < 2:
-      return None
+      return []
     else:
       robot_pos[0].color = color.Red # set robot circle display color
       robot_pos[1].color = color.Red

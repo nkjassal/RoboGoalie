@@ -2,11 +2,16 @@
 @file Shapes.py
 
 @brief Contains classes for shapes, used for location and display
+
+Currently contains classes for:
+  Circle
+  Line
 """
+import math
+
 import colors as color
 
 class Circle:
-
   def __init__(self, x=0, y=0, radius=0, centroid=(0,0), color=color.Green):
     """
     @brief Sets up initial parameters
@@ -25,3 +30,26 @@ class Circle:
     self.radius = radius
     self.centroid = centroid
     self.color = color
+
+
+class Line:
+  def __init__(self, x1=0, y1=0, x2=0, y2=0, length=0, color=color.Red):
+    """
+    @brief Sets up initial parameters
+
+    @param x1 x-coordinate of first point
+    @param y1 y-coordinate of first point
+    @param x2 x-coordinate of second point
+    @param y2 y-coordinate of second point
+    @param length The length of the line. Calculated by default
+    @param color The color to be used to display the line
+    """
+    self.x1 = x1
+    self.y1 = y1
+    self.x2 = x2
+    self.y2 = y2
+    self.color = color
+    
+    # Only calculate length if not already provided
+    if length is 0:
+      self.length = math.sqrt(math.pow(x1-x2,2) + math.pow(y1-y2, 2))

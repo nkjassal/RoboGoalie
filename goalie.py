@@ -12,7 +12,7 @@ import numpy as np
 
 import BallTracker as bt
 import colors as color
-from shapes import Circle
+import shapes
 
 def stream(tracker, camera=0):
   """ 
@@ -47,6 +47,12 @@ def stream(tracker, camera=0):
       tracker.num_per_color)
     robot_pos = tracker.find_robot(img_hsv.copy(), tracker.robot_color)
 
+    # Only run tracking calculations if both markers found
+    if (len(robot_pos) < 2) or robot_pos is None:
+      pass
+    else:
+      robot_axis = shapes.Line(robot_pos[0].x, robot_pos[0].y,
+        robot_pos[1].x, robot_pos[1].y)
 
 
 
