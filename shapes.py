@@ -1,7 +1,7 @@
 """
 @file Shapes.py
 
-@brief The circle class, used for display and location
+@brief Contains classes for shapes, used for location and display
 """
 import colors as color
 
@@ -17,8 +17,8 @@ class Circle:
       enclosing circle.
     @param radius The radius of the circle
     @param center A tuple of (x,y) coordinates of the centroid. Comes from 
-      calcuation of centroid   using moments.
-    @param color The color to display the circle in
+      calcuation of centroid using moments.
+    @param color The display color for the circle
     """
     self.x = x
     self.y = y

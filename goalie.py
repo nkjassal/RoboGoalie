@@ -1,6 +1,9 @@
 """
 @file goalie.py
+
 @brief Main script for tracking, displaying and moving robot
+
+@author Neil Jassal
 """
 import time # for fps counter
 
@@ -11,11 +14,14 @@ import BallTracker as bt
 import colors as color
 from shapes import Circle
 
-def stream(tracker):
+def stream(tracker, camera=0):
   """ 
-  @brief Captures video and 
+  @brief Captures video and runs tracking and moves robot accordingly
+
+  @param tracker The BallTracker object to be used
+  @param camera The camera number (0 is default) for getting frame data
   """
-  # create video capture object for first video cam (mac webcam)
+  # create video capture object for
   cap = cv2.VideoCapture(0)
   cv2.namedWindow(tracker.window_name)
 
@@ -47,7 +53,7 @@ def stream(tracker):
     #### DRAW CIRCLES AROUND OBJECTS ####
     frame = tracker.draw_circles(frame, object_list)
     if robot_pos is not None:
-      frame = tracker.draw_robot(frame, robot_pos)
+      frame = tracker.draw_robot_markers(frame, robot_pos)
 
 
     #### FPS COUNTER ####
@@ -80,20 +86,19 @@ def stream(tracker):
 
 def main():
   """ 
-  Initializes the tracker object and run
+  @brief Initializes the tracker object and runs goalie script
   """    
-  robot_color = color.White
-  track_colors = [color.Blue]
+  robot_color = color.Blue
+  track_colors = []#[color.Blue]
   tracker = bt.BallTracker(
     window_name="Robot Goalie Display",
     robot_color=robot_color, 
     track_colors=track_colors, 
-    radius=20,
+    radius=15,
     num_per_color = 2) 
 
   stream(tracker) # begin tracking and object detection
 
-  
 
 
 if __name__ == "__main__":

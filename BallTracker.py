@@ -1,3 +1,11 @@
+"""
+@file BallTracker.py
+
+@brief Contains functions for tracking and displaying circles/balls for a frame
+
+@author Neil Jassal
+"""
+
 import heapq # for getting max n contours
 
 import numpy as np
@@ -26,7 +34,7 @@ class BallTracker:
     @param num_per_color The number of objects to detect for one color.
     @param debug enable debug mode
     """
-
+    
     # if robot marker and track color are the same, won't be able to tell apart
     if robot_color in track_colors:
       print 'Unable to discern robot marker from some objects (same color). Ensure robot marker color is different from colors to be tracked'
@@ -130,7 +138,8 @@ class BallTracker:
     """ 
     @brief Finds the robot circle of the specified color
 
-    Only finds one object - expects only one robot in scene
+    Only finds two objects. Robot has 1 axis of motion, so distinct circles 
+    represent the axis. Expects 2 objects
 
     @param img_hsv The HSV image to find robot in
     @param color The color to detect
@@ -141,12 +150,13 @@ class BallTracker:
       return None
 
     robot_pos = self.find_circles(img_hsv, colors=[robot_color], 
-      num_per_color=1)
-    if robot_pos == []:
+      num_per_color=2)
+    if len(robot_pos) < 2:
       return None
     else:
       robot_pos[0].color = color.Red # set robot circle display color
-      return robot_pos[0]
+      robot_pos[1].color = color.Red
+      return robot_pos
 
 
   def draw_circles(self, img, circle_list):
@@ -168,23 +178,30 @@ class BallTracker:
     return img
   
 
-  def draw_robot(self, img, robot_pos):
+  def draw_robot_markers(self, img, robot_pos):
     """
-    @brief draws a circle around the robot
+    @brief draws a circle around the robot markers
 
-    @param frame The frame to draw the circle on
-    @param robot_pos A single element list containing the tuple of 
-      (x,y,radius,center) of the robot
+    @param img The frame to draw the circle on
+    @param robot_pos A list containing Circle objects for the two robot markers
 
     @return img The updated image with the robot drawn on
     """
     if robot_pos is None:
       return img
-    img = self.draw_circles(img=img, circle_list=[robot_pos])
+    img = self.draw_circles(img=img, circle_list=robot_pos)
     return img
 
 
+  def draw_robot_axis(self, img, robot_pos):
+    """
+    @brief Draws a line between the robot markers, denoting the axis of motion
 
+    @param img The frame to draw the line on
+    @param robot_pos A list containing Circle objects for the two robot markers
 
+    @return img The updated image with the robot drawn on
+    """
+    pass
 
 
