@@ -83,6 +83,10 @@ class BallTracker:
     """
     circle_list = []
 
+    # if no colors specified, return empty
+    if colors == []:
+      return circle_list
+
     for color in colors:
       # Mask with range of HSV values, uses both color bounds and combines.
       # Erode and dilate to reduce noise
@@ -141,6 +145,9 @@ class BallTracker:
 
     @return robot_pos The tuple of (x,y,radius,center) of the robot
     """
+    if color is None:
+      return None
+
     robot_pos = self.find_circles(img_hsv, colors=[color], 
       num_per_color=1)
     if robot_pos == []:
@@ -236,7 +243,7 @@ def main():
   Initializes the tracker object and Runs
   """    
   robot_color = color.Red
-  track_colors = [color.Blue]
+  track_colors = [color.Green]
   tracker = BallTracker(robot_color=robot_color, 
     track_colors=track_colors, 
     radius=10,
