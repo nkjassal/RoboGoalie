@@ -123,25 +123,6 @@ class BallTracker:
     return circle_list
 
 
-  def draw_circles(self, img, circle_list):
-    """
-    @brief Draws circles/centroid from the given circle list onto the frame
-
-    @param img The image to have circles drawn on
-    @param circle_list List of tuples containing (x,y,radius)
-
-    @return img The updated image with drawn circles
-    """
-    for c in circle_list:
-      x,y,radius = c.x, c.y, c.radius
-
-      cv2.circle(img, (x,y), radius,
-        c.color.bgr, 2)
-      cv2.circle(img, (x,y), 5, color.Red.bgr, -1) # center  
-
-    return img
-
-
   def find_robot(self, img_hsv, robot_color):
     """ 
     @brief Finds the robot circle of the specified color
@@ -163,6 +144,25 @@ class BallTracker:
     else:
       robot_pos[0].color = color.Red # set robot circle display color
       return robot_pos[0]
+
+      
+  def draw_circles(self, img, circle_list):
+    """
+    @brief Draws circles/centroid from the given circle list onto the frame
+
+    @param img The image to have circles drawn on
+    @param circle_list List of tuples containing (x,y,radius)
+
+    @return img The updated image with drawn circles
+    """
+    for c in circle_list:
+      x,y,radius = c.x, c.y, c.radius
+
+      cv2.circle(img, (x,y), radius,
+        c.color.bgr, 2)
+      cv2.circle(img, (x,y), 5, color.Red.bgr, -1) # center  
+
+    return img
   
 
   def draw_robot(self, img, robot_pos):
