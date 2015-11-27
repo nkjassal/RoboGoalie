@@ -186,21 +186,43 @@ class BallTracker:
 
     @return img The updated image with the robot drawn on
     """
-    if robot_pos is None:
+    if robot_pos is []:
       return img
     img = self.draw_circles(img=img, circle_list=robot_pos)
     return img
 
 
-  def draw_robot_axis(self, img, robot_pos):
+  def draw_robot_axis(self, img, robot_pos=None, line=None):
     """
     @brief Draws a line between the robot markers, denoting the axis of motion
 
+    Only one of robot_pos or line needs to be supplied.
+    
+    If a line is supplied, it will draw using the line. Otherwise, if the
+    robot marker positions are supplied, it will calculate the line and
+    display using that. If neither parameter is given, no line will be 
+    displayed
+
     @param img The frame to draw the line on
     @param robot_pos A list containing Circle objects for the two robot markers
+    @param line A line object from shapes.py. Can be supplied if the Line
+      object already exists, otherwise will be calculated from robot_pos, if
+      it exists
 
     @return img The updated image with the robot drawn on
     """
-    pass
+    if line is not None:
+      img = cv2.line(img, (line.x1,line.y1), (line.x2,line.y2),
+        color=line.color.bgr, thickness=line.thickness)
+
+    # No line object given, draw line using robot_pos
+    elif robot_pos is not None:
+      img = cv2.line(img, 
+        (robot_pos[0].x, robot_pos[0].y),
+        (robot_pos[1].x, robot_pos[1].y),
+        color=color.Red.bgr, thickness=3)  
+
+
+    return img
 
 

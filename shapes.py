@@ -33,7 +33,8 @@ class Circle:
 
 
 class Line:
-  def __init__(self, x1=0, y1=0, x2=0, y2=0, length=0, color=color.Red):
+  def __init__(self, x1=0, y1=0, x2=0, y2=0, length=0, color=color.Red,
+    thickness=3):
     """
     @brief Sets up initial parameters
 
@@ -43,12 +44,14 @@ class Line:
     @param y2 y-coordinate of second point
     @param length The length of the line. Calculated by default
     @param color The color to be used to display the line
+    @param thickness The thickness of the line when drawn
     """
     self.x1 = x1
     self.y1 = y1
     self.x2 = x2
     self.y2 = y2
     self.color = color
+    self.thickness = thickness
     
     # Only calculate length if not already provided
     if length is 0:

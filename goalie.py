@@ -48,18 +48,19 @@ def stream(tracker, camera=0):
     robot_pos = tracker.find_robot(img_hsv.copy(), tracker.robot_color)
 
     # Only run tracking calculations if both markers found
-    if (len(robot_pos) < 2) or robot_pos is None:
-      pass
-    else:
-      robot_axis = shapes.Line(robot_pos[0].x, robot_pos[0].y,
-        robot_pos[1].x, robot_pos[1].y)
+    ### EVENTUALLY PUT THIS IN A FUNCTION...UTILS.PY OR SOMETHING
+    robot_axis = None
+    if len(robot_pos) is 2:
+      robot_axis = shapes.Line(
+        x1=robot_pos[0].x, y1=robot_pos[0].y,
+        x2=robot_pos[1].x, y2=robot_pos[1].y)
 
 
 
     #### DRAW CIRCLES AROUND OBJECTS ####
     frame = tracker.draw_circles(frame, object_list)
-    if robot_pos is not None:
-      frame = tracker.draw_robot_markers(frame, robot_pos)
+    frame = tracker.draw_robot_markers(frame, robot_pos)
+    frame = tracker.draw_robot_axis(frame, line=robot_axis)
 
 
     #### FPS COUNTER ####
@@ -95,12 +96,12 @@ def main():
   @brief Initializes the tracker object and runs goalie script
   """    
   robot_color = color.Blue
-  track_colors = []#[color.Blue]
+  track_colors = [color.White]
   tracker = bt.BallTracker(
     window_name="Robot Goalie Display",
     robot_color=robot_color, 
     track_colors=track_colors, 
-    radius=15,
+    radius=13,
     num_per_color = 2) 
 
   stream(tracker) # begin tracking and object detection
