@@ -13,10 +13,11 @@ import colors as color
 
 def stream(tracker):
   """ 
-  @brief Runs video capture and tracking with FPS counter
+  @brief Captures video and 
   """
   # create video capture object for first video cam (mac webcam)
   cap = cv2.VideoCapture(0)
+  cv2.namedWindow(tracker.window_name)
 
   # FPS Counters
   count = 0
@@ -28,17 +29,23 @@ def stream(tracker):
     if count is 0:
       old_time = time.time()
 
-    # Capture frame-by-frame and process
+    #### CAPTURE AND PROCESS FRAME ####
     ret, frame = cap.read()
     frame,img_hsv = tracker.setup_frame(frame=frame, blur_window=11)
 
-    # use the HSV image to detect circles, then draw on the original frame
-    circle_list = tracker.find_circles(img_hsv.copy(), tracker.track_colors,
-      tracker.num_per_color)
-    frame = tracker.draw_circles(frame, circle_list)
 
-    # same goal for the robot      
+
+    #### TRACK OBJECTS ####
+    # use the HSV image to get Circle objects for robot and objects
+    object_list = tracker.find_circles(img_hsv.copy(), tracker.track_colors,
+      tracker.num_per_color)
     robot_pos = tracker.find_robot(img_hsv.copy(), tracker.robot_color)
+
+
+
+
+    #### DRAW CIRCLES AROUND OBJECTS ####
+    frame = tracker.draw_circles(frame, object_list)
     if robot_pos is not None:
       frame = tracker.draw_robot(frame, robot_pos)
 
@@ -61,7 +68,7 @@ def stream(tracker):
     # display resulting frame
     cv2.imshow(tracker.window_name,frame)
 
-    # quit option with q
+    # quit by pressing q
     if cv2.waitKey(1) & 0xFF == ord('q'):
       break
 
@@ -75,12 +82,12 @@ def main():
   """ 
   Initializes the tracker object and run
   """    
-  robot_color = None#color.Red
+  robot_color = color.White
   track_colors = [color.Blue]
   tracker = bt.BallTracker(robot_color=robot_color, 
     track_colors=track_colors, 
     radius=10,
-    num_per_color = 1) 
+    num_per_color = 2) 
 
   stream(tracker) # begin tracking and object detection
 

@@ -1,4 +1,3 @@
-import time # for fps counter
 import heapq # for getting max n contours
 
 import numpy as np
@@ -10,7 +9,7 @@ import shapes
 
 class BallTracker:
 
-  def __init__(self, window_name='Object Tracking', 
+  def __init__(self, 
     scale=0.5, 
     robot_color=color.Red, 
     track_colors=[color.Blue], 
@@ -20,7 +19,6 @@ class BallTracker:
     """
     @brief inits default tracking parameters
 
-    @param window_name The name of the window to be displayed on screen
     @param scale Webcam frame gets scaled by this much (0 to 1).
     @param robot_color The color (from colors.py) of the robot marker
     @param track_colors List of colors (from colors.py) to be tracked. 
@@ -34,9 +32,6 @@ class BallTracker:
       print 'Unable to discern robot marker from some objects (same color). Ensure robot marker color is different from colors to be tracked'
       exit()
 
-    # The name of the window to be displayed
-    self.window_name = window_name
-    cv2.namedWindow(self.window_name)
     self.scale = scale
 
     # The number of frames to average fps over
@@ -48,6 +43,28 @@ class BallTracker:
     self.track_colors = track_colors
 
     self.debug = debug
+
+
+  def setup_frame(self, frame, scale=0.5, blur_window=11):
+    """
+    @brief Rescales and blurs frame for clarity and faster operations
+
+    @param frame The frame to be operated on and returned
+    @param scale The frame will be scaled multiplicatively by this much (0-1)
+    @param blur_window The window size used for the median blur
+
+    @return The updated frame
+    @return The updated frame blurred and in hsv
+    """  
+    # scale is a tuple, not two separate arguments (w, h)
+    h_scaled,w_scaled = tuple(self.scale * np.asarray(frame.shape[:2]))
+    frame = cv2.resize(frame, (int(w_scaled), int(h_scaled)), 
+      cv2.INTER_AREA)
+    cv2.flip(src=frame,dst=frame, flipCode=1) # flip across y for correctness
+
+    blur = cv2.GaussianBlur(frame, (blur_window,blur_window), 0) # -0 frames
+    img_hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
+    return frame, img_hsv
 
 
   def find_circles(self, img_hsv, colors, num_per_color):
@@ -98,9 +115,9 @@ class BallTracker:
             M = cv2.moments(c)
             # if divide by 0 will occur, skip circle
             if int(M["m00"]) is not 0:
-              center = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
+              centroid = (int(M["m10"] / M["m00"]), int(M["m01"] / M["m00"]))
               circle = shapes.Circle(x=int(x), y=int(y), 
-                radius=int(radius), center=center)
+                radius=int(radius), centroid=centroid)
               circle_list.append(circle)
 
     return circle_list
@@ -116,10 +133,11 @@ class BallTracker:
     @return img The updated image with drawn circles
     """
     for c in circle_list:
-      x,y,radius,center = c.x, c.y, c.radius, c.center
-      cv2.circle(img, (x, y), radius,
+      x,y,radius = c.x, c.y, c.radius
+
+      cv2.circle(img, (x,y), radius,
         c.color.bgr, 2)
-      cv2.circle(img, center, 5, (0,0,255), -1) # centroid   
+      cv2.circle(img, (x,y), 5, color.Red.bgr, -1) # center  
 
     return img
 
@@ -163,26 +181,6 @@ class BallTracker:
     return img
 
 
-  def setup_frame(self, frame, scale=0.5, blur_window=11):
-    """
-    @brief Rescales and blurs frame for clarity and faster operations
-
-    @param frame The frame to be operated on and returned
-    @param scale The frame will be scaled multiplicatively by this much (0-1)
-    @param blur_window The window size used for the median blur
-
-    @return The updated frame
-    @return The updated frame blurred and in hsv
-    """  
-    # scale is a tuple, not two separate arguments (w, h)
-    h_scaled,w_scaled = tuple(self.scale * np.asarray(frame.shape[:2]))
-    frame = cv2.resize(frame, (int(w_scaled), int(h_scaled)), 
-      cv2.INTER_LINEAR)
-    cv2.flip(src=frame,dst=frame, flipCode=1) # flip across y for correctness
-
-    blur = cv2.GaussianBlur(frame, (blur_window,blur_window), 0) # -0 frames
-    img_hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
-    return frame, img_hsv
 
 
 
