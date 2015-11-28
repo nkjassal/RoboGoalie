@@ -82,6 +82,7 @@ class BallTracker:
     return frame, img_hsv
 
 
+  ################ OBJECT DETECTION FUNCTIONS ######################
   def find_circles(self, img_hsv, colors, num_per_color):
     """
     @brief Finds circle(s) in the frame based on input params, displays 
@@ -147,7 +148,7 @@ class BallTracker:
     @param img_hsv The HSV image to find robot in
     @param color The color to detect
 
-    @return robot_pos The tuple of (x,y,radius,center) of the robot
+    @return robot_pos A list of the two circle objects for a robot
     """
     if robot_color is None:
       return []
@@ -162,6 +163,8 @@ class BallTracker:
       return robot_pos
 
 
+
+  ################ DRAWING FUNCTIONS ###################
   def draw_circles(self, img, circle_list):
     """
     @brief Draws circles/centroid from the given circle list onto the frame

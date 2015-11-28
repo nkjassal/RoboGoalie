@@ -29,6 +29,8 @@ The +/- scale of 22 works alright.
 NOTE: The Saturation value S should be specifically determined on a 
 color-by-color basis. S=90 or S=150 seem to work decently, as starting points.
 
+@author Neil Jassal
+
 """
 
 class Blue:

@@ -13,6 +13,7 @@ import numpy as np
 import tracker as bt
 import colors as color
 import shapes
+import utils
 
 def stream(tracker, camera=0):
   """ 
@@ -49,15 +50,16 @@ def stream(tracker, camera=0):
 
     # Only run tracking calculations if both markers found
     ### EVENTUALLY PUT THIS IN A FUNCTION...UTILS.PY OR SOMETHING
-    robot_axis = None
-    if len(robot_pos) is 2:
-      robot_axis = shapes.Line(
-        x1=robot_pos[0].x, y1=robot_pos[0].y,
-        x2=robot_pos[1].x, y2=robot_pos[1].y)
+    # robot_axis = None
+    # if len(robot_pos) is 2:
+    #   robot_axis = shapes.Line(
+    #     x1=robot_pos[0].x, y1=robot_pos[0].y,
+    #     x2=robot_pos[1].x, y2=robot_pos[1].y)
+    robot_axis = utils.get_line_from_circles(robot_pos)
 
 
 
-    #### DRAW CIRCLES AROUND OBJECTS ####
+    #### DRAW ANNOTATIONS ON FRAME ####
     frame = tracker.draw_circles(frame, object_list)
     frame = tracker.draw_robot_markers(frame, robot_pos)
     frame = tracker.draw_robot_axis(frame, line=robot_axis)
@@ -102,7 +104,7 @@ def main():
     robot_color=robot_color, 
     track_colors=track_colors, 
     radius=13,
-    num_per_color = 2) 
+    num_per_color = 1) 
 
   stream(tracker) # begin tracking and object detection
 

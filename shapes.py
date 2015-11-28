@@ -6,6 +6,8 @@
 Currently contains classes for:
   Circle
   Line
+
+@author Neil Jassal
 """
 import math
 
