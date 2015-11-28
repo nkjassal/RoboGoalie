@@ -42,7 +42,6 @@ class Blue:
 
   lower0 = (75, 90, 90)
   upper0 = (163, 255, 255)
-
   lower1 = (0,0,0)
   upper1 = (0,0,0)
 
@@ -55,9 +54,9 @@ class Green:
 
   lower0 = (16, 90, 90)
   upper0 = (104, 255, 255)
-
   lower1 = (0,0,0)
   upper1 = (0,0,0)
+
 
 class Red:
   """
@@ -67,9 +66,9 @@ class Red:
 
   lower0 = (0, 150, 150)
   upper0 = (20, 255, 255)
-
   lower1 = (160, 150, 150)
   upper1 = (179,255, 255)
+
 
 class White:
   """

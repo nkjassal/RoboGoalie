@@ -44,6 +44,8 @@ class Line:
     @param y1 y-coordinate of first point
     @param x2 x-coordinate of second point
     @param y2 y-coordinate of second point
+    @param dx The x-distance between points
+    @param dy The y-distance between points
     @param length The length of the line. Calculated by default
     @param color The color to be used to display the line
     @param thickness The thickness of the line when drawn
@@ -52,6 +54,8 @@ class Line:
     self.y1 = y1
     self.x2 = x2
     self.y2 = y2
+    self.dx = math.fabs(x1 - x2) * 1.0
+    self.dy = math.fabs(y1 - y2) * 1.0
     self.color = color
     self.thickness = thickness
     

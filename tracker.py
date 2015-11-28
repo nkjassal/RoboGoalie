@@ -47,7 +47,7 @@ class BallTracker:
     self.window_name = window_name
     self.scale = scale
 
-    # The number of frames to average fps over
+    # The num ber of frames to average fps over
     self.FPS_FRAMES = 50
 
     self.num_per_color = num_per_color
@@ -83,7 +83,8 @@ class BallTracker:
 
 
   ################ OBJECT DETECTION FUNCTIONS ######################
-  def find_circles(self, img_hsv, colors, num_per_color):
+  def find_circles(self, img_hsv, colors, 
+    num_per_color):
     """
     @brief Finds circle(s) in the frame based on input params, displays 
     on-screen
@@ -118,13 +119,12 @@ class BallTracker:
 
       # only proceed if at least one contour found
       if len(cnts) > 0:
-        # find largest contour in mask, then use it to compute min enclosing
+        # find largest N contours in mask, then use it to compute min enclosing
         # circle and centroid
         contours = heapq.nlargest(num_per_color, cnts, 
           key=cv2.contourArea)
         for c in contours:
           ((x,y), radius) = cv2.minEnclosingCircle(c)
-
           # only proceed if radius meets certain size
           if radius > self.radius:
             M = cv2.moments(c)
@@ -228,7 +228,6 @@ class BallTracker:
         (robot_pos[0].x, robot_pos[0].y),
         (robot_pos[1].x, robot_pos[1].y),
         color=color.Red.bgr, thickness=3)  
-
 
     return img
 

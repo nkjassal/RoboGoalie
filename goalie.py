@@ -50,10 +50,10 @@ def stream(tracker, camera=0):
       tracker.num_per_color)
     robot_pos = tracker.find_robot(img_hsv.copy(), tracker.robot_color)
 
-    # Get the line between the robot markers (may return None)
+    # Get the line/distances between the robot markers (may return None)
     robot_axis = utils.get_line_from_circles(robot_pos)
-
-
+    distances = utils.get_distance_from_line(object_list, robot_axis)
+    #print distances
 
     #### DRAW ANNOTATIONS ON FRAME ####
     frame = tracker.draw_circles(frame, object_list)
@@ -100,7 +100,7 @@ def main():
     robot_color=robot_color, 
     track_colors=track_colors, 
     radius=13,
-    num_per_color = 1) 
+    num_per_color = 2) 
 
   stream(tracker) # begin tracking and object detection
 
