@@ -1,7 +1,11 @@
 """
-@file BallTracker.py
+@file tracker.py
 
-@brief Contains functions for tracking and displaying circles/balls for a frame
+@brief Contains the BallTracker class.
+
+The BallTracker class has functions for tracking and displaying circles for 
+a given frame. Cirles can be tracked, as well as the 'robot.' The robot isd
+denoted as a set of two circles with an axis between them.
 
 @author Neil Jassal
 """

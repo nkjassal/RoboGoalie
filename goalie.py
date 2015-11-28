@@ -10,7 +10,7 @@ import time # for fps counter
 import cv2
 import numpy as np
 
-import BallTracker as bt
+import tracker as bt
 import colors as color
 import shapes
 
