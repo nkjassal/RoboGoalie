@@ -43,18 +43,14 @@ def stream(tracker, camera=0):
 
 
     #### TRACK OBJECTS ####
-    # use the HSV image to get Circle objects for robot and objects
+    # use the HSV image to get Circle objects for robot and objects.
+    # object_list is list of Circle objects found.
+    # robot_ops is 2-elem list of Circle objects for robot markers
     object_list = tracker.find_circles(img_hsv.copy(), tracker.track_colors,
       tracker.num_per_color)
     robot_pos = tracker.find_robot(img_hsv.copy(), tracker.robot_color)
 
-    # Only run tracking calculations if both markers found
-    ### EVENTUALLY PUT THIS IN A FUNCTION...UTILS.PY OR SOMETHING
-    # robot_axis = None
-    # if len(robot_pos) is 2:
-    #   robot_axis = shapes.Line(
-    #     x1=robot_pos[0].x, y1=robot_pos[0].y,
-    #     x2=robot_pos[1].x, y2=robot_pos[1].y)
+    # Get the line between the robot markers (may return None)
     robot_axis = utils.get_line_from_circles(robot_pos)
 
 
