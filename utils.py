@@ -10,7 +10,21 @@ import math
 import shapes
 
 
-def get_line_from_circles(robot=None, c1=None, c2=None):
+def draw_lines(frame, line_list):
+  """
+  @brief Draws each line from line_list onto the frame
+
+  @param frame The frame to be updated with lines 
+  @param line_list The list of Line objects to be drawn onto frame
+
+  @return frame The updated frame
+  """
+  for line in line_list:
+    frame = cv2.line(frame, (line.x1,line.y1), (line.x2,line.y2),
+      color=line.color.bgr, thickness=line.thickness)
+  return frame
+
+def line_between_circles(robot=None, c1=None, c2=None):
   """
   @brief Gets the Line from two circles, or a robot_pos (list of 2 circles)
 
@@ -35,7 +49,7 @@ def get_line_from_circles(robot=None, c1=None, c2=None):
   return line
 
 
-def get_distance_from_line(circle_list, line):
+def distance_from_line(circle_list, line):
   """
   @brief Gets the shortest distance from each circle to the given line
 
@@ -44,19 +58,22 @@ def get_distance_from_line(circle_list, line):
   @param circle_list The list of Circles to get distances from line
   @param line The Line object to get distances from
 
+  @return points A list of (x,y) tuples corresponding to closest point on line
+    to circle i. points[i] corresponds to circle_list[i]
   @return distances A list of distances. distances[i] corresponds to
     circle_list[i]. Returns None if no circles found
   """
   distances = []
+  points = []
 
   # if no line or no circles return None
   if line is None or not circle_list:
-    return None
+    return points, distances
 
   for c in circle_list:
     
     line_dot = line.dx*line.dx + line.dx*line.dx
-    if float(line_dot) is 0.0: # avoid divide by 0
+    if float(line_dot) <= 0.1: # avoid divide by 0
       distances.append(-1.0)
       continue
 
@@ -73,12 +90,14 @@ def get_distance_from_line(circle_list, line):
 
     dist = math.sqrt(dx*dx + dy*dy)
 
-    # ensures nonexistent circles
+    points.append((x, y))
+
+    # ensures nonexistent circles have distance of -1, not 0
     if dist <= 0.1:
       distances.append(-1.0)
     else:
       distances.append(dist)
 
-  return distances
+  return points, distances
 
 

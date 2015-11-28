@@ -54,8 +54,8 @@ class Line:
     self.y1 = y1
     self.x2 = x2
     self.y2 = y2
-    self.dx = math.fabs(x1 - x2) * 1.0
-    self.dy = math.fabs(y1 - y2) * 1.0
+    self.dx = math.fabs(int(x1) - int(x2)) * 1.0
+    self.dy = math.fabs(int(y1) - int(y2)) * 1.0
     self.color = color
     self.thickness = thickness
     
