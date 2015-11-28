@@ -7,6 +7,8 @@
 """
 import math
 
+import cv2
+
 import shapes
 
 
@@ -90,7 +92,7 @@ def distance_from_line(circle_list, line):
 
     dist = math.sqrt(dx*dx + dy*dy)
 
-    points.append((x, y))
+    points.append( (x,y) )
 
     # ensures nonexistent circles have distance of -1, not 0
     if dist <= 0.1:
