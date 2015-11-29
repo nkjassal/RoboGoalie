@@ -42,6 +42,7 @@ class Circle:
     """
     self.x = x
     self.y = y
+    self.coord = (x,y)
     self.radius = radius
     self.centroid = centroid
     self.color = color

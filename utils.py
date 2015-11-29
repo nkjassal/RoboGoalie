@@ -75,8 +75,6 @@ def distance_from_line(circle_list, line):
     return points, distances
 
   for c in circle_list:
-    px = c.x - line.x1
-    py = c.y - line.y1
 
     line_dot = line.dx*line.dx + line.dy*line.dy
     if float(line_dot) <= 0.00001: # avoid divide by 0
@@ -84,6 +82,9 @@ def distance_from_line(circle_list, line):
       points.append(None)
       continue
 
+    px = c.x - line.x1
+    py = c.y - line.y1
+    
     proj = px*line.dx + py*line.dy
     u = proj / float(line_dot)
 
