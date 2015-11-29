@@ -13,6 +13,19 @@ import math
 
 import colors as color
 
+
+class Point:
+  def __init__(self, x=0, y=0, color=color.Red):
+    """
+    @brief Sets up initial parameters
+
+    @param x The x-coordinate of the point
+    @param y The y-coordinate of the point
+    """
+    self.x = x
+    self.y = y
+    self.color = color
+
 class Circle:
   def __init__(self, x=0, y=0, radius=0, centroid=(0,0), color=color.Green):
     """
@@ -54,8 +67,8 @@ class Line:
     self.y1 = y1
     self.x2 = x2
     self.y2 = y2
-    self.dx = math.fabs(int(x1) - int(x2)) * 1.0
-    self.dy = math.fabs(int(y1) - int(y2)) * 1.0
+    self.dx = (x1 - x2) * 1.0
+    self.dy = (y1 - y2) * 1.0
     self.color = color
     self.thickness = thickness
     

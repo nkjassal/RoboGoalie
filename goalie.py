@@ -50,26 +50,30 @@ def stream(tracker, camera=0):
       tracker.num_per_color)
     robot_markers = tracker.find_robot(img_hsv.copy(), tracker.robot_color)
 
-    # Get the line/distances between the robot markers (may return empty lists)
+    # Get the line/distances between the robot markers (may return None elems)
     robot_axis = utils.line_between_circles(robot_markers)
     points, distances = utils.distance_from_line(object_list, robot_axis)
 
+    # display line from object to robot axis
     lines = []
-    
     if len(object_list) is len(points):
       for i in range(len(object_list)):
         pt = points[i]
+        if pt is None:
+          continue
         obj = object_list[i]
-        ln = shapes.Line(x1=int(pt[0]), y1=int(pt[1]), x2=obj.x, y2=obj.y, 
+        ln = shapes.Line(x1=int(pt.x), y1=int(pt.y), x2=obj.x, y2=obj.y, 
           color=color.Green)
         lines.append(ln)
+        frame = cv2.circle(frame, (int(obj.x),int(obj.y)),10,color.Blue.bgr,-1)
+        frame = cv2.circle(frame, (int(pt.x),int(pt.y)),10,color.Green.bgr,-1)
 
 
     #### DRAW ANNOTATIONS ON FRAME ####
-    frame = tracker.draw_circles(frame, object_list)
+    #frame = tracker.draw_circles(frame, object_list)
     frame = tracker.draw_robot_markers(frame, robot_markers)
     frame = tracker.draw_robot_axis(frame, line=robot_axis)
-    frame = utils.draw_lines(frame=frame, line_list=lines)
+    #frame = utils.draw_lines(frame=frame, line_list=lines)
 
     #### FPS COUNTER ####
     # if correct number of frames have elapsed

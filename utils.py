@@ -57,6 +57,8 @@ def distance_from_line(circle_list, line):
 
   Adapted from: http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
 
+  Invalid points will have distance of -1, points tuple = None
+
   @param circle_list The list of Circles to get distances from line
   @param line The Line object to get distances from
 
@@ -73,32 +75,37 @@ def distance_from_line(circle_list, line):
     return points, distances
 
   for c in circle_list:
-    
-    line_dot = line.dx*line.dx + line.dx*line.dx
-    if float(line_dot) <= 0.1: # avoid divide by 0
-      distances.append(-1.0)
+    px = c.x - line.x1
+    py = c.y - line.y1
+
+    line_dot = line.dx*line.dx + line.dy*line.dy
+    if float(line_dot) <= 0.00001: # avoid divide by 0
+      distances.append(-1)
+      points.append(None)
       continue
 
-    u = ((c.x - line.x1)*line.dx + (c.y - line.y1)*line.dy) / float(line_dot) 
-    if u > 1:
-      u = 1
-    elif u < 0:
-      u = 0
+    proj = px*line.dx + py*line.dy
+    u = proj / float(line_dot)
+
+    if u > 1.0:
+      u = 1.0
+    elif u < 0.0:
+      u = 0.0
 
     x = line.x1 + u * line.dx
-    y = line.y1 + u * line.dy
+    y = line.x2 + u * line.dy
     dx = x - c.x
     dy = y - c.y
-
     dist = math.sqrt(dx*dx + dy*dy)
 
-    points.append( (x,y) )
-
     # ensures nonexistent circles have distance of -1, not 0
-    if dist <= 0.1:
-      distances.append(-1.0)
+    if dist <= 0.00001:
+      distances.append(-1)
+      points.append(None)
     else:
       distances.append(dist)
+      points.append( shapes.Point(x,y) )
+
 
   return points, distances
 
