@@ -60,21 +60,29 @@ class BallTracker:
     self.debug = debug
 
 
-  def setup_frame(self, frame, scale=0.5, blur_window=11):
+  def setup_frame(self, frame, w=None, h=None, scale=0.5, blur_window=11):
     """
     @brief Rescales and blurs frame for clarity and faster operations
 
     @param frame The frame to be operated on and returned
+    @param w Value in pixels for scaled frame width
+    @param h Value in pixels for scaled height width
     @param scale The frame will be scaled multiplicatively by this much (0-1)
     @param blur_window The window size used for the median blur
 
+    The scale parameter is only used if w or h are not supplied. If w and h
+    are supplied, the frame will be resized to the specific size wxh
+
     @return The updated frame
     @return The updated frame blurred and in hsv
-    """  
-    # scale is a tuple, not two separate arguments (w, h)
-    h_scaled,w_scaled = tuple(self.scale * np.asarray(frame.shape[:2]))
-    frame = cv2.resize(frame, (int(w_scaled), int(h_scaled)), 
-      cv2.INTER_AREA)
+    """ 
+    if w is not None and h is not None: # use specified (w,h)
+      frame = cv2.resize(frame, (w,h), cv2.INTER_AREA)
+    else: # use default/specified scale
+      # scale argument is a tuple, not two separate arguments (w, h)
+      h_scaled,w_scaled = tuple(scale * np.asarray(frame.shape[:2]))
+      frame = cv2.resize(frame, (int(w_scaled), int(h_scaled)), 
+        cv2.INTER_AREA)
     cv2.flip(src=frame,dst=frame, flipCode=1) # flip across y for correctness
 
     blur = cv2.GaussianBlur(frame, (blur_window,blur_window), 0) # -0 frames

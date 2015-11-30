@@ -23,7 +23,7 @@ def stream(tracker, camera=0):
   @param camera The camera number (0 is default) for getting frame data
   """
   # create video capture object for
-  cap = cv2.VideoCapture(0)
+  cap = cv2.VideoCapture(1)
   cv2.namedWindow(tracker.window_name)
 
   # FPS Counters
@@ -38,7 +38,8 @@ def stream(tracker, camera=0):
 
     #### CAPTURE AND PROCESS FRAME ####
     ret, frame = cap.read()
-    frame,img_hsv = tracker.setup_frame(frame=frame, blur_window=11)
+    frame,img_hsv = tracker.setup_frame(frame=frame, scale=0.3,
+      blur_window=11)
 
 
 
