@@ -72,12 +72,13 @@ def stream(tracker, camera=0):
         if pt is None:
           continue
         obj = object_list[i]
-        ln = shapes.Line(x1=int(pt.x), y1=int(pt.y), x2=obj.x, y2=obj.y, 
+        ln = shapes.Line(x1=int(obj.x), y1=int(obj.y), x2=pt.x, y2=pt.y, 
           color=colors.Green)
         lines.append(ln)
-
-        #frame = cv2.circle(frame, (int(obj.x),int(obj.y)),10,colors.Blue.bgr,-1)
-        #frame = cv2.circle(frame, (int(pt.x),int(pt.y)),10,colors.Green.bgr,-1)
+        frame = cv2.circle(frame, (int(obj.x),int(obj.y)),10, 
+          colors.Blue.bgr, -1)
+        frame = cv2.circle(frame, (int(pt.x),int(pt.y)), 10, 
+          colors.Green.bgr, -1)
 
 
     #### DRAW ANNOTATIONS ON FRAME ####

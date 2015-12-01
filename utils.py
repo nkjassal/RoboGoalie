@@ -8,6 +8,7 @@
 import math
 
 import cv2
+from IPython import embed
 
 import shapes
 
@@ -41,6 +42,7 @@ def distance_from_line(circle_list, line):
   """
   @brief Gets the shortest distance from each circle to the given line
 
+  CURRENTLY NOT WORKING. FINDING POINT INCORRECTLY-->WRONG DISTANCE
   Adapted from: http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
 
   Invalid points will have distance of -1, points tuple = None
@@ -74,13 +76,15 @@ def distance_from_line(circle_list, line):
     proj = px*line.dx + py*line.dy
     u = proj / float(line_dot)
 
-    if u > 1.0:
-      u = 1.0
-    elif u < 0.0:
-      u = 0.0
+    # bounds checking - need to fix to account for negative
+    # if u > 1.0:
+    #   u = 1.0
+    # elif u < 0.0:
+    #   u = 0.0
 
     x = line.x1 + u * line.dx
-    y = line.x2 + u * line.dy
+    y = line.y1 + u * line.dy
+
     dx = x - c.x
     dy = y - c.y
     dist = math.sqrt(dx*dx + dy*dy)
