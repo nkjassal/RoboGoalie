@@ -4,6 +4,7 @@
 @brief Contains classes for shapes, used for location and display
 
 Currently contains classes for:
+  Point
   Circle
   Line
 
