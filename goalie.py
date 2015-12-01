@@ -62,7 +62,8 @@ def stream(tracker, camera=0):
     ######## TRACK OBJECTS ########
     # use the HSV image to get Circle objects for robot and objects.
     # object_list is list of Circle objects found.
-    # robot_ops is 2-elem list of Circle objects for robot markers
+    # robot is single Circle for the robot position
+    # robot_markers is 2-elem list of Circle objects for robot markers
     object_list = tracker.find_circles(img_hsv.copy(), tracker.track_colors,
       tracker.num_per_color)
     robot, robot_markers = tracker.find_robot_system(img_hsv)
@@ -78,11 +79,11 @@ def stream(tracker, camera=0):
 
 
     ######## DRAW ANNOTATIONS ON FRAME ########
-    frame = gfx.draw_circles(frame, object_list)
-    frame = gfx.draw_robot(frame, robot)
-    frame = gfx.draw_robot_markers(frame, robot_markers)
-    frame = gfx.draw_robot_axis(img=frame, line=robot_axis)
-    frame = gfx.draw_lines(frame=frame, line_list=lines)
+    frame = gfx.draw_circles(frame, object_list) # draw objects
+    frame = gfx.draw_robot(frame, robot) # draw robot
+    frame = gfx.draw_robot_markers(frame, robot_markers) # draw markers
+    frame = gfx.draw_robot_axis(img=frame, line=robot_axis) # draw axis line
+    frame = gfx.draw_lines(frame=frame, line_list=lines) # draw obj->axis lines
 
     ######## FPS COUNTER ########
     # if correct number of frames have elapsed
