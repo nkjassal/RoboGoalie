@@ -14,10 +14,22 @@ import shapes
 import colors
 
 
+def clamp(val, min_val, max_val):
+  """
+  @brief clamps the given value to a specified range
+
+  @param val The value to be clamped
+  @param min_val The min value of the range to clamp to
+  @param max_val The max value of the range to clamp to
+
+  @return val The new value, clamped in range [min_val, max_val]
+  """
+  return max(min_val, min(val, max_val))
+
 def get_lines(object_list, points):
   """
   @brief Gets a Line object for each object to the specified point
-  
+
   Used to get the line between each object and its' single-frame estimated
     final position on the robot axis
 
@@ -104,13 +116,17 @@ def distance_from_line(circle_list, line):
     u = proj / float(line_dot)
 
     # bounds checking - need to fix to account for negative
-    # if u > 1.0:
-    #   u = 1.0
-    # elif u < 0.0:
-    #   u = 0.0
+    if u > 1.0:
+      u = 1.0
+    elif u < -1.0: # THIS MAY NEED FIXING
+      u = -1.0
 
     x = line.x1 + u * line.dx
     y = line.y1 + u * line.dy
+
+    # Clamp x and y so the line is never out of range of the robot segment
+    x = clamp(x, min(line.x1, line.x2), max(line.x1, line.x2))
+    y = clamp(y, min(line.y1, line.y2), max(line.y1, line.y2))
 
     dx = x - c.x
     dy = y - c.y

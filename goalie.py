@@ -43,7 +43,7 @@ def stream(tracker, camera=0):
     ######## CAPTURE AND PROCESS FRAME ########
     frame = None
     if DEBUG:
-      frame = cv2.imread('media/simple-1.png',1) # temp for debugging
+      frame = cv2.imread('media/out_of_range-4.png',1) # temp for debugging
       if frame is None:
         print 'Failed to read image.'
         exit()
