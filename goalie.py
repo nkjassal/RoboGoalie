@@ -12,6 +12,7 @@ import numpy as np
 
 import tracker as bt
 import colors as color
+import graphics as gfx
 import shapes
 import utils
 
@@ -23,7 +24,7 @@ def stream(tracker, camera=0):
   @param camera The camera number (0 is default) for getting frame data
   """
   # create video capture object for
-  cap = cv2.VideoCapture(1)
+  cap = cv2.VideoCapture(0)
   cv2.namedWindow(tracker.window_name)
 
   # FPS Counters
@@ -74,9 +75,9 @@ def stream(tracker, camera=0):
 
 
     #### DRAW ANNOTATIONS ON FRAME ####
-    frame = tracker.draw_circles(frame, object_list)
-    frame = tracker.draw_robot_markers(frame, robot_markers)
-    frame = tracker.draw_robot_axis(frame, line=robot_axis)
+    frame = gfx.draw_circles(frame, object_list)
+    frame = gfx.draw_robot_markers(frame, robot_markers)
+    frame = gfx.draw_robot_axis(frame, line=robot_axis)
     #frame = utils.draw_lines(frame=frame, line_list=lines)
 
     #### FPS COUNTER ####
@@ -112,7 +113,7 @@ def main():
   @brief Initializes the tracker object and runs goalie script
   """    
   robot_color = color.Blue
-  track_colors = [color.Red]
+  track_colors = [color.White]
   tracker = bt.BallTracker(
     window_name="Robot Goalie Display",
     robot_color=robot_color, 
