@@ -11,6 +11,33 @@ import cv2
 from IPython import embed
 
 import shapes
+import colors
+
+
+def get_lines(object_list, points):
+  """
+  @brief Gets a Line object for each object to the specified point
+  
+  Used to get the line between each object and its' single-frame estimated
+    final position on the robot axis
+
+  @param object_list The list of objects to use 
+  @param points The list of endpoints to generate lines from
+
+  @return lines A list of Line objects for each object in object_list
+  """
+  lines = []
+  if len(object_list) is len(points):
+    for i in range(len(object_list)):
+      pt = points[i]
+      if pt is None:
+        continue
+      obj = object_list[i]
+      ln = shapes.Line(x1=int(obj.x), y1=int(obj.y), x2=pt.x, y2=pt.y, 
+        color=colors.Green)
+      lines.append(ln)
+
+  return lines
 
 
 def line_between_circles(robot=None, c1=None, c2=None):

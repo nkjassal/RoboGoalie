@@ -11,6 +11,8 @@ import colors
 import shapes
 
 
+
+
 def draw_lines(frame, line_list):
   """
   @brief Draws each line from line_list onto the frame
@@ -21,7 +23,8 @@ def draw_lines(frame, line_list):
   @return frame The updated frame
   """
   for line in line_list:
-    frame = cv2.line(frame, (line.x1,line.y1), (line.x2,line.y2),
+    frame = cv2.line(frame, (int(line.x1),int(line.y1)), 
+      (int(line.x2),int(line.y2)), 
       color=line.color.bgr, thickness=line.thickness)
   return frame
 
