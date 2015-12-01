@@ -12,8 +12,6 @@ import cv2
 import shapes
 
 
-
-
 def line_between_circles(robot=None, c1=None, c2=None):
   """
   @brief Gets the Line from two circles, or a robot_pos (list of 2 circles)
