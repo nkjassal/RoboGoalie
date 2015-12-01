@@ -69,11 +69,13 @@ def stream(tracker, camera=0):
     robot, robot_markers = tracker.find_robot_system(img_hsv)
 
     # Get the line/distances between the robot markers
-    # Some elems of line may be None, corresponding distance of -1
+    # robot_axis is Line object between the robot axis markers
+    # points is list of Point objects of closest intersection w/ robot axis
+    # distanes is a list of distances of each point to the robot axis
     robot_axis = utils.line_between_circles(robot_markers)
     points, distances = utils.distance_from_line(object_list, robot_axis)
 
-    # Get list of Line objects for each circle to the axis
+    # Get list of Line objects for each object to its closest axis intersection
     lines = utils.get_lines(object_list, points, colors.Green)
 
 
