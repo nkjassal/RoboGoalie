@@ -41,12 +41,21 @@ def stream(tracker, camera=0):
       old_time = time.time()
 
     ######## CAPTURE AND PROCESS FRAME ########
+    frame = None
     if DEBUG:
-      frame = cv2.imread('media/sample.png',1) # temp for debuggin
+      frame = cv2.imread('media/simple-1.png',1) # temp for debugging
+      if frame is None:
+        print 'Failed to read image.'
+        exit()
     else:
       ret, frame = cap.read()
-    frame,img_hsv = tracker.setup_frame(frame=frame, scale=0.5,
-      blur_window=11)
+
+
+    if DEBUG:
+      frame,img_hsv = tracker.setup_frame(frame=frame,scale=1.0)
+    else:
+      frame,img_hsv = tracker.setup_frame(frame=frame, scale=0.5,
+        blur_window=11)
 
 
 
