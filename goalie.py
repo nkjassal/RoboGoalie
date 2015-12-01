@@ -9,6 +9,7 @@ import time # for fps counter
 
 import cv2
 import numpy as np
+from IPython import embed # debugging
 
 import tracker as bt
 import colors
@@ -113,7 +114,7 @@ def main():
   @brief Initializes the tracker object and runs goalie script
   """    
   robot_color = colors.Blue
-  track_colors = [colors.White]
+  track_colors = [colors.Red]
   tracker = bt.BallTracker(
     window_name="Robot Goalie Display",
     robot_color=robot_color, 
