@@ -26,7 +26,7 @@ def clamp(val, min_val, max_val):
   """
   return max(min_val, min(val, max_val))
 
-def get_lines(object_list, points):
+def get_lines(object_list, points, color=colors.Green):
   """
   @brief Gets a Line object for each object to the specified point
 
@@ -46,7 +46,7 @@ def get_lines(object_list, points):
         continue
       obj = object_list[i]
       ln = shapes.Line(x1=int(obj.x), y1=int(obj.y), x2=pt.x, y2=pt.y, 
-        color=colors.Green)
+        color=color)
       lines.append(ln)
 
   return lines

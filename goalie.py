@@ -43,7 +43,7 @@ def stream(tracker, camera=0):
     ######## CAPTURE AND PROCESS FRAME ########
     frame = None
     if DEBUG:
-      frame = cv2.imread('media/out_of_range-4.png',1) # temp for debugging
+      frame = cv2.imread('media/complex-2.png',1) # temp for debugging
       if frame is None:
         print 'Failed to read image.'
         exit()
@@ -73,7 +73,7 @@ def stream(tracker, camera=0):
     points, distances = utils.distance_from_line(object_list, robot_axis)
 
     # Get list of Line objects for each circle to the axis
-    lines = utils.get_lines(object_list, points)
+    lines = utils.get_lines(object_list, points, colors.Green)
 
 
 
@@ -116,13 +116,13 @@ def main():
   @brief Initializes the tracker object and runs goalie script
   """    
   robot_color = colors.Blue
-  track_colors = [colors.Red]
+  track_colors = [colors.Red, colors.Green]
   tracker = bt.BallTracker(
     window_name="Robot Goalie Object Tracking Display",
     robot_color=robot_color, 
     track_colors=track_colors, 
     radius=13,
-    num_per_color = 1) 
+    num_per_color = 2) 
 
   stream(tracker) # begin tracking and object detection
 
