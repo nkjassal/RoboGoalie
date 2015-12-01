@@ -17,6 +17,8 @@ import graphics as gfx
 import shapes
 import utils
 
+DEBUG = True
+
 def stream(tracker, camera=0):
   """ 
   @brief Captures video and runs tracking and moves robot accordingly
@@ -39,8 +41,11 @@ def stream(tracker, camera=0):
       old_time = time.time()
 
     #### CAPTURE AND PROCESS FRAME ####
-    ret, frame = cap.read()
-    frame,img_hsv = tracker.setup_frame(frame=frame, scale=0.3,
+    if DEBUG:
+      frame = cv2.imread('media/sample.png',1) # temp
+    else:
+      ret, frame = cap.read()
+    frame,img_hsv = tracker.setup_frame(frame=frame, scale=1.0,
       blur_window=11)
 
 
@@ -79,7 +84,7 @@ def stream(tracker, camera=0):
     frame = gfx.draw_circles(frame, object_list)
     frame = gfx.draw_robot_markers(frame, robot_markers)
     frame = gfx.draw_robot_axis(frame, line=robot_axis)
-    #frame = utils.draw_lines(frame=frame, line_list=lines)
+    frame = gfx.draw_lines(frame=frame, line_list=lines)
 
     #### FPS COUNTER ####
     # if correct number of frames have elapsed
