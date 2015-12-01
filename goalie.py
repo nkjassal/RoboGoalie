@@ -40,17 +40,17 @@ def stream(tracker, camera=0):
     if count is 0:
       old_time = time.time()
 
-    #### CAPTURE AND PROCESS FRAME ####
+    ######## CAPTURE AND PROCESS FRAME ########
     if DEBUG:
-      frame = cv2.imread('media/sample.png',1) # temp
+      frame = cv2.imread('media/sample.png',1) # temp for debuggin
     else:
       ret, frame = cap.read()
-    frame,img_hsv = tracker.setup_frame(frame=frame, scale=1.0,
+    frame,img_hsv = tracker.setup_frame(frame=frame, scale=0.5,
       blur_window=11)
 
 
 
-    #### TRACK OBJECTS ####
+    ######## TRACK OBJECTS ########
     # use the HSV image to get Circle objects for robot and objects.
     # object_list is list of Circle objects found.
     # robot_ops is 2-elem list of Circle objects for robot markers
@@ -58,22 +58,23 @@ def stream(tracker, camera=0):
       tracker.num_per_color)
     robot_markers = tracker.find_robot(img_hsv.copy(), tracker.robot_color)
 
-    # Get the line/distances between the robot markers (may return None elems)
+    # Get the line/distances between the robot markers
+    # Some elems of line may be None, corresponding distance of -1
     robot_axis = utils.line_between_circles(robot_markers)
     points, distances = utils.distance_from_line(object_list, robot_axis)
 
-    # Get Line objects for each circle to the axis
+    # Get list of Line objects for each circle to the axis
     lines = utils.get_lines(object_list, points)
 
 
 
-    #### DRAW ANNOTATIONS ON FRAME ####
+    ######## DRAW ANNOTATIONS ON FRAME ########
     frame = gfx.draw_circles(frame, object_list)
     frame = gfx.draw_robot_markers(frame, robot_markers)
     frame = gfx.draw_robot_axis(frame, line=robot_axis)
     frame = gfx.draw_lines(frame=frame, line_list=lines)
 
-    #### FPS COUNTER ####
+    ######## FPS COUNTER ########
     # if correct number of frames have elapsed
     if count is tracker.FPS_FRAMES:
       elapsed_time = time.time() - old_time # get time elapsed
@@ -83,7 +84,7 @@ def stream(tracker, camera=0):
     else:
      count += 1
 
-    #### DISPLAY FRAME ON SCREEN ####
+    ######## DISPLAY FRAME ON SCREEN ########
     # Display FPS on screen every frame
     font = cv2.FONT_HERSHEY_SIMPLEX # no idea what font this is
     cv2.putText(frame, fps, (10, 30), font, 0.8, (0,255,0),2,cv2.LINE_AA)
@@ -108,7 +109,7 @@ def main():
   robot_color = colors.Blue
   track_colors = [colors.Red]
   tracker = bt.BallTracker(
-    window_name="Robot Goalie Display",
+    window_name="Robot Goalie Object Tracking Display",
     robot_color=robot_color, 
     track_colors=track_colors, 
     radius=13,

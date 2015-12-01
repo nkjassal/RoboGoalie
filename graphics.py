@@ -11,7 +11,20 @@ import colors
 import shapes
 
 
+def draw_line(img, line):
+  """
+  @brief Draws a single Line object to the given image
 
+  @param img The image to annotate
+  @param line The Line object to draw
+
+  @return img The annotated image
+  """
+  cv2.line(img, 
+    (int(line.x1),int(line.y1)), 
+    (int(line.x2),int(line.y2)), 
+    color=line.color.bgr, thickness=line.thickness)
+  return img
 
 def draw_lines(frame, line_list):
   """
@@ -23,11 +36,27 @@ def draw_lines(frame, line_list):
   @return frame The updated frame
   """
   for line in line_list:
-    frame = cv2.line(frame, (int(line.x1),int(line.y1)), 
-      (int(line.x2),int(line.y2)), 
-      color=line.color.bgr, thickness=line.thickness)
+    frame = draw_line(frame, line)
+    # frame = cv2.line(frame, (int(line.x1),int(line.y1)), 
+    #   (int(line.x2),int(line.y2)), 
+    #   color=line.color.bgr, thickness=line.thickness)
   return frame
 
+
+def draw_circle(img, c):
+  """
+  @brief Draws a single Circle object to the given image
+
+  @param img The image to annotate
+  @param c The Circle object to draw
+
+  @return img The annotated image
+  """
+  x,y,radius = c.x, c.y, c.radius
+
+  cv2.circle(img, (x,y), radius, c.color.bgr, 2)
+  cv2.circle(img, (x,y), 5, colors.Red.bgr, -1) # center 
+  return img
 
 def draw_circles(img, circle_list):
   """
@@ -39,10 +68,11 @@ def draw_circles(img, circle_list):
   @return img The updated image with drawn circles
   """
   for c in circle_list:
-    x,y,radius = c.x, c.y, c.radius
+    draw_circle(img, c)
+    # x,y,radius = c.x, c.y, c.radius
 
-    cv2.circle(img, (x,y), radius, c.color.bgr, 2)
-    cv2.circle(img, (x,y), 5, colors.Red.bgr, -1) # center  
+    # cv2.circle(img, (x,y), radius, c.color.bgr, 2)
+    # cv2.circle(img, (x,y), 5, colors.Red.bgr, -1) # center  
 
   return img
 
