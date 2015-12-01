@@ -77,6 +77,20 @@ def draw_circles(img, circle_list):
   return img
 
 
+def draw_robot(img, robot):
+  """
+  @brief draws a circle around the robot
+
+  @param img The image to draw the robot on
+  @param robot The circle object representing the robot
+
+  @return img The annotated image
+  """
+  if robot is None:
+    return img
+  img = draw_circle(img=img, c=robot)
+  return img
+
 def draw_robot_markers(img, robot_pos):
   """
   @brief draws a circle around the robot markers

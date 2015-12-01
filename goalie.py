@@ -65,7 +65,7 @@ def stream(tracker, camera=0):
     # robot_ops is 2-elem list of Circle objects for robot markers
     object_list = tracker.find_circles(img_hsv.copy(), tracker.track_colors,
       tracker.num_per_color)
-    robot_markers = tracker.find_robot(img_hsv.copy(), tracker.robot_color)
+    robot, robot_markers = tracker.find_robot_system(img_hsv)
 
     # Get the line/distances between the robot markers
     # Some elems of line may be None, corresponding distance of -1
@@ -79,8 +79,9 @@ def stream(tracker, camera=0):
 
     ######## DRAW ANNOTATIONS ON FRAME ########
     frame = gfx.draw_circles(frame, object_list)
+    frame = gfx.draw_robot(frame, robot)
     frame = gfx.draw_robot_markers(frame, robot_markers)
-    frame = gfx.draw_robot_axis(frame, line=robot_axis)
+    frame = gfx.draw_robot_axis(img=frame, line=robot_axis)
     frame = gfx.draw_lines(frame=frame, line_list=lines)
 
     ######## FPS COUNTER ########
@@ -115,11 +116,13 @@ def main():
   """ 
   @brief Initializes the tracker object and runs goalie script
   """    
-  robot_color = colors.Blue
-  track_colors = [colors.Red, colors.Green]
+  robot_marker_color = colors.Blue
+  robot_color = colors.Green
+  track_colors = [colors.Red]
   tracker = bt.BallTracker(
     window_name="Robot Goalie Object Tracking Display",
-    robot_color=robot_color, 
+    robot_color=robot_color,
+    robot_marker_color=robot_marker_color, 
     track_colors=track_colors, 
     radius=13,
     num_per_color = 2) 

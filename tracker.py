@@ -23,7 +23,8 @@ class BallTracker:
 
   def __init__(self, window_name="Ball Tracking",
     scale=0.5, 
-    robot_color=colors.Red, 
+    robot_color=colors.Green,
+    robot_marker_color=colors.Red, 
     track_colors=[colors.Blue], 
     radius=10, 
     num_per_color = 1,
@@ -32,7 +33,8 @@ class BallTracker:
     @brief inits default tracking parameters
 
     @param scale Webcam frame gets scaled by this much (0 to 1).
-    @param robot_color The color (from colors.py) of the robot marker
+    @param robot_color The color (from colors.py) of the robot itself
+    @param robot_marker_color The color of the axis ends of the robot
     @param track_colors List of colors (from colors.py) to be tracked. 
     @param radius The min radius circle to be detected
     @param num_per_color The number of objects to detect for one color.
@@ -40,7 +42,7 @@ class BallTracker:
     """
     
     # if robot marker and track color are the same, won't be able to tell apart
-    if robot_color in track_colors:
+    if robot_marker_color in track_colors:
       print 'Unable to discern robot marker from some objects (same color). Ensure robot marker color is different from colors to be tracked'
       exit()
 
@@ -53,6 +55,7 @@ class BallTracker:
     self.num_per_color = num_per_color
 
     self.robot_color = robot_color
+    self.robot_marker_color = robot_marker_color
     self.track_colors = track_colors
 
     self.radius = radius
@@ -146,9 +149,26 @@ class BallTracker:
     return circle_list
 
 
-  def find_robot(self, img_hsv, robot_color):
+  def find_robot(self, img_hsv):
+    """
+    @brief Finds the circle representing the robot itself
+
+    @param img_hsv The HSV image to find the robot in
+
+    @return A single circle object representing the robot position
+    """
+    if self.robot_color is None:
+      return []
+
+    robot_pos = self.find_circles(img_hsv, colors=[self.robot_color], 
+      num_per_color=1)
+
+    robot_pos[0].color = colors.Magenta # display robot circle as cyan
+    return robot_pos [0]   
+
+  def find_robot_markers(self, img_hsv):
     """ 
-    @brief Finds the robot circle of the specified color
+    @brief Finds the robot axis markers of the specified color
 
     Only finds two objects. Robot has 1 axis of motion, so distinct circles 
     represent the axis. Expects 2 objects
@@ -158,10 +178,11 @@ class BallTracker:
 
     @return robot_pos A list of the two circle objects for a robot
     """
-    if robot_color is None:
+    if self.robot_marker_color is None:
       return []
 
-    robot_pos = self.find_circles(img_hsv, colors=[robot_color], 
+    # Find two circles for the axis markers
+    robot_pos = self.find_circles(img_hsv, colors=[self.robot_marker_color], 
       num_per_color=2)
     if len(robot_pos) < 2:
       return []
@@ -170,4 +191,17 @@ class BallTracker:
       robot_pos[1].color = colors.Red
       return robot_pos
 
+  def find_robot_system(self, img_hsv):
+    """
+    @brief Finds the robot and the robot markers
 
+    Wrapper for find_robot_markers and find_robot
+
+    @param img_hsv The HSV image to find robot in
+
+    @return robot The Circle object representing the robot
+    @return robot_axis 2-elem list of Circle objects for the robot axis markers
+    """
+    robot = self.find_robot(img_hsv.copy())
+    robot_axis = self.find_robot_markers(img_hsv.copy())
+    return robot, robot_axis
