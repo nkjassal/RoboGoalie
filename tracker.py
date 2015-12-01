@@ -10,21 +10,21 @@ denoted as a set of two circles with an axis between them.
 @author Neil Jassal
 """
 
-import heapq # for getting max n contours
+import heapq # built-in packages
 
-import numpy as np
+import numpy as np # 3rd party packages
 import cv2 as cv2
-from IPython import embed # for debugging
+from IPython import embed
 
-import colors as color # application-specific constants
+import colors # application-specific constants
 import shapes 
 
 class BallTracker:
 
   def __init__(self, window_name="Ball Tracking",
     scale=0.5, 
-    robot_color=color.Red, 
-    track_colors=[color.Blue], 
+    robot_color=colors.Red, 
+    track_colors=[colors.Blue], 
     radius=10, 
     num_per_color = 1,
     debug=0):
@@ -166,8 +166,8 @@ class BallTracker:
     if len(robot_pos) < 2:
       return []
     else:
-      robot_pos[0].color = color.Red # set robot circle display color
-      robot_pos[1].color = color.Red
+      robot_pos[0].color = colors.Red # set robot circle display color
+      robot_pos[1].color = colors.Red
       return robot_pos
 
 

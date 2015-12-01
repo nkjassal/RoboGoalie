@@ -11,7 +11,7 @@ import cv2
 import numpy as np
 
 import tracker as bt
-import colors as color
+import colors
 import graphics as gfx
 import shapes
 import utils
@@ -67,11 +67,11 @@ def stream(tracker, camera=0):
           continue
         obj = object_list[i]
         ln = shapes.Line(x1=int(pt.x), y1=int(pt.y), x2=obj.x, y2=obj.y, 
-          color=color.Green)
+          color=colors.Green)
         lines.append(ln)
 
-        #frame = cv2.circle(frame, (int(obj.x),int(obj.y)),10,color.Blue.bgr,-1)
-        #frame = cv2.circle(frame, (int(pt.x),int(pt.y)),10,color.Green.bgr,-1)
+        #frame = cv2.circle(frame, (int(obj.x),int(obj.y)),10,colors.Blue.bgr,-1)
+        #frame = cv2.circle(frame, (int(pt.x),int(pt.y)),10,colors.Green.bgr,-1)
 
 
     #### DRAW ANNOTATIONS ON FRAME ####
@@ -112,8 +112,8 @@ def main():
   """ 
   @brief Initializes the tracker object and runs goalie script
   """    
-  robot_color = color.Blue
-  track_colors = [color.White]
+  robot_color = colors.Blue
+  track_colors = [colors.White]
   tracker = bt.BallTracker(
     window_name="Robot Goalie Display",
     robot_color=robot_color, 

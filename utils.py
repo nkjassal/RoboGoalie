@@ -12,19 +12,7 @@ import cv2
 import shapes
 
 
-def draw_lines(frame, line_list):
-  """
-  @brief Draws each line from line_list onto the frame
 
-  @param frame The frame to be updated with lines 
-  @param line_list The list of Line objects to be drawn onto frame
-
-  @return frame The updated frame
-  """
-  for line in line_list:
-    frame = cv2.line(frame, (line.x1,line.y1), (line.x2,line.y2),
-      color=line.color.bgr, thickness=line.thickness)
-  return frame
 
 def line_between_circles(robot=None, c1=None, c2=None):
   """

@@ -7,7 +7,24 @@ Contains drawing and screen annotation functions
 """
 
 import cv2
-import colors as color
+import colors
+import shapes
+
+
+def draw_lines(frame, line_list):
+  """
+  @brief Draws each line from line_list onto the frame
+
+  @param frame The frame to be updated with lines 
+  @param line_list The list of Line objects to be drawn onto frame
+
+  @return frame The updated frame
+  """
+  for line in line_list:
+    frame = cv2.line(frame, (line.x1,line.y1), (line.x2,line.y2),
+      color=line.color.bgr, thickness=line.thickness)
+  return frame
+
 
 def draw_circles(img, circle_list):
   """
@@ -22,7 +39,7 @@ def draw_circles(img, circle_list):
     x,y,radius = c.x, c.y, c.radius
 
     cv2.circle(img, (x,y), radius, c.color.bgr, 2)
-    cv2.circle(img, (x,y), 5, color.Red.bgr, -1) # center  
+    cv2.circle(img, (x,y), 5, colors.Red.bgr, -1) # center  
 
   return img
 
@@ -70,6 +87,6 @@ def draw_robot_axis(img, robot_pos=None, line=None):
     img = cv2.line(img, 
       (robot_pos[0].x, robot_pos[0].y),
       (robot_pos[1].x, robot_pos[1].y),
-      color=color.Red.bgr, thickness=3)  
+      color=colors.Red.bgr, thickness=3)  
 
   return img

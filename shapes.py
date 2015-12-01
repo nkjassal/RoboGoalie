@@ -11,11 +11,11 @@ Currently contains classes for:
 """
 import math
 
-import colors as color
+import colors
 
 
-class Point:
-  def __init__(self, x=0, y=0, color=color.Red):
+class Point:    
+  def __init__(self, x=0, y=0, color=colors.Red):
     """
     @brief Sets up initial parameters
 
@@ -27,7 +27,7 @@ class Point:
     self.color = color
 
 class Circle:
-  def __init__(self, x=0, y=0, radius=0, centroid=(0,0), color=color.Green):
+  def __init__(self, x=0, y=0, radius=0, centroid=(0,0), color=colors.Green):
     """
     @brief Sets up initial parameters
 
@@ -49,7 +49,7 @@ class Circle:
 
 
 class Line:
-  def __init__(self, x1=0, y1=0, x2=0, y2=0, length=0, color=color.Red,
+  def __init__(self, x1=0, y1=0, x2=0, y2=0, length=0, color=colors.Red,
     thickness=3):
     """
     @brief Sets up initial parameters
