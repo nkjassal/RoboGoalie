@@ -16,6 +16,7 @@ import colors
 import graphics as gfx
 import shapes
 import utils
+from fps import FPS
 
 DEBUG = True
 
@@ -30,15 +31,12 @@ def stream(tracker, camera=0):
   cap = cv2.VideoCapture(0)
   cv2.namedWindow(tracker.window_name)
 
-  # FPS Counters
-  count = 0
-  old_time = 0
-  fps = '' # for display
+  # create FPS object for frame rate tracking
+  fps_timer = FPS()
 
   while(True):
     # start fps timer
-    if count is 0:
-      old_time = time.time()
+    fps_timer.start_iteration()
 
     ######## CAPTURE AND PROCESS FRAME ########
     frame = None
@@ -88,21 +86,10 @@ def stream(tracker, camera=0):
     frame = gfx.draw_lines(frame=frame, line_list=lines) # draw obj->axis lines
 
     ######## FPS COUNTER ########
-    # if correct number of frames have elapsed
-    if count is tracker.FPS_FRAMES:
-      elapsed_time = time.time() - old_time # get time elapsed
-      fps_val = 1.0 * tracker.FPS_FRAMES / elapsed_time
-      count = 0 # reset count
-      fps = str(round(fps_val, 1))
-    else:
-     count += 1
+    fps_timer.get_fps()
+    fps_timer.display(frame)
 
     ######## DISPLAY FRAME ON SCREEN ########
-    # Display FPS on screen every frame
-    font = cv2.FONT_HERSHEY_SIMPLEX # no idea what font this is
-    cv2.putText(frame, fps, (10, 30), font, 0.8, (0,255,0),2,cv2.LINE_AA)
-
-    # display resulting frame
     cv2.imshow(tracker.window_name,frame)
 
     # quit by pressing q

@@ -26,6 +26,7 @@ def clamp(val, min_val, max_val):
   """
   return max(min_val, min(val, max_val))
 
+
 def get_lines(object_list, points, color=colors.Green):
   """
   @brief Gets a Line object for each object to the specified point
@@ -54,9 +55,9 @@ def get_lines(object_list, points, color=colors.Green):
 
 def line_between_circles(robot=None, c1=None, c2=None):
   """
-  @brief Gets the Line from two circles, or a robot_pos (list of 2 circles)
+  @brief Gets the Line from two circles or the robot markers
 
-  @param robot A list of two circle objects TODO create robot class
+  @param robot A list of two circle objects representing robot markers. TODO create robot class
   @param c1 One circle to calculate the Line from. Only used if robot not given
   @param c2 Other circle to get Line from. Only used if robot not given
 
@@ -79,9 +80,8 @@ def line_between_circles(robot=None, c1=None, c2=None):
 
 def distance_from_line(circle_list, line):
   """
-  @brief Gets the shortest distance from each circle to the given line
+  @brief Gets the shortest distance from each circle to a given line
 
-  CURRENTLY NOT WORKING. FINDING POINT INCORRECTLY-->WRONG DISTANCE
   Adapted from: http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
 
   Invalid points will have distance of -1, points tuple = None
@@ -139,7 +139,6 @@ def distance_from_line(circle_list, line):
     else:
       distances.append(dist)
       points.append( shapes.Point(x,y) )
-
 
   return points, distances
 
