@@ -51,11 +51,12 @@ def stream(tracker, camera=0):
         exit()
 
 
+    # resize to 640x480 for streaming/video sources
     if DEBUG:
       frame,img_hsv = tracker.setup_frame(frame=frame,scale=1.0)
     else:
-      frame,img_hsv = tracker.setup_frame(frame=frame, scale=1,
-        blur_window=11)
+      frame,img_hsv = tracker.setup_frame(frame=frame, w=640,h=480,
+        scale=1, blur_window=11)
 
 
 
@@ -104,7 +105,6 @@ def stream(tracker, camera=0):
 
     ######## DISPLAY FRAME ON SCREEN ########
     cv2.imshow(tracker.window_name,frame)
-
     # quit by pressing q
     if cv2.waitKey(1) & 0xFF == ord('q'):
       break
