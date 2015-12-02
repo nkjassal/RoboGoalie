@@ -68,12 +68,7 @@ def draw_circles(img, circle_list):
   @return img The updated image with drawn circles
   """
   for c in circle_list:
-    draw_circle(img, c)
-    # x,y,radius = c.x, c.y, c.radius
-
-    # cv2.circle(img, (x,y), radius, c.color.bgr, 2)
-    # cv2.circle(img, (x,y), 5, colors.Red.bgr, -1) # center  
-
+    draw_circle(img, c) 
   return img
 
 

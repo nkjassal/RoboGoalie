@@ -77,8 +77,11 @@ def stream(tracker, camera=0):
     points, distances = utils.distance_from_line(object_list, robot_axis)
 
     # get closest object, generate line
-    #closest_obj_index = min(distances)
-
+    closest_obj_index = utils.min_index(distances)
+    closest_line = shapes.Line()
+    if closest_obj_index is not None:
+      closest_line = utils.get_line(object_list[closest_obj_index],
+        points[closest_obj_index])
 
     # Get list of Line objects for each object to its closest axis intersection
     lines = utils.get_lines(object_list, points, colors.Green)
@@ -90,7 +93,8 @@ def stream(tracker, camera=0):
     frame = gfx.draw_robot(frame, robot) # draw robot
     frame = gfx.draw_robot_markers(frame, robot_markers) # draw markers
     frame = gfx.draw_robot_axis(img=frame, line=robot_axis) # draw axis line
-    frame = gfx.draw_lines(frame=frame, line_list=lines) # draw obj>axis line
+    frame = gfx.draw_line(img=frame, line=closest_line)
+    #frame = gfx.draw_lines(frame=frame, line_list=lines) # draw obj>axis line
 
     ######## FPS COUNTER ########
     fps_timer.get_fps()

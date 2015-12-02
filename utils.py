@@ -26,6 +26,19 @@ def clamp(val, min_val, max_val):
   """
   return max(min_val, min(val, max_val))
 
+def min_index(ls):
+  """
+  @brief Gets the index of the min element in the list
+
+  @param ls The list to get the min element index of
+
+  @return index The minimum value index
+  """
+  if len(ls) > 0:
+    return ls.index(min(ls))
+  else:
+    return None
+
 
 def get_line(object, point, color=colors.Green):
   """
@@ -33,6 +46,7 @@ def get_line(object, point, color=colors.Green):
 
   @param object The Circle object used as one endpoint
   @param point The Point object used as the other endpoint
+  @param color The color the line will be displayed in
 
   @return ln The Line object between object and point
   """
