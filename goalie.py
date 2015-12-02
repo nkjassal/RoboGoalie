@@ -70,12 +70,18 @@ def stream(tracker, camera=0):
 
 
     ######## TRAJECTORY PLANNING ########
-    # get closest object, generate line
+    # get closest object and associated point, generate line
     closest_obj_index = utils.min_index(distances)
     closest_line = shapes.Line()
+    closest_pt = shapes.Point()
+    closest_obj = shapes.Circle()
     if closest_obj_index is not None:
+      closest_obj = object_list[closest_obj_index]
+      closest_pt = points[closest_obj_index]
       closest_line = utils.get_line(object_list[closest_obj_index],
         points[closest_obj_index])
+
+
 
     # gets all lines - not needed, only need to use closest
     # Get list of Line objects for each object to its closest axis intersection
