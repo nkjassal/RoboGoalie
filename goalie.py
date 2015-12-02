@@ -76,6 +76,10 @@ def stream(tracker, camera=0):
     robot_axis = utils.line_between_circles(robot_markers)
     points, distances = utils.distance_from_line(object_list, robot_axis)
 
+    # get closest object, generate line
+    #closest_obj_index = min(distances)
+
+
     # Get list of Line objects for each object to its closest axis intersection
     lines = utils.get_lines(object_list, points, colors.Green)
 
@@ -86,7 +90,7 @@ def stream(tracker, camera=0):
     frame = gfx.draw_robot(frame, robot) # draw robot
     frame = gfx.draw_robot_markers(frame, robot_markers) # draw markers
     frame = gfx.draw_robot_axis(img=frame, line=robot_axis) # draw axis line
-    frame = gfx.draw_lines(frame=frame, line_list=lines) # draw obj->axis lines
+    frame = gfx.draw_lines(frame=frame, line_list=lines) # draw obj>axis line
 
     ######## FPS COUNTER ########
     fps_timer.get_fps()
@@ -102,7 +106,6 @@ def stream(tracker, camera=0):
   # release capture
   cap.release()
   cv2.destroyAllWindows()
-
 
 
 def main():

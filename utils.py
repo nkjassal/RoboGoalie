@@ -27,6 +27,22 @@ def clamp(val, min_val, max_val):
   return max(min_val, min(val, max_val))
 
 
+def get_line(object, point, color=colors.Green):
+  """
+  @brief Creates Line from object to point
+
+  @param object The Circle object used as one endpoint
+  @param point The Point object used as the other endpoint
+
+  @return ln The Line object between object and point
+  """
+  if point is None:
+    return None
+  ln = shapes.Line(x1=int(object.x), y1=int(object.y), 
+    x2=point.x, y2=point.y, color=color)  
+  return ln
+
+
 def get_lines(object_list, points, color=colors.Green):
   """
   @brief Gets a Line object for each object to the specified point
@@ -42,14 +58,7 @@ def get_lines(object_list, points, color=colors.Green):
   lines = []
   if len(object_list) is len(points):
     for i in range(len(object_list)):
-      pt = points[i]
-      if pt is None:
-        continue
-      obj = object_list[i]
-      ln = shapes.Line(x1=int(obj.x), y1=int(obj.y), x2=pt.x, y2=pt.y, 
-        color=color)
-      lines.append(ln)
-
+      lines.append(get_line(object_list[i], points[i]))
   return lines
 
 
