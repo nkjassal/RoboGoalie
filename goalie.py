@@ -18,7 +18,6 @@ import shapes
 import utils
 from fps import FPS
 
-DEBUG = False
 
 def stream(tracker, camera=0):
   """ 
@@ -41,22 +40,15 @@ def stream(tracker, camera=0):
     fps_timer.start_iteration()
 
     ######## CAPTURE AND PROCESS FRAME ########
-    frame = None
-    if DEBUG:
-      frame = cv2.imread('media/complex-2.png',1) # temp for debugging
-    else:
-      ret, frame = cap.read()
-      if ret is False:
-        print 'Frame not read'
-        exit()
+    ret, frame = cap.read()
+    if ret is False:
+      print 'Frame not read'
+      exit()
 
 
     # resize to 640x480 for streaming/video sources
-    if DEBUG:
-      frame,img_hsv = tracker.setup_frame(frame=frame,scale=1.0)
-    else:
-      frame,img_hsv = tracker.setup_frame(frame=frame, w=640,h=480,
-        scale=1, blur_window=11)
+    frame,img_hsv = tracker.setup_frame(frame=frame, w=640,h=480,
+      scale=1, blur_window=11)
 
 
 
@@ -85,9 +77,7 @@ def stream(tracker, camera=0):
       closest_line = utils.get_line(object_list[closest_obj_index],
         points[closest_obj_index])
 
-  
-
-
+    # gets all lines - not needed, only need to use closest
     # Get list of Line objects for each object to its closest axis intersection
     # lines = utils.get_lines(object_list, points, colors.Green)
 
