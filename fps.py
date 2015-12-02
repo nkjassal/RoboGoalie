@@ -66,7 +66,7 @@ class FPS:
 
     @param img The image to draw the fps onto
 
-    @return img The updated image. The text draw function is destructive and alters img, so don't need to use the returned value.
+    @return img The updated image. The text draw function is destructive and alters img, so don't need to use the returned image
     """
     img = cv2.putText(img, self.fps_str, (10, 30), self.font, 
       0.8, (0,255,0), 2, cv2.LINE_AA)   

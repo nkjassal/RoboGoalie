@@ -27,7 +27,7 @@ class BallTracker:
     robot_marker_color=colors.Red, 
     track_colors=[colors.Blue], 
     radius=10, 
-    num_per_color = 1,
+    num_objects = 1,
     debug=0):
     """
     @brief inits default tracking parameters
@@ -37,7 +37,7 @@ class BallTracker:
     @param robot_marker_color The color of the axis ends of the robot
     @param track_colors List of colors (from colors.py) to be tracked. 
     @param radius The min radius circle to be detected
-    @param num_per_color The number of objects to detect for one color.
+    @param num_objects The number of objects to detect.
     @param debug enable debug mode
     """
     
@@ -52,7 +52,7 @@ class BallTracker:
     # The num ber of frames to average fps over
     self.FPS_FRAMES = 50
 
-    self.num_per_color = num_per_color
+    self.num_objects = num_objects
 
     self.robot_color = robot_color
     self.robot_marker_color = robot_marker_color
@@ -95,7 +95,7 @@ class BallTracker:
 
   ################ OBJECT DETECTION FUNCTIONS ######################
   def find_circles(self, img_hsv, colors, 
-    num_per_color):
+    num_objects):
     """
     @brief Finds circle(s) in the frame based on input params, displays 
     on-screen
@@ -105,7 +105,7 @@ class BallTracker:
 
     @param img_hsv The frame in HSV to detect circles in
     @param colors The list of colors to be tracked
-    @param num_per_color The number of objects of each color to detect
+    @param num_objects The number of objects to detect
 
     @return circle_list List of detected circles (x,y,radius,center)
     """
@@ -132,7 +132,7 @@ class BallTracker:
       if len(cnts) > 0:
         # find largest N contours in mask, then use it to compute min enclosing
         # circle and centroid
-        contours = heapq.nlargest(num_per_color, cnts, 
+        contours = heapq.nlargest(num_objects, cnts, 
           key=cv2.contourArea)
         for c in contours:
           ((x,y), radius) = cv2.minEnclosingCircle(c)
@@ -145,6 +145,10 @@ class BallTracker:
               circle = shapes.Circle(x=int(x), y=int(y), 
                 radius=int(radius), centroid=centroid)
               circle_list.append(circle)
+
+    # get the n largest circles, n being num_objects
+    circle_list = heapq.nlargest(num_objects, circle_list,
+      key=lambda s: s.radius)
 
     return circle_list
 
@@ -161,10 +165,12 @@ class BallTracker:
       return []
 
     robot_pos = self.find_circles(img_hsv, colors=[self.robot_color], 
-      num_per_color=1)
+      num_objects=1)
 
+    if len(robot_pos) < 1:
+      return None
     robot_pos[0].color = colors.Magenta # display robot circle as cyan
-    return robot_pos [0]   
+    return robot_pos[0]   
 
   def find_robot_markers(self, img_hsv):
     """ 
@@ -183,7 +189,7 @@ class BallTracker:
 
     # Find two circles for the axis markers
     robot_pos = self.find_circles(img_hsv, colors=[self.robot_marker_color], 
-      num_per_color=2)
+      num_objects=2)
     if len(robot_pos) < 2:
       return []
     else:

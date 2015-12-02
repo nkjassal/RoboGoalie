@@ -18,7 +18,7 @@ import shapes
 import utils
 from fps import FPS
 
-DEBUG = True
+DEBUG = False
 
 def stream(tracker, camera=0):
   """ 
@@ -28,7 +28,7 @@ def stream(tracker, camera=0):
   @param camera The camera number (0 is default) for getting frame data
   """
   # create video capture object for
-  cap = cv2.VideoCapture(0)
+  cap = cv2.VideoCapture(camera)
   cv2.namedWindow(tracker.window_name)
 
   # create FPS object for frame rate tracking
@@ -47,6 +47,9 @@ def stream(tracker, camera=0):
         exit()
     else:
       ret, frame = cap.read()
+      if ret is False:
+        print 'Frame not read'
+        continue
 
 
     if DEBUG:
@@ -63,7 +66,7 @@ def stream(tracker, camera=0):
     # robot is single Circle for the robot position
     # robot_markers is 2-elem list of Circle objects for robot markers
     object_list = tracker.find_circles(img_hsv.copy(), tracker.track_colors,
-      tracker.num_per_color)
+      tracker.num_objects)
     robot, robot_markers = tracker.find_robot_system(img_hsv)
 
     # Get the line/distances between the robot markers
@@ -107,7 +110,7 @@ def main():
   @brief Initializes the tracker object and runs goalie script
   """    
   robot_marker_color = colors.Blue
-  robot_color = colors.Green
+  robot_color = colors.White
   track_colors = [colors.Red]
   tracker = bt.BallTracker(
     window_name="Robot Goalie Object Tracking Display",
@@ -115,9 +118,9 @@ def main():
     robot_marker_color=robot_marker_color, 
     track_colors=track_colors, 
     radius=13,
-    num_per_color = 2) 
+    num_objects = 3) 
 
-  stream(tracker) # begin tracking and object detection
+  stream(tracker, camera=1) # begin tracking and object detection
 
 
 
