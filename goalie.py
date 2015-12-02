@@ -29,8 +29,8 @@ def stream(tracker, camera=0):
     camera=1 is generally the first webcam plugged in
   """
   # create video capture object for
-  cap = cv2.VideoCapture(camera)
-  #cap = cv2.VideoCapture('media/goalie-test2.mp4')
+  #cap = cv2.VideoCapture(camera)
+  cap = cv2.VideoCapture('media/goalie-test.mov')
   cv2.namedWindow(tracker.window_name)
 
   # create FPS object for frame rate tracking
