@@ -166,3 +166,33 @@ def distance_from_line(circle_list, line):
   return points, distances
 
 
+def line_intersect(ln1, ln2):
+  """
+  @brief Determines if two lines intersect. True if intersect, false if not
+
+  Adapted from: http://stackoverflow.com/questions/20677795/find-the-point-of-intersecting-lines
+
+  @param ln1 The first line to check intersection with
+  @param ln2 The second line to check intersection with
+
+  @return intersect True if intersect, false if not. None if ln1 or ln2 invalid
+  """
+  if ln1 is None or ln2 is None:
+    return None
+
+  xdiff = (ln1.x1 - ln1.x2, ln2.x1 - ln2.x2)
+  ydiff = (ln1.y1 - ln1.y2, ln2.y1 - ln2.y2)
+
+  def det(a, b):
+    return a[0] * b[1] - a[1] * b[0]
+
+  div = det(xdiff, ydiff)
+  if div is 0:
+    return False
+  else:
+    return True
+
+
+
+
+

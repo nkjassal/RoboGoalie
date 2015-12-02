@@ -17,6 +17,7 @@ import graphics as gfx
 import shapes
 import utils
 from fps import FPS
+from trajectory import TrajectoryPlanner
 
 
 def stream(tracker, camera=0):
@@ -31,6 +32,9 @@ def stream(tracker, camera=0):
   #cap = cv2.VideoCapture(camera)
   cap = cv2.VideoCapture('media/goalie-test.mov')
   cv2.namedWindow(tracker.window_name)
+
+  # create trajectory planner object
+  planner = TrajectoryPlanner()
 
   # create FPS object for frame rate tracking
   fps_timer = FPS()
@@ -80,8 +84,13 @@ def stream(tracker, camera=0):
       closest_pt = points[closest_obj_index]
       closest_line = utils.get_line(object_list[closest_obj_index],
         points[closest_obj_index])
+      planner.update_traj(closest_obj)
 
 
+    traj_ln = planner.get_traj() # frame-to-frame line, very small length
+    if utils.line_intersect(traj_ln, robot_axis):
+      # get point of intersection
+      pass
 
     # gets all lines - not needed, only need to use closest
     # Get list of Line objects for each object to its closest axis intersection
@@ -94,6 +103,7 @@ def stream(tracker, camera=0):
     frame = gfx.draw_robot_axis(img=frame, line=robot_axis) # draw axis line
     frame = gfx.draw_line(img=frame, line=closest_line) # closets obj>axis
     #frame = gfx.draw_lines(frame=frame, line_list=lines) # draw obj>axis line
+    frame = gfx.draw_line(img=frame, line=traj_ln)
 
     ######## FPS COUNTER ########
     fps_timer.get_fps()

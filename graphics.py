@@ -20,6 +20,8 @@ def draw_line(img, line):
 
   @return img The annotated image
   """
+  if line is None:
+    return img
   cv2.line(img, 
     (int(line.x1),int(line.y1)), 
     (int(line.x2),int(line.y2)), 
