@@ -26,9 +26,11 @@ def stream(tracker, camera=0):
 
   @param tracker The BallTracker object to be used
   @param camera The camera number (0 is default) for getting frame data
+    camera=1 is generally the first webcam plugged in
   """
   # create video capture object for
   cap = cv2.VideoCapture(camera)
+  #cap = cv2.VideoCapture('media/goalie-test2.mp4')
   cv2.namedWindow(tracker.window_name)
 
   # create FPS object for frame rate tracking
@@ -42,20 +44,17 @@ def stream(tracker, camera=0):
     frame = None
     if DEBUG:
       frame = cv2.imread('media/complex-2.png',1) # temp for debugging
-      if frame is None:
-        print 'Failed to read image.'
-        exit()
     else:
       ret, frame = cap.read()
       if ret is False:
         print 'Frame not read'
-        continue
+        exit()
 
 
     if DEBUG:
       frame,img_hsv = tracker.setup_frame(frame=frame,scale=1.0)
     else:
-      frame,img_hsv = tracker.setup_frame(frame=frame, scale=0.5,
+      frame,img_hsv = tracker.setup_frame(frame=frame, scale=1,
         blur_window=11)
 
 
@@ -76,6 +75,8 @@ def stream(tracker, camera=0):
     robot_axis = utils.line_between_circles(robot_markers)
     points, distances = utils.distance_from_line(object_list, robot_axis)
 
+
+    ######## TRAJECTORY PLANNING ########
     # get closest object, generate line
     closest_obj_index = utils.min_index(distances)
     closest_line = shapes.Line()
@@ -83,17 +84,18 @@ def stream(tracker, camera=0):
       closest_line = utils.get_line(object_list[closest_obj_index],
         points[closest_obj_index])
 
+  
+
+
     # Get list of Line objects for each object to its closest axis intersection
-    lines = utils.get_lines(object_list, points, colors.Green)
-
-
+    # lines = utils.get_lines(object_list, points, colors.Green)
 
     ######## DRAW ANNOTATIONS ON FRAME ########
     frame = gfx.draw_circles(frame, object_list) # draw objects
     frame = gfx.draw_robot(frame, robot) # draw robot
     frame = gfx.draw_robot_markers(frame, robot_markers) # draw markers
     frame = gfx.draw_robot_axis(img=frame, line=robot_axis) # draw axis line
-    frame = gfx.draw_line(img=frame, line=closest_line)
+    frame = gfx.draw_line(img=frame, line=closest_line) # closets obj>axis
     #frame = gfx.draw_lines(frame=frame, line_list=lines) # draw obj>axis line
 
     ######## FPS COUNTER ########
