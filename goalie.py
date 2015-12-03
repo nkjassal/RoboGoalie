@@ -87,10 +87,10 @@ def stream(tracker, camera=0):
       planner.update_traj(closest_obj)
 
 
+    # attempt to get point of intersection of trajectory and robot axis
     traj_ln = planner.get_traj() # frame-to-frame line, very small length
-    if utils.line_intersect(traj_ln, robot_axis):
-      # get point of intersection
-      pass
+   # traj_intersect = utils.line_intersect(traj_ln, robot_axis)
+
 
     # gets all lines - not needed, only need to use closest
     # Get list of Line objects for each object to its closest axis intersection
