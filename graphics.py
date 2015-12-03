@@ -39,9 +39,6 @@ def draw_lines(frame, line_list):
   """
   for line in line_list:
     frame = draw_line(frame, line)
-    # frame = cv2.line(frame, (int(line.x1),int(line.y1)), 
-    #   (int(line.x2),int(line.y2)), 
-    #   color=line.color.bgr, thickness=line.thickness)
   return frame
 
 
@@ -54,8 +51,10 @@ def draw_circle(img, c):
 
   @return img The annotated image
   """
-  x,y,radius = c.x, c.y, c.radius
+  if c is None:
+    return img
 
+  x,y,radius = c.x, c.y, c.radius
   cv2.circle(img, (x,y), radius, c.color.bgr, 2)
   cv2.circle(img, (x,y), 5, colors.Red.bgr, -1) # center 
   return img
@@ -97,7 +96,7 @@ def draw_robot_markers(img, robot_pos):
 
   @return img The updated image with the robot drawn on
   """
-  if robot_pos is []:
+  if robot_pos is [] or robot_pos is None:
     return img
   img = draw_circles(img=img, circle_list=robot_pos)
   return img
@@ -122,6 +121,10 @@ def draw_robot_axis(img, robot_pos=None, line=None):
 
   @return img The updated image with the robot drawn on
   """
+
+  if robot_pos is None and line is None:
+    return None
+    
   if line is not None:
     img = cv2.line(img, (line.x1,line.y1), (line.x2,line.y2),
       color=line.color.bgr, thickness=line.thickness)

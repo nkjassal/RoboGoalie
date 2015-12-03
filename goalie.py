@@ -84,12 +84,19 @@ def stream(tracker, camera=0):
       closest_pt = points[closest_obj_index]
       closest_line = utils.get_line(object_list[closest_obj_index],
         points[closest_obj_index])
-      planner.update_traj(closest_obj)
+      planner.update_frames(closest_obj)
 
 
     # attempt to get point of intersection of trajectory and robot axis
     traj_ln = planner.get_traj() # frame-to-frame line, very small length
-    ti = utils.line_intersect(traj_ln, robot_axis)
+    traj_int_pt = utils.line_intersect(traj_ln, robot_axis)
+
+    traj = utils.get_line(closest_obj, traj_int_pt, color=colors.Cyan)
+    if traj_int_pt is not None:
+      traj_int_pt = utils.clamp_point_to_line(traj_int_pt, robot_axis)
+
+
+
 
     # gets all lines - not needed, only need to use closest
     # Get list of Line objects for each object to its closest axis intersection
@@ -103,10 +110,8 @@ def stream(tracker, camera=0):
     frame = gfx.draw_robot_axis(img=frame, line=robot_axis) # draw axis line
     frame = gfx.draw_line(img=frame, line=closest_line) # closets obj>axis
     #frame = gfx.draw_lines(frame=frame, line_list=lines) # draw obj>axis line
-    frame = gfx.draw_line(img=frame, line=traj_ln)
+    frame = gfx.draw_line(img=frame, line=traj) # draw trajectory estimate
 
-    if ti is not None:
-      frame = cv2.circle(frame, (int(ti.x),int(ti.y)), 5, colors.Yellow.bgr, -1) # center 
 
 
     ######## FPS COUNTER ########

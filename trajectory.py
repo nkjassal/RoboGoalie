@@ -27,7 +27,7 @@ class TrajectoryPlanner:
       self.traj = shapes.Line()
 
 
-    def update_traj(self, point):
+    def update_frames(self, point):
       """
       @brief Adds the current point to the list of points to get traj from
 
@@ -52,7 +52,6 @@ class TrajectoryPlanner:
       ln = shapes.Line(x1=self.prev_pt.x, y1=self.prev_pt.y,
         x2=self.curr_pt.x, y2=self.curr_pt.y, color=color)
 
-      self.traj = ln
       return ln
 
 

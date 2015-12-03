@@ -26,6 +26,22 @@ def clamp(val, min_val, max_val):
   """
   return max(min_val, min(val, max_val))
 
+
+def clamp_point_to_line(pt, line):
+  """
+  @brief Clamps the (x,y) values of a point to a given line
+
+  @param pt The point to clamp (Point object)
+  @param line The line to clamp to (Line object)
+
+  @return The clamped point
+  """
+  x,y = pt.x, pt.y
+  x = clamp(x, min(line.x1, line.x2), max(line.x1, line.x2))
+  y = clamp(y, min(line.y1, line.y2), max(line.y1, line.y2))
+
+  return shapes.Point(x,y)
+
 def min_index(ls):
   """
   @brief Gets the index of the min element in the list
@@ -40,11 +56,11 @@ def min_index(ls):
     return None
 
 
-def get_line(object, point, color=colors.Green):
+def get_line(obj, point, color=colors.Green):
   """
   @brief Creates Line from object to point
 
-  @param object The Circle object used as one endpoint
+  @param object The Circle or Point object used as one endpoint
   @param point The Point object used as the other endpoint
   @param color The color the line will be displayed in
 
@@ -52,7 +68,7 @@ def get_line(object, point, color=colors.Green):
   """
   if point is None:
     return None
-  ln = shapes.Line(x1=int(object.x), y1=int(object.y), 
+  ln = shapes.Line(x1=int(obj.x), y1=int(obj.y), 
     x2=point.x, y2=point.y, color=color)  
   return ln
 
@@ -148,8 +164,8 @@ def distance_from_line(circle_list, line):
     y = line.y1 + u * line.dy
 
     # Clamp x and y so the line is never out of range of the robot segment
-    x = clamp(x, min(line.x1, line.x2), max(line.x1, line.x2))
-    y = clamp(y, min(line.y1, line.y2), max(line.y1, line.y2))
+    clamp_pt = clamp_point_to_line(shapes.Point(x,y), line)
+    x,y = clamp_pt.x, clamp_pt.y
 
     dx = x - c.x
     dy = y - c.y
@@ -171,8 +187,7 @@ def line_intersect(ln1, ln2):
   @brief Determines point of intersection between two lines
 
   Adapted from: http://stackoverflow.com/questions/20677795/find-the-point-of-intersecting-lines
-  Update adapted from: http://stackoverflow.com/questions/563198/how-do-you-detect-where-two-line-segments-intersect
-
+  
   @param ln1 The first line to check intersection with
   @param ln2 The second line to check intersection with
 
@@ -199,40 +214,12 @@ def line_intersect(ln1, ln2):
   d = (det(ln1_list[0],ln1_list[1]), det(ln2_list[0],ln2_list[1]))
   x = det(d, xdiff) / div
   y = det(d, ydiff) / div
+
   return shapes.Point(x,y)
 
-  return None
 
 
 
-  # if ln1 is None or ln2 is None:
-  #   return None
 
-  # s1_x = ln1.x2 - ln1.x1
-  # s2_x = ln2.x2 - ln2.x1
-  # s1_y = ln1.x2 - ln1.x1
-  # s2_y = ln2.y2 - ln2.y1
-
-  # det = -s2_x * s1_y + s1_x * s2_y
-  # if det < 0.000001: # no intersection, avoids div by 0
-  #   return None
-
-  # s = (-s1_y * (ln1.x1-ln2.x1) + s1_x * (ln1.y1 - ln2.y1)) / det
-  # t = (s2_x * (ln1.y1 - ln2.y1) + s1_y * (ln1.x1 - ln2.x1)) / det
-
-  # # bounds checking - need to fix to account for negative
-  # if s > 1.0:
-  #   s = 1.0
-  # elif s < -1.0: # THIS MAY NEED FIXING
-  #   s = -1.0
-  # if t > 1.0:
-  #   t = 1.0
-  # elif t < -1.0: # THIS MAY NEED FIXING
-  #   t = -1.0 
-
-  # x = ln1.x1 + t*s1_x
-  # y = ln1.y1 + t*s1_y
-
-  # return shapes.Point(x,y)
 
 
