@@ -34,7 +34,7 @@ def stream(tracker, camera=0):
   cv2.namedWindow(tracker.window_name)
 
   # create trajectory planner object
-  planner = TrajectoryPlanner()
+  planner = TrajectoryPlanner(5)
 
   # create FPS object for frame rate tracking
   fps_timer = FPS()
@@ -84,11 +84,13 @@ def stream(tracker, camera=0):
       closest_pt = points[closest_obj_index]
       closest_line = utils.get_line(object_list[closest_obj_index],
         points[closest_obj_index])
-      planner.update_frames(closest_obj)
+      #planner.update_frames(closest_obj)
+      planner.add_point(closest_obj)
 
 
     # attempt to get point of intersection of trajectory and robot axis
-    traj_ln = planner.get_traj() # frame-to-frame line, very small length
+    #traj_ln = planner.get_traj() # frame-to-frame line, very small length
+    traj_ln = planner.get_trajectory() # n-frame best fit
     traj_int_pt = utils.line_intersect(traj_ln, robot_axis)
 
     traj = utils.get_line(closest_obj, traj_int_pt, color=colors.Cyan)

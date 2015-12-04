@@ -128,8 +128,8 @@ def distance_from_line(circle_list, line):
   @param circle_list The list of Circles to get distances from line
   @param line The Line object to get distances from
 
-  @return points A list of (x,y) tuples corresponding to closest point on line
-    to circle i. points[i] corresponds to circle_list[i]
+  @return points A list of Point objects corresponding to closest point on line
+    to circle i for each point. points[i] corresponds to circle_list[i]
   @return distances A list of distances. distances[i] corresponds to
     circle_list[i]. Returns None if no circles found
   """

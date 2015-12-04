@@ -10,6 +10,7 @@ current object trajectory.
 """
 
 import cv2
+import numpy as np
 
 import shapes
 import colors
@@ -21,15 +22,15 @@ class TrajectoryPlanner:
 
       @param frames The number of previous points to fit the trajectory to
       """
-      self.num_frames is 0
+      self.num_frames = frames
 
       # Index of most recent frame in pt_list. Iterated with modulo operator
       # to wrap properly and always use
-      self.start_index = None
-      self.pt_list = [None] * num_frames # list of Points
+      self.index = None
+      self.pt_list = [None] * self.num_frames # list of Points
       # Separate x and y list are kept for convenience when fitting line
-      self.x_list = [None] * num_frames  # list of x-values for best fit
-      self.y_list = [None] * num_frames # list of y-values for best fit
+      self.x_list = [None] * self.num_frames  # list of x-values for best fit
+      self.y_list = [None] * self.num_frames # list of y-values for best fit
       
 
       ######## FOR 2-FRAME TRAJECTORY ESTIMATION #########
@@ -50,20 +51,44 @@ class TrajectoryPlanner:
       if point is None:
         return
 
-      if self.start_index is None: # first time
-        self.start_index = 0
+      if self.index is None: # first time
+        self.index = 0
       else:
         # increment index so it wraps
-        self.start_index = (self.start_index + 1) % self.num_frames
+        self.index = (self.index + 1) % self.num_frames
 
-      self.pt_list[self.start_index] = point
-      self.x_list[self.start_index] = point.x
-      self.y_list[self.start_index] = point.y
+      self.pt_list[self.index] = point
+      self.x_list[self.index] = point.x
+      self.y_list[self.index] = point.y
+
+    def get_trajectory(self, color=colors.Cyan):
+      """
+      @brief Gets best fit line from n-previous points
+
+      Uses np.polyfit with dimension 1. Creates line from two points. Points
+      are generated using closest point to most recent frame (x1,y1) and 
+      a point (x1 + 1.0, y2)
+
+      @param color The color to be used in the trajectory line
+
+      @return ln Line object representing the trajectory
+      """
+      if None in self.pt_list:
+        return None
+
+      # get best fit line
+      fit = np.polyfit(self.x_list, self.y_list, 1, full=True)
+      m = fit[0][0] # slope of best fit line
+      b = fit[0][1] # intercept of best fit line
+
+      x1 = self.x_list[self.index]
+      x2 = x1 + 1.0
+      y1 = m * x1 + b
+      y2 = m * x2 + b
 
 
-
-
-
+      ln = shapes.Line(x1=x1, y1=y1, x2=x2, y2=y2, color=color)
+      return ln
 
 
     ######## FOR 2-FRAME TRAJECTORY ESTIMATION #########
