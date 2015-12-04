@@ -81,7 +81,7 @@ def stream(tracker, camera=0):
     if closest_obj_index is not None:
       closest_obj = object_list[closest_obj_index]
       closest_pt = points[closest_obj_index]
-      closest_line = utils.get_line(closest_obj, closest_pt)
+      closest_line = utils.get_line(closest_obj, closest_pt) # only for viewing
 
       planner.add_point(closest_obj)
 
@@ -102,6 +102,7 @@ def stream(tracker, camera=0):
 
     frame = gfx.draw_circles(frame, object_list) # draw objects
 
+    # draw the direct object->axis point (not needed), and trajectory
     frame = gfx.draw_line(img=frame, line=closest_line) # closest obj>axis
     frame = gfx.draw_line(img=frame, line=traj) # draw trajectory estimate
 

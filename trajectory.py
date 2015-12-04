@@ -56,15 +56,6 @@ class TrajectoryPlanner:
       self.y_list = [None] * self.num_frames # list of y-values for best fit
       
 
-      ######## FOR 2-FRAME TRAJECTORY ESTIMATION #########
-      # The previous frame's point/circle. TODO: upgrade to an n-frame list
-      self.prev_pt = None
-      # The current frame's object point/circle TODO: upgrade to n-frame list
-      self.curr_pt = None
-      # The line representing the current trajectory
-      self.traj = shapes.Line()
-
-
     def add_point(self, point):
       """
       @brief Adds current point to list of points, overwriting the oldest value
@@ -86,6 +77,7 @@ class TrajectoryPlanner:
       self.pt_list[self.index] = point
       self.x_list[self.index] = point.x
       self.y_list[self.index] = point.y
+
 
     def get_trajectory(self, color=colors.Cyan):
       """
