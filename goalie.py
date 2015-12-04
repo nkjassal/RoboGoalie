@@ -74,7 +74,7 @@ def stream(tracker, camera=0):
 
     ######## TRAJECTORY PLANNING ########
     # get closest object and associated point, generate trajectory
-    closest_obj_index = utils.min_index(distances)
+    closest_obj_index = utils.min_index(distances) # index of min value
     closest_line = shapes.Line()
     closest_pt = shapes.Point()
     closest_obj = shapes.Circle()
@@ -95,7 +95,7 @@ def stream(tracker, camera=0):
 
 
 
-    ######## DRAW ANNOTATIONS ON FRAME ########
+    ######## ANNOTATE FRAME FOR VISUALIZATION ########
     frame = gfx.draw_robot_axis(img=frame, line=robot_axis) # draw axis line
     frame = gfx.draw_robot(frame, robot) # draw robot
     frame = gfx.draw_robot_markers(frame, robot_markers) # draw markers

@@ -39,6 +39,7 @@ color-by-color basis. S=90 or S=150 seem to work decently, as starting points.
 
 """
 
+######## TRACKABLE COLORS ########
 class Blue:
   """
   @brief HSV range for blue. H = 119
@@ -90,6 +91,7 @@ class White:
   upper1 = (0,0,0)
 
 
+######## DISPLAY COLORS ONLY ########
 class Yellow:
   """
   @brief BGR and HSV range for yellow. 

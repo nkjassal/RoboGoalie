@@ -74,7 +74,7 @@ class Line:
 
     # for y = mx + b form
     self.m = None # ensure initialization
-    if math.fabs(self.dy) < 0.0001: # vertical line
+    if math.fabs(self.dx) < 0.0001: # vertical line
         self.m = 99999
     else:
         self.m = self.dy / self.dx
