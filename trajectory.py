@@ -4,7 +4,19 @@
 @brief Contains trajectory class used to predict object trajectories
 
 Uses Points locations from n-previous frames to approximate a line of the 
-current object trajectory.
+current object trajectory. Trajectory estimation is using numpy.polyfit with 
+a dimension of 1.
+
+Note that a larger number of frames means a slower reaction - prediction will
+not occur until n frames have been added to the list.
+
+If an object is stationary, noise in the video or location feed may cause
+noisy points to be added, resulting in incorrect and/or highly skewed best fit
+lines.
+
+The trajectory planner will also not directly handle switching to a new object
+to track for the goalie. A few frames of noise (n frames) will occur while the
+old location points are in the list with the newer ones.
 
 @author Neil Jassal
 """
@@ -46,6 +58,9 @@ class TrajectoryPlanner:
       """
       @brief Adds current point to list of points, overwriting the oldest value
 
+      For optimal usage, it is generally recommended to add a point denoting 
+      the updated location at every frame
+
       @param The Point or Circle object to add as the current frame
       """
       if point is None:
@@ -73,6 +88,7 @@ class TrajectoryPlanner:
 
       @return ln Line object representing the trajectory
       """
+      # Not enough frames collected
       if None in self.pt_list:
         return None
 

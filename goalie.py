@@ -34,7 +34,7 @@ def stream(tracker, camera=0):
   cv2.namedWindow(tracker.window_name)
 
   # create trajectory planner object
-  planner = TrajectoryPlanner(5)
+  planner = TrajectoryPlanner(frames=3)
 
   # create FPS object for frame rate tracking
   fps_timer = FPS()
@@ -82,8 +82,10 @@ def stream(tracker, camera=0):
     if closest_obj_index is not None:
       closest_obj = object_list[closest_obj_index]
       closest_pt = points[closest_obj_index]
-      closest_line = utils.get_line(object_list[closest_obj_index],
-        points[closest_obj_index])
+      # closest_line = utils.get_line(object_list[closest_obj_index],
+      #   points[closest_obj_index])
+      closest_line = utils.get_line(closest_obj, closest_pt)
+
       #planner.update_frames(closest_obj)
       planner.add_point(closest_obj)
 
@@ -93,9 +95,9 @@ def stream(tracker, camera=0):
     traj_ln = planner.get_trajectory() # n-frame best fit
     traj_int_pt = utils.line_intersect(traj_ln, robot_axis)
 
-    traj = utils.get_line(closest_obj, traj_int_pt, color=colors.Cyan)
     if traj_int_pt is not None:
       traj_int_pt = utils.clamp_point_to_line(traj_int_pt, robot_axis)
+    traj = utils.get_line(closest_obj, traj_int_pt, color=colors.Cyan)
 
 
 
