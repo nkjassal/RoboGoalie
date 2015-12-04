@@ -189,7 +189,8 @@ def line_intersect(ln1, ln2):
   """
   @brief Determines point of intersection between two lines
 
-  Adapted from: http://stackoverflow.com/questions/20677795/find-the-point-of-intersecting-lines
+  Adapted from: 
+  http://stackoverflow.com/questions/20677795/find-the-point-of-intersecting-lines
   
   @param ln1 The first line to check intersection with
   @param ln2 The second line to check intersection with

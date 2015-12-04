@@ -18,7 +18,7 @@ The trajectory planner will also not directly handle switching to a new object
 to track for the goalie. A few frames of noise (n frames) will occur while the
 old location points are in the list with the newer ones.
 
-Standard usage for a 3-frame best fit model (pseudocode):
+Standard usage for a 3-frame best fit model (pseudocode example)::
 
 planner = TrajectoryPlanner(3)
 while True:
