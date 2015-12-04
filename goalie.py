@@ -49,8 +49,7 @@ def stream(tracker, camera=0):
       print 'Frame not read'
       exit()
 
-
-    # resize to 640x480 for streaming/video sources
+    # resize to 640x480, flip and blur
     frame,img_hsv = tracker.setup_frame(frame=frame, w=640,h=480,
       scale=1, blur_window=15)
 
@@ -74,7 +73,7 @@ def stream(tracker, camera=0):
 
 
     ######## TRAJECTORY PLANNING ########
-    # get closest object and associated point, generate line
+    # get closest object and associated point, generate trajectory
     closest_obj_index = utils.min_index(distances)
     closest_line = shapes.Line()
     closest_pt = shapes.Point()
@@ -82,38 +81,28 @@ def stream(tracker, camera=0):
     if closest_obj_index is not None:
       closest_obj = object_list[closest_obj_index]
       closest_pt = points[closest_obj_index]
-      # closest_line = utils.get_line(object_list[closest_obj_index],
-      #   points[closest_obj_index])
       closest_line = utils.get_line(closest_obj, closest_pt)
 
-      #planner.update_frames(closest_obj)
       planner.add_point(closest_obj)
 
 
-    # attempt to get point of intersection of trajectory and robot axis
-    #traj_ln = planner.get_traj() # frame-to-frame line, very small length
+    # Get trajectory line between closest object and its' point of intersection
+    # on the robot axis
     traj_ln = planner.get_trajectory() # n-frame best fit
-    traj_int_pt = utils.line_intersect(traj_ln, robot_axis)
-
-    if traj_int_pt is not None:
-      traj_int_pt = utils.clamp_point_to_line(traj_int_pt, robot_axis)
+    traj_int_pt = utils.line_intersect(traj_ln, robot_axis) # Point object
+    traj_int_pt = utils.clamp_point_to_line(traj_int_pt, robot_axis)
     traj = utils.get_line(closest_obj, traj_int_pt, color=colors.Cyan)
 
 
 
-
-    # gets all lines - not needed, only need to use closest
-    # Get list of Line objects for each object to its closest axis intersection
-    # lines = utils.get_lines(object_list, points, colors.Green)
-
-
     ######## DRAW ANNOTATIONS ON FRAME ########
-    frame = gfx.draw_circles(frame, object_list) # draw objects
+    frame = gfx.draw_robot_axis(img=frame, line=robot_axis) # draw axis line
     frame = gfx.draw_robot(frame, robot) # draw robot
     frame = gfx.draw_robot_markers(frame, robot_markers) # draw markers
-    frame = gfx.draw_robot_axis(img=frame, line=robot_axis) # draw axis line
-    frame = gfx.draw_line(img=frame, line=closest_line) # closets obj>axis
-    #frame = gfx.draw_lines(frame=frame, line_list=lines) # draw obj>axis line
+
+    frame = gfx.draw_circles(frame, object_list) # draw objects
+
+    frame = gfx.draw_line(img=frame, line=closest_line) # closest obj>axis
     frame = gfx.draw_line(img=frame, line=traj) # draw trajectory estimate
 
 

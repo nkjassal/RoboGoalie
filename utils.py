@@ -36,6 +36,9 @@ def clamp_point_to_line(pt, line):
 
   @return The clamped point
   """
+  if pt is None:
+    return None
+
   x,y = pt.x, pt.y
   x = clamp(x, min(line.x1, line.x2), max(line.x1, line.x2))
   y = clamp(y, min(line.y1, line.y2), max(line.y1, line.y2))

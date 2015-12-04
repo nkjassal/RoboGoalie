@@ -18,6 +18,17 @@ The trajectory planner will also not directly handle switching to a new object
 to track for the goalie. A few frames of noise (n frames) will occur while the
 old location points are in the list with the newer ones.
 
+Standard usage for a 3-frame best fit model (pseudocode):
+
+planner = TrajectoryPlanner(3)
+while True:
+  frame = get_video_frame()
+  point = frame.get_object_location() # point is a shapes.Point object
+  # Every frame, add the newest point
+  planner.add_point(point)
+  # Returns None until 3 frames have been added, then returns shapes.Line
+  traj = planner.get_trajectory()
+
 @author Neil Jassal
 """
 
@@ -82,7 +93,9 @@ class TrajectoryPlanner:
 
       Uses np.polyfit with dimension 1. Creates line from two points. Points
       are generated using closest point to most recent frame (x1,y1) and 
-      a point (x1 + 1.0, y2)
+      a point (x1 + 1.0, y2). This works as a line can be represented by any
+      arbitrary two points along it. The actual points do not matter here or
+      for the goalie, unless specified/calculated otherwise.
 
       @param color The color to be used in the trajectory line
 
@@ -97,42 +110,12 @@ class TrajectoryPlanner:
       m = fit[0][0] # slope of best fit line
       b = fit[0][1] # intercept of best fit line
 
-      x1 = self.x_list[self.index]
+      x1 = self.x_list[self.index] # most recent x
       x2 = x1 + 1.0
       y1 = m * x1 + b
       y2 = m * x2 + b
 
-
       ln = shapes.Line(x1=x1, y1=y1, x2=x2, y2=y2, color=color)
-      return ln
-
-
-    ######## FOR 2-FRAME TRAJECTORY ESTIMATION #########
-    def update_frames(self, point):
-      """
-      @brief Adds the current point to the list of points to get traj from
-
-      Should be run every time a new point is found
-
-      @param point The current Point or Circle object found
-      """
-      # Move now-old point to previous and update current point
-      self.prev_pt = self.curr_pt
-      self.curr_pt = point
-
-    def get_traj(self, color=colors.Cyan):
-      """
-      @brief Uses the n-frame list to determine the current trajectory
-
-      @param color The trajectory Line color to use
-
-      @return traj The Line object, direction is pt1 to pt2
-      """
-      if self.prev_pt is None or self.curr_pt is None:
-        return None
-      ln = shapes.Line(x1=self.prev_pt.x, y1=self.prev_pt.y,
-        x2=self.curr_pt.x, y2=self.curr_pt.y, color=color)
-
       return ln
 
 
