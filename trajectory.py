@@ -15,10 +15,24 @@ import shapes
 import colors
 
 class TrajectoryPlanner:
-    def __init__(self):
+    def __init__(self, frames=2):
       """
       @brief Initializes parameters
+
+      @param frames The number of previous points to fit the trajectory to
       """
+      self.num_frames is 0
+
+      # Index of most recent frame in pt_list. Iterated with modulo operator
+      # to wrap properly and always use
+      self.start_index = None
+      self.pt_list = [None] * num_frames # list of Points
+      # Separate x and y list are kept for convenience when fitting line
+      self.x_list = [None] * num_frames  # list of x-values for best fit
+      self.y_list = [None] * num_frames # list of y-values for best fit
+      
+
+      ######## FOR 2-FRAME TRAJECTORY ESTIMATION #########
       # The previous frame's point/circle. TODO: upgrade to an n-frame list
       self.prev_pt = None
       # The current frame's object point/circle TODO: upgrade to n-frame list
@@ -27,6 +41,32 @@ class TrajectoryPlanner:
       self.traj = shapes.Line()
 
 
+    def add_point(self, point):
+      """
+      @brief Adds current point to list of points, overwriting the oldest value
+
+      @param The Point or Circle object to add as the current frame
+      """
+      if point is None:
+        return
+
+      if self.start_index is None: # first time
+        self.start_index = 0
+      else:
+        # increment index so it wraps
+        self.start_index = (self.start_index + 1) % self.num_frames
+
+      self.pt_list[self.start_index] = point
+      self.x_list[self.start_index] = point.x
+      self.y_list[self.start_index] = point.y
+
+
+
+
+
+
+
+    ######## FOR 2-FRAME TRAJECTORY ESTIMATION #########
     def update_frames(self, point):
       """
       @brief Adds the current point to the list of points to get traj from

@@ -71,9 +71,22 @@ class Line:
     self.y2 = y2
     self.dx = (x1 - x2) * 1.0
     self.dy = (y1 - y2) * 1.0
+
+    # for y = mx + b form
+    self.m = None # ensure initialization
+    if math.fabs(dy) < 0.0001 # vertical line
+        self.m = 99999
+    else:
+        self.m = self.dy / self.dx
+    self.b = y1 - self.m * x1
+
+    # display parameters
     self.color = color
     self.thickness = thickness
     
     # Only calculate length if not already provided
     if length is 0:
       self.length = math.sqrt(math.pow(x1-x2,2) + math.pow(y1-y2, 2))
+
+
+      

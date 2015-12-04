@@ -11,11 +11,11 @@ import cv2
 import numpy as np
 from IPython import embed # debugging
 
-import tracker as bt
 import colors
-import graphics as gfx
 import shapes
 import utils
+import tracker as bt
+import graphics as gfx
 from fps import FPS
 from trajectory import TrajectoryPlanner
 
@@ -52,7 +52,7 @@ def stream(tracker, camera=0):
 
     # resize to 640x480 for streaming/video sources
     frame,img_hsv = tracker.setup_frame(frame=frame, w=640,h=480,
-      scale=1, blur_window=11)
+      scale=1, blur_window=15)
 
 
 
@@ -137,7 +137,7 @@ def main():
   robot_color = colors.White
   track_colors = [colors.Red]
   tracker = bt.BallTracker(
-    window_name="Robot Goalie Object Tracking Display",
+    window_name="Robot Goalie Tracking Display",
     robot_color=robot_color,
     robot_marker_color=robot_marker_color, 
     track_colors=track_colors, 
