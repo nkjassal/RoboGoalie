@@ -28,7 +28,7 @@ class FPS:
     self.fps_str = ''
     self.font = cv2.FONT_HERSHEY_SIMPLEX # no idea what font this is
 
-    self.num_frames = 40
+    self.num_frames = num_frames
     self.color = color
 
   def start_iteration(self):

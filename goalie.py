@@ -144,7 +144,7 @@ def main():
     rail_color=rail_color,
     track_colors=track_colors, 
     radius=13,
-    num_objects = 5) 
+    num_objects = 2) 
 
   stream(tracker, camera=1) # begin tracking and object detection
 

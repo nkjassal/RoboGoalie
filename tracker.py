@@ -51,7 +51,7 @@ class BallTracker:
     scale=0.5, 
     robot_color=colors.White,
     robot_marker_color=colors.Red, 
-    rail_color=colors.Green
+    rail_color=colors.Green,
     track_colors=[colors.Blue], 
     radius=10, 
     num_objects = 1,
@@ -76,9 +76,6 @@ class BallTracker:
 
     self.window_name = window_name
     self.scale = scale
-
-    # The num ber of frames to average fps over
-    self.FPS_FRAMES = 50
 
     self.num_objects = num_objects
 
@@ -108,7 +105,7 @@ class BallTracker:
     @return The updated frame blurred and in hsv
     """ 
     if w is not None and h is not None: # use specified (w,h)
-      frame = cv2.resize(frame, (w,h), cv2.INTER_AREA)
+      frame = cv2.resize(frame, (w,h), cv2.INTER_NEAREST)
     else: # use default/specified scale
       # scale argument is a tuple, not two separate arguments (w, h)
       h_scaled,w_scaled = tuple(scale * np.asarray(frame.shape[:2]))
