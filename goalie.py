@@ -34,7 +34,7 @@ def stream(tracker, camera=0):
   cv2.namedWindow(tracker.window_name)
 
   # create trajectory planner object
-  planner = TrajectoryPlanner(frames=5)
+  planner = TrajectoryPlanner(frames=4)
 
   # create FPS object for frame rate tracking
   fps_timer = FPS()

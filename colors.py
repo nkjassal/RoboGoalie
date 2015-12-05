@@ -47,10 +47,16 @@ class Blue:
   """
   bgr = (255,0,0)
 
-  # lower0 = (75, 90, 90)
+  # lower0 = (75, 90, 90) # original
   # upper0 = (163, 255, 255)
-  lower0 = (90, 90, 90)
-  upper0 = (150, 255, 255)
+
+  # lower0 = (90, 90, 90) #rgb only
+  # upper0 = (150, 255, 255)
+
+  lower0 = (105, 90, 90) # rgb cyan/magenta/yellow
+  upper0 = (145, 255, 255)
+
+
   lower1 = (0,0,0) # no second range needed
   upper1 = (0,0,0)
 
@@ -61,8 +67,15 @@ class Green:
   """
   bgr = (0,255,0)
 
-  lower0 = (16, 90, 90)
-  upper0 = (104, 255, 255)
+  # lower0 = (16, 90, 90) # original
+  # upper0 = (104, 255, 255)
+
+  # lower0 = (30, 90, 90) # rgb only
+  # upper0 = (90, 255, 255)
+
+  lower0 = (45, 90, 90) # rgb cyan/magenta/yellow
+  upper0 = (75, 255, 255)
+
   lower1 = (0,0,0)  # no second range needed
   upper1 = (0,0,0)
 
@@ -70,18 +83,26 @@ class Green:
 class Red:
   """
   @brief BGR and HSV range for red. H = 0
+
+  The S and V here is 150 instead of 90 - otherwise many shades of brown get
+  detected instead...
   """
   bgr = (0,0,255)
 
-  # lower0 = (0, 150, 150)
+  # lower0 = (0, 150, 150) # original
   # upper0 = (20, 255, 255)
   # lower1 = (160, 150, 150)
   # upper1 = (179,255, 255)
-  lower0 = (0, 150, 150)
-  upper0 = (30, 255, 255)
-  lower1 = (150, 150, 150)
-  upper1 = (179, 255, 255)
 
+  # lower0 = (0, 150, 150) # rgb only
+  # upper0 = (30, 255, 255)
+  # lower1 = (150, 150, 150)
+  # upper1 = (179, 255, 255)
+
+  lower0 = (0, 150, 150) #rgb cyan/magenta/yellow
+  upper0 = (15, 255, 255)
+  lower1 = (165, 150, 150)
+  upper1 = (179, 255, 255)
 
 class White:
   """
@@ -93,7 +114,7 @@ class White:
 
   lower0 = (0, 0, 220)
   upper0 = (179, 50, 255)
-  lower1 = (0,0,0) # no second range needed
+  lower1 = (0,0,0)  # no second range needed
   upper1 = (0,0,0)
 
 
@@ -105,6 +126,10 @@ class Yellow:
   """
   bgr = (0, 255, 255)
 
+  lower0 = (15, 90, 90)
+  upper0 = (45, 255, 255)
+  lower1 = (0,0,0)  # no second range needed
+  upper1 = (0,0,0)
 
 class Magenta:
   """
@@ -113,6 +138,10 @@ class Magenta:
   """
   bgr = (255, 0, 255)
 
+  lower0 = (135, 90, 90)
+  upper0 = (165, 255, 255)
+  lower1 = (0,0,0)  # no second range needed
+  upper1 = (0,0,0)
 
 class Cyan:
   """
@@ -120,6 +149,14 @@ class Cyan:
   TODO: Add upper/lower bounds
   """
   bgr = (255, 255, 0)
+
+  lower0 = (75, 90, 90)
+  upper0 = (105, 255, 255)
+  lower1 = (0,0,0)  # no second range needed
+  upper1 = (0,0,0)
+
+
+
 
 
 
