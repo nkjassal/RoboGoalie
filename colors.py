@@ -126,7 +126,7 @@ class Yellow:
   """
   bgr = (0, 255, 255)
 
-  lower0 = (15, 90, 90)
+  lower0 = (15, 150, 150)
   upper0 = (45, 255, 255)
   lower1 = (0,0,0)  # no second range needed
   upper1 = (0,0,0)

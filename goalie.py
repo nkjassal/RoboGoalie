@@ -44,10 +44,11 @@ def stream(tracker, camera=0):
     fps_timer.start_iteration()
 
     ######## CAPTURE AND PROCESS FRAME ########
-    ret, frame = cap.read()
-    if ret is False:
-      print 'Frame not read'
-      exit()
+    frame = cv2.imread('media/multi-color.png', 1)
+    # ret, frame = cap.read()
+    # if ret is False:
+    #   print 'Frame not read'
+    #   exit()
 
     # resize to 640x480, flip and blur
     frame,img_hsv = tracker.setup_frame(frame=frame, w=640,h=480,
@@ -139,7 +140,7 @@ def main():
     robot_marker_color=robot_marker_color, 
     track_colors=track_colors, 
     radius=13,
-    num_objects = 3) 
+    num_objects = 5) 
 
   stream(tracker, camera=1) # begin tracking and object detection
 
