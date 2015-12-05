@@ -123,8 +123,8 @@ def draw_robot_axis(img, robot_pos=None, line=None):
   """
 
   if robot_pos is None and line is None:
-    return None
-    
+    return img
+
   if line is not None:
     img = cv2.line(img, (line.x1,line.y1), (line.x2,line.y2),
       color=line.color.bgr, thickness=line.thickness)

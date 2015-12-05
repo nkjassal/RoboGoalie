@@ -39,7 +39,7 @@ import shapes
 import colors
 
 class TrajectoryPlanner:
-    def __init__(self, frames=2):
+    def __init__(self, frames=5):
       """
       @brief Initializes parameters
 
@@ -54,6 +54,9 @@ class TrajectoryPlanner:
       # Separate x and y list are kept for convenience when fitting line
       self.x_list = [None] * self.num_frames  # list of x-values for best fit
       self.y_list = [None] * self.num_frames # list of y-values for best fit
+
+      self.curr_pt = None
+      self.last_pt = None
       
 
     def add_point(self, point):

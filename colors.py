@@ -20,7 +20,7 @@ upper1 will be the tuple (0,0,0)
 
 When determining HSV colors, it is important to note that OpenCV uses the
 following color ranges when HSV is calculated with the cv2.COLOR_BGR2HSV macro:
-  H from 0 to 180
+  H from 0 to 179
   S from 0 to 255
   V from 0 to 255
 
@@ -47,8 +47,10 @@ class Blue:
   """
   bgr = (255,0,0)
 
-  lower0 = (75, 90, 90)
-  upper0 = (163, 255, 255)
+  # lower0 = (75, 90, 90)
+  # upper0 = (163, 255, 255)
+  lower0 = (90, 90, 90)
+  upper0 = (150, 255, 255)
   lower1 = (0,0,0) # no second range needed
   upper1 = (0,0,0)
 
@@ -71,10 +73,14 @@ class Red:
   """
   bgr = (0,0,255)
 
+  # lower0 = (0, 150, 150)
+  # upper0 = (20, 255, 255)
+  # lower1 = (160, 150, 150)
+  # upper1 = (179,255, 255)
   lower0 = (0, 150, 150)
-  upper0 = (20, 255, 255)
-  lower1 = (160, 150, 150)
-  upper1 = (179,255, 255)
+  upper0 = (30, 255, 255)
+  lower1 = (150, 150, 150)
+  upper1 = (179, 255, 255)
 
 
 class White:
@@ -86,7 +92,7 @@ class White:
   bgr = (255, 255, 255)
 
   lower0 = (0, 0, 220)
-  upper0 = (180, 50, 255)
+  upper0 = (179, 50, 255)
   lower1 = (0,0,0) # no second range needed
   upper1 = (0,0,0)
 

@@ -85,7 +85,7 @@ class BallTracker:
       # scale argument is a tuple, not two separate arguments (w, h)
       h_scaled,w_scaled = tuple(scale * np.asarray(frame.shape[:2]))
       frame = cv2.resize(frame, (int(w_scaled), int(h_scaled)), 
-        cv2.INTER_AREA)
+        cv2.INTER_NEAREST)
     cv2.flip(src=frame,dst=frame, flipCode=1) # flip over y for visual clarity
 
     blur = cv2.GaussianBlur(frame, (blur_window,blur_window), 0) # -0 frames
