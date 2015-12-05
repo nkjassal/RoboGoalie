@@ -70,8 +70,8 @@ class BallTracker:
     """
     
     # if robot marker and track color are the same, won't be able to tell apart
-    if robot_marker_color in track_colors:
-      print 'Unable to discern robot marker from some objects (same color). Ensure robot marker color is different from colors to be tracked'
+    if robot_marker_color in track_colors or robot_color in track_colors:
+      print 'Some markers are the same color. Ensure robot, markers, rails and objects all have unique colors'
       exit()
 
     self.window_name = window_name
@@ -81,6 +81,7 @@ class BallTracker:
 
     self.robot_color = robot_color
     self.robot_marker_color = robot_marker_color
+    self.rail_color = rail_color
     self.track_colors = track_colors
 
     self.radius = radius
@@ -236,3 +237,41 @@ class BallTracker:
     robot = self.find_robot(img_hsv.copy())
     robot_axis = self.find_robot_markers(img_hsv.copy())
     return robot, robot_axis
+
+
+  def get_rails(self, img_hsv, robot_markers):
+    """
+    @brief Gets the 2 lines representing the rails of the system
+
+    Finds 2 objects of rail_color, then creates two lines. Each line goes from
+    one robot marker to the closest rail object found. 
+
+    @param img_hsv The HSV image to find robot
+    @param robot_markers A 2-elem list of Circles representing robot markers
+
+    @return A 2-element list of Line objects representing the rails. If either
+    rail is not found, return empty list
+    """
+    if len(robot_markers) is not 2:
+      return []
+
+    rails = self.find_circles(img_hsv, colors=[self.rail_color], num_objects=2)
+    if len(rails) is not 2:
+      return []
+
+    # Determine which marker one rail is closer to, generate appropriate lines
+    r0_m0_dist = utils.get_pt2pt_dist(rails[0], robot_markers[0], squared=1)
+    r0_m1_dist = utils.get_pt2pt_dist(rails[0], robot_markers[1], squared=1)
+
+    # Use rails[0] and markers[0], and rails[1] and markers[1] if true
+    if r0_m0_dist < r0_m1_dist:
+      ln1 = utils.line_between_circles(c1=rails[0], c2=robot_markers[0])
+      ln2 = utils.line_between_circles(c1=rails[1], c2=robot_markers[1])
+    else:
+      # use rails[0], markers[1], and rails[1], markers[0] as lines
+      ln1 = utils.line_between_circles(c1=rails[0], c2=robot_markers[1])
+      ln2 = utils.line_between_circles(c1=rails[1], c2=robot_markers[0])     
+
+    return [ln1, ln2]
+
+    

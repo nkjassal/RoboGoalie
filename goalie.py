@@ -29,8 +29,8 @@ def stream(tracker, camera=0):
     camera=1 is generally the first webcam plugged in
   """
   # create video capture object for
-  #cap = cv2.VideoCapture(camera)
-  cap = cv2.VideoCapture('media/goalie-test.mov')
+  cap = cv2.VideoCapture(camera)
+ # cap = cv2.VideoCapture('media/goalie-test.mov')
   cv2.namedWindow(tracker.window_name)
 
   # create trajectory planner object
@@ -63,6 +63,7 @@ def stream(tracker, camera=0):
     object_list = tracker.find_circles(img_hsv.copy(), tracker.track_colors,
       tracker.num_objects)
     robot, robot_markers = tracker.find_robot_system(img_hsv)
+    rails = tracker.get_rails(img_hsv, robot_markers)
 
     # Get the line/distances between the robot markers
     # robot_axis is Line object between the robot axis markers
@@ -146,7 +147,7 @@ def main():
     radius=13,
     num_objects = 2) 
 
-  stream(tracker, camera=1) # begin tracking and object detection
+  stream(tracker, camera=0) # begin tracking and object detection
 
 
 

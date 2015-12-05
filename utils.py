@@ -59,12 +59,28 @@ def min_index(ls):
     return None
 
 
+def get_pt2pt_dist(p1, p2, squared=0):
+  """
+  @brief Gets the distance or distance squared from the given points
+
+  @param p1 One Point or Circle object
+  @param p2 The other Point or Circle object
+  @param squared Whether or not to use distance squared
+
+  @return The distance (or distance squared) between the two points
+  """
+  dist_sq = (p2.x - p1.x)*(p2.x-p1.x) + (p2.y-p1.y)*(p2.y-p1.y)
+  if squared:
+    return dist_sq
+  else:
+    return math.sqrt(dist_sq)
+
 def get_line(obj, point, color=colors.Green):
   """
   @brief Creates Line from object to point
 
   @param object The Circle or Point object used as one endpoint
-  @param point The Point object used as the other endpoint
+  @param point The Circle or Point object used as the other endpoint
   @param color The color the line will be displayed in
 
   @return ln The Line object between object and point
