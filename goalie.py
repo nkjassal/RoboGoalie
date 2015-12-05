@@ -29,8 +29,8 @@ def stream(tracker, camera=0):
     camera=1 is generally the first webcam plugged in
   """
   # create video capture object for
-  cap = cv2.VideoCapture(camera)
- # cap = cv2.VideoCapture('media/goalie-test.mov')
+  #cap = cv2.VideoCapture(camera)
+  cap = cv2.VideoCapture('media/goalie-test.mov')
   cv2.namedWindow(tracker.window_name)
 
   # create trajectory planner object
@@ -44,11 +44,11 @@ def stream(tracker, camera=0):
     fps_timer.start_iteration()
 
     ######## CAPTURE AND PROCESS FRAME ########
-    frame = cv2.imread('media/rails-1.png', 1) # for image testing
-    # ret, frame = cap.read()
-    # if ret is False:
-    #   print 'Frame not read'
-    #   exit()
+    #frame = cv2.imread('media/rails-1.png', 1) # for image testing
+    ret, frame = cap.read()
+    if ret is False:
+      print 'Frame not read'
+      exit()
 
     # resize to 640x480, flip and blur
     frame,img_hsv = tracker.setup_frame(frame=frame, w=640,h=480,
@@ -90,7 +90,7 @@ def stream(tracker, camera=0):
 
     # Get trajectory line between closest object and its' point of intersection
     # on the robot axis
-    traj_ln = planner.get_trajectory() # n-frame best fit
+    traj_ln = planner.get_trajectory(walls=rails) # n-frame best fit
 
     # if trajectory not moving towards robot axis
     if not planner.traj_dir_toward_line(robot_axis):
