@@ -111,13 +111,14 @@ def get_lines(object_list, points, color=colors.Green):
   return lines
 
 
-def line_between_circles(robot=None, c1=None, c2=None):
+def line_between_circles(robot=None, c1=None, c2=None, color=colors.Red):
   """
   @brief Gets the Line from two circles or the robot markers
 
   @param robot A list of two circle objects representing robot markers. TODO create robot class
   @param c1 One circle to calculate the Line from. Only used if robot not given
   @param c2 Other circle to get Line from. Only used if robot not given
+  @param color The Line color to use
 
   @return Line object for the line between both circles
   """
@@ -125,14 +126,16 @@ def line_between_circles(robot=None, c1=None, c2=None):
   # if no robot, use c1 and c2
   if robot is None:
     line = shapes.Line(
-        x1=c1[0].x, y1=c1[0].y,
-        x2=c2[1].x, y2=c2[1].y)
+        x1=c1.x, y1=c1.y,
+        x2=c2.x, y2=c2.y,
+        color=color)
 
   # ensure robot can be used to generate line
   elif len(robot) is 2:
     line = shapes.Line(
           x1=robot[0].x, y1=robot[0].y,
-          x2=robot[1].x, y2=robot[1].y) 
+          x2=robot[1].x, y2=robot[1].y,
+          color=color) 
   return line
 
 

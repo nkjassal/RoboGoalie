@@ -28,18 +28,18 @@ def draw_line(img, line):
     color=line.color.bgr, thickness=line.thickness)
   return img
 
-def draw_lines(frame, line_list):
+def draw_lines(img, line_list):
   """
   @brief Draws each line from line_list onto the frame
 
-  @param frame The frame to be updated with lines 
+  @param img The frame to be updated with lines 
   @param line_list The list of Line objects to be drawn onto frame
 
-  @return frame The updated frame
+  @return img The updated frame
   """
   for line in line_list:
-    frame = draw_line(frame, line)
-  return frame
+    img = draw_line(img, line)
+  return img
 
 
 def draw_circle(img, c):

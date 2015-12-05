@@ -44,11 +44,11 @@ def stream(tracker, camera=0):
     fps_timer.start_iteration()
 
     ######## CAPTURE AND PROCESS FRAME ########
-    #frame = cv2.imread('media/multi-color.png', 1) # for image testing
-    ret, frame = cap.read()
-    if ret is False:
-      print 'Frame not read'
-      exit()
+    frame = cv2.imread('media/rails-1.png', 1) # for image testing
+    # ret, frame = cap.read()
+    # if ret is False:
+    #   print 'Frame not read'
+    #   exit()
 
     # resize to 640x480, flip and blur
     frame,img_hsv = tracker.setup_frame(frame=frame, w=640,h=480,
@@ -63,7 +63,7 @@ def stream(tracker, camera=0):
     object_list = tracker.find_circles(img_hsv.copy(), tracker.track_colors,
       tracker.num_objects)
     robot, robot_markers = tracker.find_robot_system(img_hsv)
-    rails = tracker.get_rails(img_hsv, robot_markers)
+    rails = tracker.get_rails(img_hsv, robot_markers, colors.Yellow)
 
     # Get the line/distances between the robot markers
     # robot_axis is Line object between the robot axis markers
@@ -102,6 +102,8 @@ def stream(tracker, camera=0):
 
 
     ######## ANNOTATE FRAME FOR VISUALIZATION ########
+    frame = gfx.draw_lines(img=frame, line_list=rails)
+
     frame = gfx.draw_robot_axis(img=frame, line=robot_axis) # draw axis line
     frame = gfx.draw_robot(frame, robot) # draw robot
     frame = gfx.draw_robot_markers(frame, robot_markers) # draw markers

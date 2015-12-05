@@ -18,6 +18,7 @@ from IPython import embed
 
 import colors # application-specific
 import shapes 
+import utils
 
 class BallTracker:
   """ 
@@ -239,7 +240,7 @@ class BallTracker:
     return robot, robot_axis
 
 
-  def get_rails(self, img_hsv, robot_markers):
+  def get_rails(self, img_hsv, robot_markers, color=colors.Red):
     """
     @brief Gets the 2 lines representing the rails of the system
 
@@ -248,6 +249,7 @@ class BallTracker:
 
     @param img_hsv The HSV image to find robot
     @param robot_markers A 2-elem list of Circles representing robot markers
+    @param color The line color of the rail
 
     @return A 2-element list of Line objects representing the rails. If either
     rail is not found, return empty list
@@ -272,6 +274,8 @@ class BallTracker:
       ln1 = utils.line_between_circles(c1=rails[0], c2=robot_markers[1])
       ln2 = utils.line_between_circles(c1=rails[1], c2=robot_markers[0])     
 
+    ln1.color = color
+    ln2.color = color
     return [ln1, ln2]
 
-    
+
