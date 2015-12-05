@@ -16,7 +16,7 @@ import numpy as np # 3rd party packages
 import cv2 as cv2
 from IPython import embed
 
-import colors # application-specific constants
+import colors # application-specific
 import shapes 
 
 class BallTracker:

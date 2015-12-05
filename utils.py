@@ -120,7 +120,7 @@ def line_between_circles(robot=None, c1=None, c2=None):
   return line
 
 
-def distance_from_line(circle_list, line):
+def distance_from_line(object_list, line):
   """
   @brief Gets the shortest distance from each circle to a given line
 
@@ -128,7 +128,9 @@ def distance_from_line(circle_list, line):
 
   Invalid points will have distance of -1, points tuple = None
 
-  @param circle_list The list of Circles to get distances from line
+  NOTE: Only detects distance from center of circle.
+
+  @param object_list The list of Circles to get distances from line
   @param line The Line object to get distances from
 
   @return points A list of Point objects corresponding to closest point on line
@@ -140,10 +142,10 @@ def distance_from_line(circle_list, line):
   points = []
 
   # if no line or no circles return None
-  if line is None or not circle_list:
+  if line is None or not object_list:
     return points, distances
 
-  for c in circle_list:
+  for c in object_list:
 
     line_dot = line.dx*line.dx + line.dy*line.dy
     if float(line_dot) <= 0.00001: # avoid divide by 0

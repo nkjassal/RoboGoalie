@@ -32,11 +32,12 @@ while True:
 @author Neil Jassal
 """
 
-import cv2
+import cv2 # 3rd party imports
 import numpy as np
 
 import shapes
 import colors
+import utils
 
 class TrajectoryPlanner:
     def __init__(self, frames=5):
@@ -55,8 +56,8 @@ class TrajectoryPlanner:
       self.x_list = [None] * self.num_frames  # list of x-values for best fit
       self.y_list = [None] * self.num_frames # list of y-values for best fit
 
-      self.curr_pt = None
-      self.last_pt = None
+      self.curr_index = None # Index of most recent point
+      self.last_index = None # Index of oldest point
       
 
     def add_point(self, point):
@@ -64,7 +65,7 @@ class TrajectoryPlanner:
       @brief Adds current point to list of points, overwriting the oldest value
 
       For optimal usage, it is generally recommended to add a point denoting 
-      the updated location at every frame
+      the updated location at every frame. A Point contains an x and y value
 
       @param The Point or Circle object to add as the current frame
       """
@@ -73,9 +74,12 @@ class TrajectoryPlanner:
 
       if self.index is None: # first time
         self.index = 0
+        self.curr_index = 0
       else:
-        # increment index so it wraps
+        # increment index so it wraps, as well as current and last index
         self.index = (self.index + 1) % self.num_frames
+        self.curr_index = self.index
+        self.last_index = (self.index + 1) % self.num_frames
 
       self.pt_list[self.index] = point
       self.x_list[self.index] = point.x
@@ -112,6 +116,41 @@ class TrajectoryPlanner:
 
       ln = shapes.Line(x1=x1, y1=y1, x2=x2, y2=y2, color=color)
       return ln
+
+
+    def traj_dir_toward_line(self, line):
+      """
+      @brief Determines if the current trajectory is moving toward the line
+
+      Takes the most and least recent points, and determines if the overall
+      direction of the trajectory is generally toward the given Line or away.
+      This is done by comparing the distance between the current point and 
+      oldest point. 
+        
+        if dist(curr_pt to line) < dist(old_pt to line):
+          return 1
+        else return 0
+
+      @param line The Line object used
+
+      @return 1 if moving towards line, 0 if not
+      """
+      if None in self.pt_list or line is None:
+        return 0
+
+      curr_pt = self.pt_list[self.curr_index]
+      last_pt = self.pt_list[self.last_index]
+
+      unused, distances = utils.distance_from_line(
+        [curr_pt, last_pt], line)
+
+      # current point is closer to line than last point
+      if distances[0] < distances[1]:
+        return 1
+
+      return 0
+
+
 
 
 

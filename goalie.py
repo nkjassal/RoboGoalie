@@ -11,7 +11,7 @@ import cv2
 import numpy as np
 from IPython import embed # debugging
 
-import colors
+import colors # application specific
 import shapes
 import utils
 import tracker as bt
@@ -88,6 +88,10 @@ def stream(tracker, camera=0):
     # Get trajectory line between closest object and its' point of intersection
     # on the robot axis
     traj_ln = planner.get_trajectory() # n-frame best fit
+
+    # if trajectory not moving towards robot axis
+    if not planner.traj_dir_toward_line(robot_axis):
+      traj_ln = None
     traj_int_pt = utils.line_intersect(traj_ln, robot_axis) # Point object
     traj_int_pt = utils.clamp_point_to_line(traj_int_pt, robot_axis)
     traj = utils.get_line(closest_obj, traj_int_pt, color=colors.Cyan)
