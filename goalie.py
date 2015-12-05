@@ -44,11 +44,11 @@ def stream(tracker, camera=0):
     fps_timer.start_iteration()
 
     ######## CAPTURE AND PROCESS FRAME ########
-    frame = cv2.imread('media/multi-color.png', 1)
-    # ret, frame = cap.read()
-    # if ret is False:
-    #   print 'Frame not read'
-    #   exit()
+    #frame = cv2.imread('media/multi-color.png', 1) # for image testing
+    ret, frame = cap.read()
+    if ret is False:
+      print 'Frame not read'
+      exit()
 
     # resize to 640x480, flip and blur
     frame,img_hsv = tracker.setup_frame(frame=frame, w=640,h=480,
@@ -81,6 +81,7 @@ def stream(tracker, camera=0):
     if closest_obj_index is not None:
       closest_obj = object_list[closest_obj_index]
       closest_pt = points[closest_obj_index]
+      # only for viewing, eventually won't need this one (only display traj)
       closest_line = utils.get_line(closest_obj, closest_pt) # only for viewing
 
       planner.add_point(closest_obj)
@@ -107,6 +108,7 @@ def stream(tracker, camera=0):
     frame = gfx.draw_circles(frame, object_list) # draw objects
 
     # draw the direct object->axis point (not needed), and trajectory
+    # eventually won't need to draw closest line
     frame = gfx.draw_line(img=frame, line=closest_line) # closest obj>axis
     frame = gfx.draw_line(img=frame, line=traj) # draw trajectory estimate
 
@@ -133,11 +135,13 @@ def main():
   """    
   robot_marker_color = colors.Blue
   robot_color = colors.White
+  rail_color = colors.Green
   track_colors = [colors.Red]
   tracker = bt.BallTracker(
     window_name="Robot Goalie Tracking Display",
     robot_color=robot_color,
-    robot_marker_color=robot_marker_color, 
+    robot_marker_color=robot_marker_color,
+    rail_color=rail_color,
     track_colors=track_colors, 
     radius=13,
     num_objects = 5) 

@@ -20,11 +20,38 @@ import colors # application-specific
 import shapes 
 
 class BallTracker:
+  """ 
+  Used to track a given number of circular objects with respect to a robot
+  system. The system is assumed to be as follows, with each type of object or
+  system component having a unique color.
 
+  1 - uniquely colored circle representing the robot (R)
+  2 - circles on the bounds of the robot's axis of motion. The robot can only
+    move between these two circles. These are robot markers (M)
+  2 - circles representing the opposite ends of the rails. Balls can bounce off
+    the rails, and the rails will be specified as two lines (on either side of
+    the system) from the robot markers. (L)
+  3 - circles representing the objects to track. Trackable objects can be of
+    multiple colors, but this list of colors must be specified (O)
+
+  Using the convention of robot (R), markers (M), rails (L) and objects (O),
+    a sample setup could be approximated below. The '|' symbols represent the
+    rails over which the objects can bounce off of
+
+    M     R         M
+    |               |
+    |   O           |
+    |               |
+    |           O   |
+    |               |
+    L               L
+
+  """
   def __init__(self, window_name="Ball Tracking",
     scale=0.5, 
-    robot_color=colors.Green,
+    robot_color=colors.White,
     robot_marker_color=colors.Red, 
+    rail_color=colors.Green
     track_colors=[colors.Blue], 
     radius=10, 
     num_objects = 1,
@@ -35,6 +62,7 @@ class BallTracker:
     @param scale Webcam frame gets scaled by this much (0 to 1).
     @param robot_color The color (from colors.py) of the robot itself
     @param robot_marker_color The color of the axis ends of the robot
+    @param rail_color The color of the opposite endpoints of the rail
     @param track_colors List of colors (from colors.py) to be tracked. 
     @param radius The min radius circle to be detected
     @param num_objects The number of objects to detect.
