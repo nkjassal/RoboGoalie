@@ -142,7 +142,7 @@ class TrajectoryPlanner:
       last_pt = self.pt_list[self.last_index]
 
       unused, distances = utils.distance_from_line(
-        [curr_pt, last_pt], line)
+        [curr_pt, last_pt], line, squared=1)
 
       # current point is closer to line than last point
       if distances[0] < distances[1]:
