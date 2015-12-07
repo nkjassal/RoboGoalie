@@ -30,7 +30,8 @@ def stream(tracker, camera=0):
   """
   # create video capture object for
   #cap = cv2.VideoCapture(camera)
-  cap = cv2.VideoCapture('media/goalie-test.mov')
+  #cap = cv2.VideoCapture('media/goalie-test.mov')
+  cap = cv2.VideoCapture('media/bounce.mp4')
   cv2.namedWindow(tracker.window_name)
 
   # create trajectory planner object
@@ -96,7 +97,7 @@ def stream(tracker, camera=0):
     if not planner.traj_dir_toward_line(robot_axis):
       traj_ln = None
     traj_int_pt = utils.line_intersect(traj_ln, robot_axis) # Point object
-    traj_int_pt = utils.clamp_point_to_line(traj_int_pt, robot_axis)
+    #traj_int_pt = utils.clamp_point_to_line(traj_int_pt, robot_axis)
     traj = utils.get_line(closest_obj, traj_int_pt, color=colors.Cyan)
 
 
