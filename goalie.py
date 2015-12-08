@@ -97,9 +97,12 @@ def stream(tracker, camera=0):
     if not planner.traj_dir_toward_line(robot_axis):
       traj_ln = None
     traj_int_pt = utils.line_intersect(traj_ln, robot_axis) # Point object
-    #traj_int_pt = utils.clamp_point_to_line(traj_int_pt, robot_axis)
     traj = utils.get_line(closest_obj, traj_int_pt, color=colors.Cyan)
 
+
+    # debugging bounce trajectory testing
+    bounce_pt1 = utils.ray_segment_intersect(traj, rails[0])
+    #bounce_pt2 = utils.ray_segment_intersect(traj, rails[1])
 
 
     ######## ANNOTATE FRAME FOR VISUALIZATION ########

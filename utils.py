@@ -1,7 +1,7 @@
 """
 @file utils.py
 
-@brief Contains general object conversion functions, math functions, etc.
+@brief Contains general object conversion functions, math/geometry fns, etc.
 
 @author Neil Jassal
 """
@@ -12,6 +12,36 @@ from IPython import embed
 
 import shapes
 import colors
+
+
+def dot(p1, p2):
+  """
+  @brief Gets dot product of p1 and p2
+  @param p1 The first Point 
+  @param p2 the second Point
+  @return The dot product of p1,p2, or None if either Point is invalid
+  """
+  if p1 is None or p2 is None:
+    return None
+  return p1.x*p2.x + p1.y*p2.y
+
+
+def determinant(p1, p2):
+  """
+  @brief Gets the determinant of matrix formed by p1 and p2.
+
+  For Point p1 = (x1, y1) and Point p2 = (x2, y2), determinant is calculated:
+        x1  y1
+        x2  y2
+    det(p1, p2) = x1*y2 - x2*y1
+
+  @param p1 The first point in the determinant
+  @param p2 The second point in the determinant
+  @return The determinant, or None if p1 or p2 is invalid
+  """
+  if p1 is None or p2 is None:
+    return None
+  return (p1.x * p2.y) - (p2.x * p1.y)
 
 
 def clamp(val, min_val, max_val):
@@ -247,6 +277,48 @@ def line_intersect(ln1, ln2):
 
   return shapes.Point(x,y)
 
+
+def ray_segment_intersect(ray, line):
+  """
+  @brief Determines where a ray intersects a line in 2D
+
+  The ray is represented by a Line object, where the direction is 
+  from (x1,y1) --> (x2, y2).
+
+  Adapted from https://gist.github.com/danieljfarrell/faf7c4cafd683db13cbc
+  Here, the cross product of a 2D vector is equivalent to the determinant
+
+  @param ray Line object to represent the ray. Direction is pt1->
+  @param line The line segment pt1-pt2 to find intersection of
+
+  @return A Point object representing the point of intersection. Returns
+  None if no intersection.
+  """
+  if ray is None or line is None or ray.length is 0:
+    return None
+
+  # get normalized ray direction
+  ray_dir = shapes.Point(
+    (ray.x2-ray.x1)/ray.length, 
+    (ray.y2-ray.y1)/ray.length)
+
+  v1 = shapes.Point(ray.x1-line.x1, ray.y1 - line.y1)
+  v2 = shapes.Point(line.x2-line.x1, line.y2-line.y1)
+  v3 = shapes.Point(-ray_dir.x, ray_dir.y)
+
+  v2_v3 = dot(v2, v3)
+  if v2_v3 is 0:
+    return None
+
+  t1 = determinant(v2, v1) / v2_v3
+  t2 = dot(v1, v3) / v2_v3
+
+  if t1 >= 0.0 and t2 >= 0.0 and t2 <= 1.0:
+    x = ray.x1 + t1 * ray_dir.x
+    y = ray.y1 + t1 * ray_dir.y
+    print 1
+    return shapes.Point(x, y)
+  return None
 
 
 
