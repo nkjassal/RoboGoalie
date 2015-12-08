@@ -5,7 +5,7 @@
 
 Uses Points locations from n-previous frames to approximate a line of the 
 current object trajectory. Trajectory estimation is using numpy.polyfit with 
-a dimension of 1.
+a dimension of 1. Trajectories are created in the direction of the robot_axis
 
 For multiple bounces, trajectory estimation will produce a list of Line objects
 representing each 'bounce.' The last element of this list is the line of the
@@ -44,19 +44,22 @@ import colors
 import utils
 
 class TrajectoryPlanner:
-    def __init__(self, frames=5, bounces=0, walls=[]):
+    def __init__(self, frames=5, bounces=0, walls=[], robot_axis=None):
       """
       @brief Initializes parameters
 
       @param frames The number of previous points to fit the trajectory to
       @param bounces How many bounces off of walls to predict
       @param walls A list of Line objects representing walls to bounce off of
+      @param robot_axis The robot axis to be used
       """
       self.num_frames = frames
       self.num_bounces = bounces
 
       # Line objects representing walls for bounce prediction
       self.walls = walls
+      # Line representing robot axis
+      self.robot_axis = robot_axis
 
       # Index of most recent frame in pt_list. Iterated with modulo operator
       # to wrap properly and always use
@@ -71,6 +74,8 @@ class TrajectoryPlanner:
       
       # The best-fit line trajectory, no bounces. Set when traj is calculated
       self.traj = None
+      # List of lines representing all bounces of the trajectory prediction
+      self.traj_list = []
 
     def add_point(self, point):
       """
@@ -97,8 +102,50 @@ class TrajectoryPlanner:
       self.x_list[self.index] = point.x
       self.y_list[self.index] = point.y
 
+    def add_wall(self, wall):
+      """
+      @brief Adds a wall to the trajectory's list
+      @param wall A Line object representing the wall
+      """
+      if wall is None:
+        return
+      self.walls.append(wall)
+      return
 
-    def get_trajectory(self, color=colors.Cyan):
+    def add_walls(self, wall_list):
+      """
+      @brief Adds a set of walls to the trajectory's list
+      @param wall_list A list of Line objects representing walls
+      """
+      if wall_list is None:
+        return
+      for wall in wall_list:
+        if wall is None:
+          continue
+        self.walls.append(wall)
+      return
+
+    def get_best_fit_line(self, color=colors.Cyan):
+      """
+      @brief Gets and returns a Line object representing the best fit line
+      @param The color for the best fit line
+      @return A Line object
+      """
+      # get best fit line
+      fit = np.polyfit(self.x_list, self.y_list, 1, full=True)
+      m = fit[0][0] # slope of best fit line
+      b = fit[0][1] # intercept of best fit line
+
+      x1 = self.x_list[self.index] # most recent x
+      x2 = x1 + 1.0
+      y1 = m * x1 + b
+      y2 = m * x2 + b
+
+      ln = shapes.Line(x1=x1, y1=y1, x2=x2, y2=y2, color=color)
+      return ln
+
+
+    def get_trajectory_list(self, color=colors.Cyan):
       """
       @brief Gets best fit line from n-previous points
 
@@ -114,28 +161,65 @@ class TrajectoryPlanner:
       """
       # Not enough frames collected
       if None in self.pt_list:
-        return None
+        return []
 
-      # get best fit line
-      fit = np.polyfit(self.x_list, self.y_list, 1, full=True)
-      m = fit[0][0] # slope of best fit line
-      b = fit[0][1] # intercept of best fit line
+      # reset and get best fit line
+      self.traj_list = []
+      ln = self.get_best_fit_line()
 
-      x1 = self.x_list[self.index] # most recent x
-      x2 = x1 + 1.0
-      y1 = m * x1 + b
-      y2 = m * x2 + b
+      # get trajectory towards robot axis, line from obj to axis
+      # if trajectory not moving towards robot axis, no prediction
+      if not self.traj_dir_toward_line(self.robot_axis):
+        ln = None
+      start_pt = self.pt_list[self.curr_index]
+      traj_int_pt = utils.line_intersect(ln, self.robot_axis) # Point object
+      traj = utils.get_line(start_pt, traj_int_pt, color=colors.Cyan)
+      self.traj = traj
 
-      ln = shapes.Line(x1=x1, y1=y1, x2=x2, y2=y2, color=color)
-      self.traj = ln
+
       # return straight-line trajectory (as a 1-elem list for consistency) if
       # no bounces to be predicted
-      if self.num_bounces is not 0:
-        return [ln]
+      if self.num_bounces is 0: # no bounces
+        self.traj_list.append(ln)
+
+        return self.traj_list
+      for wall in self.walls:
+
+        bounce_pt = utils.line_segment_intersect(self.traj, wall)
+        if bounce_pt is None:
+          continue
+
+        bounce_ln = utils.get_line(self.pt_list[self.curr_index],
+          bounce_pt, color=colors.Cyan)
+        self.traj_list.append(bounce_ln)
 
 
 
-      return [ln]
+
+      return self.traj_list
+
+
+    def get_trajectory(self, calculate=1, color=colors.Cyan):
+      """
+      @brief Gets the full list of trajectory prediction lines, and returns
+      a line for the final trajectory
+
+      @param calculate Whether to compute the trajectory or take from list
+      @param color The color of trajectory lines
+
+      @return The last predicted trajectory line
+      """
+      if calculate is 1:
+        self.traj_list = self.get_trajectory_list(color)
+
+      # if failed to get trajectory list
+      if self.traj_list is None:
+        return None
+      if len(self.traj_list) < 1:
+        return None
+
+      # return last predicted line - best prediction
+      return self.traj_list[len(self.traj_list) - 1]
 
 
     def traj_dir_toward_line(self, line):

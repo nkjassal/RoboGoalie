@@ -35,7 +35,7 @@ def stream(tracker, camera=0):
   cv2.namedWindow(tracker.window_name)
 
   # create trajectory planner object
-  planner = TrajectoryPlanner(frames=4, bounces=2)
+  planner = TrajectoryPlanner(frames=4, bounces=1)
 
   # create FPS object for frame rate tracking
   fps_timer = FPS()
@@ -65,6 +65,7 @@ def stream(tracker, camera=0):
       tracker.num_objects)
     robot, robot_markers = tracker.find_robot_system(img_hsv)
     rails = tracker.get_rails(img_hsv, robot_markers, colors.Yellow)
+    planner.walls = rails
 
     # Get the line/distances between the robot markers
     # robot_axis is Line object between the robot axis markers
@@ -72,7 +73,7 @@ def stream(tracker, camera=0):
     # distanes is a list of distances of each point to the robot axis
     robot_axis = utils.line_between_circles(robot_markers)
     points, distances = utils.distance_from_line(object_list, robot_axis)
-
+    planner.robot_axis = robot_axis
 
     ######## TRAJECTORY PLANNING ########
     # get closest object and associated point, generate trajectory
@@ -91,23 +92,20 @@ def stream(tracker, camera=0):
 
     # Get trajectory line between closest object and its' point of intersection
     # on the robot axis
-    traj_list = planner.get_trajectory() # n-frame best fit
-    traj_ln = None # Final predicted trajectory
-    if traj_list is not None:
-      traj_ln = traj_list[len(traj_list)-1]
-
-    # if trajectory not moving towards robot axis, no prediction
-    if not planner.traj_dir_toward_line(robot_axis):
-      traj_ln = None
-    traj_int_pt = utils.line_intersect(traj_ln, robot_axis) # Point object
-    traj = utils.get_line(closest_obj, traj_int_pt, color=colors.Cyan)
+    traj_list = planner.get_trajectory_list(colors.Cyan)
+    # traj_ln = planner.get_trajectory(calculate=0) # n-frame best fit
+    # # if trajectory not moving towards robot axis, no prediction
+    # if not planner.traj_dir_toward_line(robot_axis):
+    #   traj_ln = None
+    # traj_int_pt = utils.line_intersect(traj_ln, robot_axis) # Point object
+    # traj = utils.get_line(closest_obj, traj_int_pt, color=colors.Cyan)
 
 
-    # debugging bounce trajectory testing
-    bounce_pt1 = utils.line_segment_intersect(traj, rails[0])
-    bounce_pt2 = utils.line_segment_intersect(traj, rails[1])
-    bounce_ln1 = utils.get_line(closest_obj, bounce_pt1, color=colors.Magenta)
-    bounce_ln2 = utils.get_line(closest_obj, bounce_pt2, color=colors.Blue)
+    # # debugging bounce trajectory testing - DELETE LATER
+    # bounce_pt1 = utils.line_segment_intersect(traj, rails[0])
+    # bounce_pt2 = utils.line_segment_intersect(traj, rails[1])
+    # bounce_ln1 = utils.get_line(closest_obj, bounce_pt1, color=colors.Magenta)
+    # bounce_ln2 = utils.get_line(closest_obj, bounce_pt2, color=colors.Blue)
 
     ######## ANNOTATE FRAME FOR VISUALIZATION ########
     frame = gfx.draw_lines(img=frame, line_list=rails)
@@ -121,11 +119,14 @@ def stream(tracker, camera=0):
     # draw the direct object->axis point (not needed), and trajectory
     # eventually won't need to draw closest line
     frame = gfx.draw_line(img=frame, line=closest_line) # closest obj>axis
-    frame = gfx.draw_line(img=frame, line=traj) # draw trajectory estimate
 
-    # bounce trajectory testing
-    frame = gfx.draw_line(frame, bounce_ln1)
-    frame = gfx.draw_line(frame, bounce_ln2)
+    # draw full set of trajectories, including bounces
+    frame = gfx.draw_lines(img=frame, line_list=traj_list)
+    #frame = gfx.draw_line(img=frame, line=traj) # draw trajectory estimate
+
+    # bounce trajectory testing - DELETE LATER
+    #frame = gfx.draw_line(frame, bounce_ln1)
+    #frame = gfx.draw_line(frame, bounce_ln2)
 
 
     ######## FPS COUNTER ########
