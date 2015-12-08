@@ -102,8 +102,8 @@ def stream(tracker, camera=0):
 
     # debugging bounce trajectory testing
     bounce_pt1 = utils.ray_segment_intersect(traj, rails[0])
-    #bounce_pt2 = utils.ray_segment_intersect(traj, rails[1])
-
+    bounce_pt2 = utils.ray_segment_intersect(traj, rails[1])
+    bounce_ln = utils.get_line(closest_obj, bounce_pt2, color=colors.Magenta)
 
     ######## ANNOTATE FRAME FOR VISUALIZATION ########
     frame = gfx.draw_lines(img=frame, line_list=rails)
@@ -119,6 +119,8 @@ def stream(tracker, camera=0):
     frame = gfx.draw_line(img=frame, line=closest_line) # closest obj>axis
     frame = gfx.draw_line(img=frame, line=traj) # draw trajectory estimate
 
+
+    #frame = gfx.draw_line(frame, bounce_ln)
 
 
     ######## FPS COUNTER ########

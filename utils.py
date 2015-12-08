@@ -105,6 +105,18 @@ def get_pt2pt_dist(p1, p2, squared=0):
   else:
     return math.sqrt(dist_sq)
 
+
+def get_pt2pt_dist_squared(p1, p2):
+  """
+  @brief Gets distance squared from given points
+
+  @param p1 One Point or Circle object
+  @param p2 The other Point or Circle object
+  @return The distance squared between the two points
+  """
+  return (p2.x - p1.x)*(p2.x-p1.x) + (p2.y-p1.y)*(p2.y-p1.y)
+  
+
 def get_line(obj, point, color=colors.Green):
   """
   @brief Creates Line from object to point
