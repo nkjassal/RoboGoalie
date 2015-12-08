@@ -35,6 +35,7 @@ while True:
 
 @author Neil Jassal
 """
+import math
 
 import cv2 # 3rd party imports
 import numpy as np
@@ -56,11 +57,13 @@ class TrajectoryPlanner:
       self.num_frames = frames
       self.num_bounces = bounces
 
+      ######## SCENE DEFINITION PARAMETERS #########
       # Line objects representing walls for bounce prediction
       self.walls = walls
       # Line representing robot axis
       self.robot_axis = robot_axis
 
+      ######### BEST FIT PARAMETERS ########
       # Index of most recent frame in pt_list. Iterated with modulo operator
       # to wrap properly and always use
       self.index = None
@@ -72,10 +75,12 @@ class TrajectoryPlanner:
       self.curr_index = None # Index of most recent point
       self.last_index = None # Index of oldest point
       
-      # The best-fit line trajectory, no bounces. Set when traj is calculated
+      ######## OUTPUT PARAMETERS ########
+      # The final line of the trajectory, extending to the robot axis
       self.traj = None
       # List of lines representing all bounces of the trajectory prediction
       self.traj_list = []
+
 
     def add_point(self, point):
       """
@@ -102,6 +107,7 @@ class TrajectoryPlanner:
       self.x_list[self.index] = point.x
       self.y_list[self.index] = point.y
 
+
     def add_wall(self, wall):
       """
       @brief Adds a wall to the trajectory's list
@@ -111,6 +117,7 @@ class TrajectoryPlanner:
         return
       self.walls.append(wall)
       return
+
 
     def add_walls(self, wall_list):
       """
@@ -124,6 +131,7 @@ class TrajectoryPlanner:
           continue
         self.walls.append(wall)
       return
+
 
     def get_best_fit_line(self, color=colors.Cyan):
       """
@@ -147,7 +155,7 @@ class TrajectoryPlanner:
 
     def get_trajectory_list(self, color=colors.Cyan):
       """
-      @brief Gets best fit line from n-previous points
+      @brief Gets best fit traj from n-previous points and predicts bounces
 
       Uses np.polyfit with dimension 1. Creates line from two points. Points
       are generated using closest point to most recent frame (x1,y1) and 
@@ -155,9 +163,16 @@ class TrajectoryPlanner:
       arbitrary two points along it. The actual points do not matter here or
       for the goalie, unless specified/calculated otherwise.
 
-      @param color The color to be used in the trajectory line
+      self.traj is always the farthest-predicted line between the last impact
+      point or object location and the robot axis
 
-      @return ln Line object representing the trajectory
+      self.traj_list contains, from oldest to farthest predicted, a list of 
+      Lines representing each bounce. The lines go obj->wall, wall->wall, ...,
+      wall->robot_axis.
+
+      @param color The color to be used in the trajectory lines
+
+      @return list of Line objects representing trajectory path
       """
       # Not enough frames collected
       if None in self.pt_list:
@@ -181,10 +196,10 @@ class TrajectoryPlanner:
       # no bounces to be predicted
       if self.num_bounces is 0: # no bounces
         self.traj_list.append(ln)
-
         return self.traj_list
-      for wall in self.walls:
 
+      for wall in self.walls:
+        # Determine where bounce occurs and add line up to bounce
         bounce_pt = utils.line_segment_intersect(self.traj, wall)
         if bounce_pt is None:
           continue
@@ -194,7 +209,27 @@ class TrajectoryPlanner:
         self.traj_list.append(bounce_ln)
 
 
+        ### THIS IS BROKEN LOL
+        # Reflect line across wall and project to next wall or axis
+        # Slope = dy/dx --> reflected slope -dx/dy, slope -> -1/slope
+        reflect_dx = -1.0
+        reflect_dy = 0
+        if math.fabs(bounce_ln.slope) < 0.0001: # avoid divide by 0
+          reflect_dy = 0.0001
+        else:
+          reflect_dy = bounce_ln.slope
 
+        #### ONCE NEW DX AND DY ARE FOND, IT WORKS. GETTING DX/DY FAILS ####
+        new_x = bounce_pt.x + reflect_dx * 0.001
+        new_y = bounce_pt.y + reflect_dy * 0.001
+        new_pt = shapes.Point(new_x, new_y)
+        new_ln = utils.get_line(bounce_pt, new_pt) # small line
+        final_int = utils.line_intersect(new_ln, self.robot_axis)
+        final_ln = shapes.Line(x1=bounce_pt.x, y1=bounce_pt.y,
+          x2=final_int.x, y2=final_int.y, color=colors.Cyan)
+        self.traj_list.append(final_ln)
+
+        break
 
       return self.traj_list
 
