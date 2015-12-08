@@ -7,6 +7,10 @@ Uses Points locations from n-previous frames to approximate a line of the
 current object trajectory. Trajectory estimation is using numpy.polyfit with 
 a dimension of 1.
 
+For multiple bounces, trajectory estimation will produce a list of Line objects
+representing each 'bounce.' The last element of this list is the line of the
+final predicted trajectory (after n bounces)
+
 Note that a larger number of frames means a slower reaction - prediction will
 not occur until n frames have been added to the list.
 
@@ -40,7 +44,7 @@ import colors
 import utils
 
 class TrajectoryPlanner:
-    def __init__(self, frames=5, bounces=1, walls=[]):
+    def __init__(self, frames=5, bounces=0, walls=[]):
       """
       @brief Initializes parameters
 
@@ -65,6 +69,8 @@ class TrajectoryPlanner:
       self.curr_index = None # Index of most recent point
       self.last_index = None # Index of oldest point
       
+      # The best-fit line trajectory, no bounces. Set when traj is calculated
+      self.traj = None
 
     def add_point(self, point):
       """
@@ -121,7 +127,15 @@ class TrajectoryPlanner:
       y2 = m * x2 + b
 
       ln = shapes.Line(x1=x1, y1=y1, x2=x2, y2=y2, color=color)
-      return ln
+      self.traj = ln
+      # return straight-line trajectory (as a 1-elem list for consistency) if
+      # no bounces to be predicted
+      if self.num_bounces is not 0:
+        return [ln]
+
+
+
+      return [ln]
 
 
     def traj_dir_toward_line(self, line):
@@ -132,6 +146,10 @@ class TrajectoryPlanner:
       direction of the trajectory is generally toward the given Line or away.
       This is done by comparing the distance between the current point and 
       oldest point. 
+
+      In context of the robot goalie, will determine if the robot is currently
+      moving towards the robot axis, irrespective of bounces. Used to tell
+      if the ball is generally moving towards or away from the axis
         
         if dist(curr_pt to line) < dist(old_pt to line):
           return 1

@@ -91,7 +91,10 @@ def stream(tracker, camera=0):
 
     # Get trajectory line between closest object and its' point of intersection
     # on the robot axis
-    traj_ln = planner.get_trajectory(walls=rails) # n-frame best fit
+    traj_list = planner.get_trajectory() # n-frame best fit
+    traj_ln = None # Final predicted trajectory
+    if traj_list is not None:
+      traj_ln = traj_list[len(traj_list)-1]
 
     # if trajectory not moving towards robot axis, no prediction
     if not planner.traj_dir_toward_line(robot_axis):
