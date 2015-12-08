@@ -69,15 +69,17 @@ class Line:
     self.y1 = y1
     self.x2 = x2
     self.y2 = y2
-    self.dx = (x1 - x2) * 1.0
-    self.dy = (y1 - y2) * 1.0
+    self.dx = (x2 - x1) * 1.0
+    self.dy = (y2 - y1) * 1.0
 
-    # for y = mx + b form
+    # for y = mx + b form, m is slope, b is y-intercept
     self.m = None # ensure initialization
     if math.fabs(self.dx) < 0.0001: # vertical line
         self.m = 99999
     else:
         self.m = self.dy / self.dx
+    self.slope = self.m
+    
     self.b = y1 - self.m * x1
 
     # display parameters

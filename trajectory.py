@@ -40,13 +40,19 @@ import colors
 import utils
 
 class TrajectoryPlanner:
-    def __init__(self, frames=5):
+    def __init__(self, frames=5, bounces=1, walls=[]):
       """
       @brief Initializes parameters
 
       @param frames The number of previous points to fit the trajectory to
+      @param bounces How many bounces off of walls to predict
+      @param walls A list of Line objects representing walls to bounce off of
       """
       self.num_frames = frames
+      self.num_bounces = bounces
+
+      # Line objects representing walls for bounce prediction
+      self.walls = walls
 
       # Index of most recent frame in pt_list. Iterated with modulo operator
       # to wrap properly and always use
@@ -86,7 +92,7 @@ class TrajectoryPlanner:
       self.y_list[self.index] = point.y
 
 
-    def get_trajectory(self, walls=None, color=colors.Cyan):
+    def get_trajectory(self, color=colors.Cyan):
       """
       @brief Gets best fit line from n-previous points
 
@@ -96,7 +102,6 @@ class TrajectoryPlanner:
       arbitrary two points along it. The actual points do not matter here or
       for the goalie, unless specified/calculated otherwise.
 
-      @param walls A list of walls to run bounce estimation off of
       @param color The color to be used in the trajectory line
 
       @return ln Line object representing the trajectory

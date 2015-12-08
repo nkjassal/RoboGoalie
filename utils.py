@@ -115,7 +115,7 @@ def get_pt2pt_dist_squared(p1, p2):
   @return The distance squared between the two points
   """
   return (p2.x - p1.x)*(p2.x-p1.x) + (p2.y-p1.y)*(p2.y-p1.y)
-  
+
 
 def get_line(obj, point, color=colors.Green):
   """
@@ -290,9 +290,35 @@ def line_intersect(ln1, ln2):
   return shapes.Point(x,y)
 
 
+def line_segment_intersect(ln1, ln2):
+  """
+  @brief determines point of intersection between two line segments
+
+  Adapted from:
+  http://stackoverflow.com/questions/3838329/how-can-i-check-if-two-segments-intersect
+
+  @param ln1 The first line to check intersection with
+  @param ln2 The second line to check intersection with
+
+  @return intersect Point object for point of intersection of ln1 and ln2.
+    Returns none if ln1 or ln2 is invalid, or if no intersection
+  """
+
+  int_pt = line_intersect(ln1, ln2)
+  if int_pt is None:
+    return None
+
+  # need to determine if int_pt is within segments
+  if ln1.x1 <= int_pt.x and int_pt.x <= ln1.x2:
+    return int_pt
+  else:
+    return None
+
 def ray_segment_intersect(ray, line):
   """
   @brief Determines where a ray intersects a line in 2D
+
+  NOTE THAT THIS FUNCTION DOES NOT WORK AS INTENDED AND CANNOT BE RELIED UPON
 
   The ray is represented by a Line object, where the direction is 
   from (x1,y1) --> (x2, y2).
@@ -328,7 +354,6 @@ def ray_segment_intersect(ray, line):
   if t1 >= 0.0 and t2 >= 0.0 and t2 <= 1.0:
     x = ray.x1 + t1 * ray_dir.x
     y = ray.y1 + t1 * ray_dir.y
-    print 1
     return shapes.Point(x, y)
   return None
 

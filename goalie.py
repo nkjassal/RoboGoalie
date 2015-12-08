@@ -35,7 +35,7 @@ def stream(tracker, camera=0):
   cv2.namedWindow(tracker.window_name)
 
   # create trajectory planner object
-  planner = TrajectoryPlanner(frames=4)
+  planner = TrajectoryPlanner(frames=4, bounces=2)
 
   # create FPS object for frame rate tracking
   fps_timer = FPS()
@@ -93,7 +93,7 @@ def stream(tracker, camera=0):
     # on the robot axis
     traj_ln = planner.get_trajectory(walls=rails) # n-frame best fit
 
-    # if trajectory not moving towards robot axis
+    # if trajectory not moving towards robot axis, no prediction
     if not planner.traj_dir_toward_line(robot_axis):
       traj_ln = None
     traj_int_pt = utils.line_intersect(traj_ln, robot_axis) # Point object
@@ -101,9 +101,10 @@ def stream(tracker, camera=0):
 
 
     # debugging bounce trajectory testing
-    bounce_pt1 = utils.ray_segment_intersect(traj, rails[0])
-    bounce_pt2 = utils.ray_segment_intersect(traj, rails[1])
-    bounce_ln = utils.get_line(closest_obj, bounce_pt2, color=colors.Magenta)
+    bounce_pt1 = utils.line_segment_intersect(traj, rails[0])
+    bounce_pt2 = utils.line_segment_intersect(traj, rails[1])
+    bounce_ln1 = utils.get_line(closest_obj, bounce_pt1, color=colors.Magenta)
+    bounce_ln2 = utils.get_line(closest_obj, bounce_pt2, color=colors.Blue)
 
     ######## ANNOTATE FRAME FOR VISUALIZATION ########
     frame = gfx.draw_lines(img=frame, line_list=rails)
@@ -119,8 +120,9 @@ def stream(tracker, camera=0):
     frame = gfx.draw_line(img=frame, line=closest_line) # closest obj>axis
     frame = gfx.draw_line(img=frame, line=traj) # draw trajectory estimate
 
-
-    #frame = gfx.draw_line(frame, bounce_ln)
+    # bounce trajectory testing
+    frame = gfx.draw_line(frame, bounce_ln1)
+    frame = gfx.draw_line(frame, bounce_ln2)
 
 
     ######## FPS COUNTER ########
