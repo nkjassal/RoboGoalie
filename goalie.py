@@ -32,6 +32,7 @@ def stream(tracker, camera=0):
   #cap = cv2.VideoCapture(camera)
   #cap = cv2.VideoCapture('media/goalie-test.mov')
   cap = cv2.VideoCapture('media/bounce.mp4')
+
   cv2.namedWindow(tracker.window_name)
 
   # create trajectory planner object
@@ -64,8 +65,8 @@ def stream(tracker, camera=0):
     object_list = tracker.find_circles(img_hsv.copy(), tracker.track_colors,
       tracker.num_objects)
     robot, robot_markers = tracker.find_robot_system(img_hsv)
-    rails = tracker.get_rails(img_hsv, robot_markers, colors.Yellow)
-    planner.walls = rails
+    walls = tracker.get_rails(img_hsv, robot_markers, colors.Yellow)
+    planner.walls = walls
 
     # Get the line/distances between the robot markers
     # robot_axis is Line object between the robot axis markers
@@ -78,7 +79,7 @@ def stream(tracker, camera=0):
     ######## TRAJECTORY PLANNING ########
     # get closest object and associated point, generate trajectory
     closest_obj_index = utils.min_index(distances) # index of min value
-    closest_line = shapes.Line()
+    closest_line = None
     if closest_obj_index is not None:
       closest_obj = object_list[closest_obj_index]
       closest_pt = points[closest_obj_index]
@@ -96,7 +97,7 @@ def stream(tracker, camera=0):
 
 
     ######## ANNOTATE FRAME FOR VISUALIZATION ########
-    frame = gfx.draw_lines(img=frame, line_list=rails)
+    frame = gfx.draw_lines(img=frame, line_list=walls)
 
     frame = gfx.draw_robot_axis(img=frame, line=robot_axis) # draw axis line
     frame = gfx.draw_robot(frame, robot) # draw robot
@@ -104,8 +105,7 @@ def stream(tracker, camera=0):
 
     frame = gfx.draw_circles(frame, object_list) # draw objects
 
-    # draw the direct object->axis point (not needed), and trajectory
-    # eventually won't need to draw closest line
+    # eventually won't need to print this one
     frame = gfx.draw_line(img=frame, line=closest_line) # closest obj>axis
 
     # draw full set of trajectories, including bounces
@@ -113,10 +113,6 @@ def stream(tracker, camera=0):
     frame = gfx.draw_line(img=frame, line=traj)
     frame=gfx.draw_line(frame,planner.debug_line)
 
-
-    # bounce trajectory testing - DELETE LATER
-    #frame = gfx.draw_line(frame, bounce_ln1)
-    #frame = gfx.draw_line(frame, bounce_ln2)
 
 
     ######## FPS COUNTER ########
