@@ -82,6 +82,7 @@ class TrajectoryPlanner:
       # List of lines representing all bounces of the trajectory prediction
       self.traj_list = []
 
+      ######## DEBUG PARAMETERS ########
       self.debug_line=None
       self.debug_pt = None
 
@@ -197,7 +198,7 @@ class TrajectoryPlanner:
 
       # return straight-line trajectory (as a 1-elem list for consistency) if
       # no bounces to be predicted
-      if self.bounce is 0: # no bounces
+      if self.bounce is 0: # no bounce prediction
         self.traj_list.append(ln)
         return self.traj_list
 
@@ -224,8 +225,8 @@ class TrajectoryPlanner:
 
         d = shapes.Point(bounce_ln.dx, bounce_ln.dy)
         n = shapes.Point(normal_dx/normal_len, normal_dy/normal_len)
-        self.debug_line = shapes.Line(x1=wall.x1, y1=wall.y1,
-          x2=wall.x1+n.x,y2=wall.y1+n.y,color=colors.Red)
+        self.debug_line = shapes.Line(x1=bounce_pt.x, y1=bounce_pt.y,
+          x2=bounce_pt.x+n.x*20,y2=bounce_pt.y+n.y*20,color=colors.Red)
 
         reflect_dx = d.x - 2 * utils.dot(d, n) * n.x
         reflect_dy = d.y - 2 * utils.dot(d, n) * n.y
