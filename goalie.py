@@ -93,6 +93,7 @@ def stream(tracker, camera=0):
     # Get trajectory line between closest object and its' point of intersection
     # on the robot axis
     traj_list = planner.get_trajectory_list(colors.Cyan)
+    traj = planner.traj
     # traj_ln = planner.get_trajectory(calculate=0) # n-frame best fit
     # # if trajectory not moving towards robot axis, no prediction
     # if not planner.traj_dir_toward_line(robot_axis):
@@ -122,7 +123,9 @@ def stream(tracker, camera=0):
 
     # draw full set of trajectories, including bounces
     frame = gfx.draw_lines(img=frame, line_list=traj_list)
-    #frame = gfx.draw_line(img=frame, line=traj) # draw trajectory estimate
+    frame = gfx.draw_line(img=frame, line=traj)
+    frame=gfx.draw_line(frame,planner.debug_line)
+
 
     # bounce trajectory testing - DELETE LATER
     #frame = gfx.draw_line(frame, bounce_ln1)

@@ -39,6 +39,7 @@ import math
 
 import cv2 # 3rd party imports
 import numpy as np
+from IPython import embed
 
 import shapes
 import colors
@@ -80,6 +81,9 @@ class TrajectoryPlanner:
       self.traj = None
       # List of lines representing all bounces of the trajectory prediction
       self.traj_list = []
+
+      self.debug_line=None
+      self.debug_pt = None
 
 
     def add_point(self, point):
@@ -188,9 +192,8 @@ class TrajectoryPlanner:
         ln = None
       start_pt = self.pt_list[self.curr_index]
       traj_int_pt = utils.line_intersect(ln, self.robot_axis) # Point object
-      traj = utils.get_line(start_pt, traj_int_pt, color=colors.Cyan)
+      traj = utils.get_line(start_pt, traj_int_pt, color=colors.Blue)
       self.traj = traj
-
 
       # return straight-line trajectory (as a 1-elem list for consistency) if
       # no bounces to be predicted
@@ -198,6 +201,8 @@ class TrajectoryPlanner:
         self.traj_list.append(ln)
         return self.traj_list
 
+
+      #### BOUNCE ####
       for wall in self.walls:
         # Determine where bounce occurs and add line up to bounce
         bounce_pt = utils.line_segment_intersect(self.traj, wall)
@@ -205,30 +210,42 @@ class TrajectoryPlanner:
           continue
 
         bounce_ln = utils.get_line(self.pt_list[self.curr_index],
-          bounce_pt, color=colors.Cyan)
+          bounce_pt, color=colors.Blue)
         self.traj_list.append(bounce_ln)
+        self.debug_pt = bounce_pt
 
 
         ### THIS IS BROKEN LOL
         # Reflect line across wall and project to next wall or axis
-        # Slope = dy/dx --> reflected slope -dx/dy, slope -> -1/slope
-        reflect_dx = -1.0
-        reflect_dy = 0
-        if math.fabs(bounce_ln.slope) < 0.0001: # avoid divide by 0
-          reflect_dy = 0.0001
-        else:
-          reflect_dy = bounce_ln.slope
+        # incoming d, normal n: outgoing r = d - 2(d dot n)*n
+        normal_dx = -wall.dy*1.0
+        normal_dy = wall.dx*1.0
+        normal_len = math.sqrt(normal_dx*normal_dx + normal_dy*normal_dy)
+
+        d = shapes.Point(bounce_ln.dx, bounce_ln.dy)
+        n = shapes.Point(normal_dx/normal_len, normal_dy/normal_len)
+        self.debug_line = shapes.Line(x1=wall.x1, y1=wall.y1,
+          x2=wall.x1+n.x,y2=wall.y1+n.y,color=colors.Red)
+
+        reflect_dx = d.x - 2 * utils.dot(d, n) * n.x
+        reflect_dy = d.y - 2 * utils.dot(d, n) * n.y
+
 
         #### ONCE NEW DX AND DY ARE FOND, IT WORKS. GETTING DX/DY FAILS ####
         new_x = bounce_pt.x + reflect_dx * 0.001
         new_y = bounce_pt.y + reflect_dy * 0.001
         new_pt = shapes.Point(new_x, new_y)
+
         new_ln = utils.get_line(bounce_pt, new_pt) # small line
         final_int = utils.line_intersect(new_ln, self.robot_axis)
-        final_ln = shapes.Line(x1=bounce_pt.x, y1=bounce_pt.y,
+        final_ln = shapes.Line(
+          x1=bounce_pt.x, y1=bounce_pt.y,
           x2=final_int.x, y2=final_int.y, color=colors.Cyan)
+
+        self.traj = final_ln
         self.traj_list.append(final_ln)
 
+        # only one bounce
         break
 
       return self.traj_list
