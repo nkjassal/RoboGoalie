@@ -46,7 +46,7 @@ import colors
 import utils
 
 class TrajectoryPlanner:
-    def __init__(self, frames=5, bounces=0, walls=[], robot_axis=None):
+    def __init__(self, frames=5, bounce=0, walls=[], robot_axis=None):
       """
       @brief Initializes parameters
 
@@ -56,7 +56,7 @@ class TrajectoryPlanner:
       @param robot_axis The robot axis to be used
       """
       self.num_frames = frames
-      self.num_bounces = bounces
+      self.bounce = bounce
 
       ######## SCENE DEFINITION PARAMETERS #########
       # Line objects representing walls for bounce prediction
@@ -197,7 +197,7 @@ class TrajectoryPlanner:
 
       # return straight-line trajectory (as a 1-elem list for consistency) if
       # no bounces to be predicted
-      if self.num_bounces is 0: # no bounces
+      if self.bounce is 0: # no bounces
         self.traj_list.append(ln)
         return self.traj_list
 
