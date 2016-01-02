@@ -30,11 +30,13 @@ def stream(tracker, camera=0):
   """
   # create video capture object for
   #cap = cv2.VideoCapture(camera)
-  cap = cv2.VideoCapture('media/goalie-test.mov')
+  #cap = cv2.VideoCapture('media/goalie-test.mov')
+  cap = cv2.VideoCapture('media/bounce.mp4')
+
   cv2.namedWindow(tracker.window_name)
 
   # create trajectory planner object
-  planner = TrajectoryPlanner(frames=4)
+  planner = TrajectoryPlanner(frames=4, bounce=1)
 
   # create FPS object for frame rate tracking
   fps_timer = FPS()
@@ -63,7 +65,8 @@ def stream(tracker, camera=0):
     object_list = tracker.find_circles(img_hsv.copy(), tracker.track_colors,
       tracker.num_objects)
     robot, robot_markers = tracker.find_robot_system(img_hsv)
-    rails = tracker.get_rails(img_hsv, robot_markers, colors.Yellow)
+    walls = tracker.get_rails(img_hsv, robot_markers, colors.Yellow)
+    planner.walls = walls
 
     # Get the line/distances between the robot markers
     # robot_axis is Line object between the robot axis markers
@@ -71,14 +74,12 @@ def stream(tracker, camera=0):
     # distanes is a list of distances of each point to the robot axis
     robot_axis = utils.line_between_circles(robot_markers)
     points, distances = utils.distance_from_line(object_list, robot_axis)
-
+    planner.robot_axis = robot_axis
 
     ######## TRAJECTORY PLANNING ########
     # get closest object and associated point, generate trajectory
     closest_obj_index = utils.min_index(distances) # index of min value
-    closest_line = shapes.Line()
-    closest_pt = shapes.Point()
-    closest_obj = shapes.Circle()
+    closest_line = None
     if closest_obj_index is not None:
       closest_obj = object_list[closest_obj_index]
       closest_pt = points[closest_obj_index]
@@ -90,19 +91,13 @@ def stream(tracker, camera=0):
 
     # Get trajectory line between closest object and its' point of intersection
     # on the robot axis
-    traj_ln = planner.get_trajectory(walls=rails) # n-frame best fit
-
-    # if trajectory not moving towards robot axis
-    if not planner.traj_dir_toward_line(robot_axis):
-      traj_ln = None
-    traj_int_pt = utils.line_intersect(traj_ln, robot_axis) # Point object
-    traj_int_pt = utils.clamp_point_to_line(traj_int_pt, robot_axis)
-    traj = utils.get_line(closest_obj, traj_int_pt, color=colors.Cyan)
+    traj_list = planner.get_trajectory_list(colors.Cyan)
+    traj = planner.traj
 
 
 
     ######## ANNOTATE FRAME FOR VISUALIZATION ########
-    frame = gfx.draw_lines(img=frame, line_list=rails)
+    frame = gfx.draw_lines(img=frame, line_list=walls)
 
     frame = gfx.draw_robot_axis(img=frame, line=robot_axis) # draw axis line
     frame = gfx.draw_robot(frame, robot) # draw robot
@@ -110,10 +105,13 @@ def stream(tracker, camera=0):
 
     frame = gfx.draw_circles(frame, object_list) # draw objects
 
-    # draw the direct object->axis point (not needed), and trajectory
-    # eventually won't need to draw closest line
+    # eventually won't need to print this one
     frame = gfx.draw_line(img=frame, line=closest_line) # closest obj>axis
-    frame = gfx.draw_line(img=frame, line=traj) # draw trajectory estimate
+
+    # draw full set of trajectories, including bounces
+    frame = gfx.draw_lines(img=frame, line_list=traj_list)
+    frame = gfx.draw_line(img=frame, line=traj)
+    frame=gfx.draw_line(frame,planner.debug_line)
 
 
 
