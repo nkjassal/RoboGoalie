@@ -216,7 +216,7 @@ class TrajectoryPlanner:
         self.debug_pt = bounce_pt
 
 
-        ### THIS IS BROKEN LOL
+        ### THIS IS BROKEN 
         # Reflect line across wall and project to next wall or axis
         # incoming d, normal n: outgoing r = d - 2(d dot n)*n
         normal_dx = -wall.dy*1.0
@@ -228,8 +228,8 @@ class TrajectoryPlanner:
         self.debug_line = shapes.Line(x1=bounce_pt.x, y1=bounce_pt.y,
           x2=bounce_pt.x+n.x*20,y2=bounce_pt.y+n.y*20,color=colors.Red)
 
-        reflect_dx = d.x - 2 * utils.dot(d, n) * n.x
-        reflect_dy = d.y - 2 * utils.dot(d, n) * n.y
+        reflect_dx = (d.x - 2 * utils.dot(d, n) * n.x)
+        reflect_dy = (d.y - 2 * utils.dot(d, n) * n.y)
 
 
         #### ONCE NEW DX AND DY ARE FOND, IT WORKS. GETTING DX/DY FAILS ####

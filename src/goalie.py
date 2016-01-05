@@ -30,8 +30,8 @@ def stream(tracker, camera=0):
   """
   # create video capture object for
   #cap = cv2.VideoCapture(camera)
-  #cap = cv2.VideoCapture('media/goalie-test.mov')
-  cap = cv2.VideoCapture('media/bounce.mp4')
+  #cap = cv2.VideoCapture('../media/goalie-test.mov')
+  cap = cv2.VideoCapture('../media/bounce.mp4')
 
   cv2.namedWindow(tracker.window_name)
 
@@ -46,7 +46,7 @@ def stream(tracker, camera=0):
     fps_timer.start_iteration()
 
     ######## CAPTURE AND PROCESS FRAME ########
-    #frame = cv2.imread('media/rails-1.png', 1) # for image testing
+    #frame = cv2.imread('../media/rails-1.png', 1) # for image testing
     ret, frame = cap.read()
     if ret is False:
       print 'Frame not read'
@@ -89,8 +89,7 @@ def stream(tracker, camera=0):
       planner.add_point(closest_obj)
 
 
-    # Get trajectory line between closest object and its' point of intersection
-    # on the robot axis
+    # Get trajectory - list of elements for bounces, and final line traj
     traj_list = planner.get_trajectory_list(colors.Cyan)
     traj = planner.traj
 
@@ -110,7 +109,7 @@ def stream(tracker, camera=0):
 
     # draw full set of trajectories, including bounces
     frame = gfx.draw_lines(img=frame, line_list=traj_list)
-    frame = gfx.draw_line(img=frame, line=traj)
+    #frame = gfx.draw_line(img=frame, line=traj)
     frame=gfx.draw_line(frame,planner.debug_line)
 
 
