@@ -29,13 +29,13 @@ class MotorController:
         motor_portnum=1,
         motor_steps=200,
         gear_radius=0.3,
-        robot_coord,
         left_rail_coord,
         rght_rail_coord,
         edge_length=0.0,
         KP=1,
         KI=1,
         KD=1,
+        robot_coord,
         KI_error_thresh=0.2,
         error_thresh=0.2
         ):
@@ -48,7 +48,6 @@ class MotorController:
         controlled
         @param motor_steps The steps per rotation of the motor
         @param radius of the gear in cm
-        @param robot_coord The location of the robot in a Point object
         @param left_right_coord The coordinate of the left rail, from the 
         perspective of the robot. This is necessary to ensure that the robot 
         does not collide with the left rail (Point object)
@@ -56,9 +55,11 @@ class MotorController:
         perspective of the robot. This is necessary to ensure that the robot 
         does not collide with the right rail (Point object)
         @param edge_length The length of the edge on which the robot traverses
+        in cm
         @param KP The proportional constant for PID control
         @param KI The integral constant for PID control
         @param KD The derivative constant for PID control
+        @param robot_coord The location of the robot in a Point object
         @param KI_error_thresh The error value less than which KI is considered
         zero for PID control
         @param error_thresh The error value less than which the robot is 
@@ -68,15 +69,19 @@ class MotorController:
         mh = Adafruit_MotorHAT(addr = HAT_addr)
         self.motor_steps = motor_steps
         self.gear_radius = gear_radius
+        self.gear_circum = 2.0*3.14159265*gear_radius
         #The motor object being controlled
         self.motor = mh.getStepper(motor_steps, motor_portnum)
         self.left_rail_coord = left_rail_coord
         self.rght_rail_coord = rght_rail_coord
         #The distance between the rails in terms of the units used in 
         #the current camera angle
-        scaled_edge_length = utils.get_pt2pt_dist(left_rail_coord,
+        self.scaled_edge_length = utils.get_pt2pt_dist(left_rail_coord,
                                                   rght_rail_coord, 0)
         self.edge_length = edge_length
+        self.scaled_ovr_real = self.scaled_edge_length/self.edge_length
+
+        #PID control stuff, might not need at all
         self.KP=KP
         self.KI=KI
         self.KD=KD
@@ -119,7 +124,9 @@ class MotorController:
     def move_to_loc(self, robot_coord, target_coord, style, reverse_dir=0):
         """
         @brief Moves the robot to a target coordinate by calling the 
-        motor_worker function
+        motor_worker function. Returns the thread running motor_worker so 
+        the calling function can check if the motor is still moving with
+        the 'moving' field
 
         @param robot_loc The current location of the robot in a Point object
         @param target_loc The desired location for the robot in a Point object
@@ -132,16 +139,43 @@ class MotorController:
 
         """
 
+        #Distances of the robot from the left or right rails, respectively
+        dist_to_left = utils.get_pt2pt_dist(robot_coord, self.left_rail_coord)
+        dist_to_rght = utils.get_pt2pt_dist(robot_coord, self.rght_rail_coord)
+        dist_to_trgt = utils.get_pt2pt_dist(robot_coord, target_coord)
+        #Real distance to target in cm
+        real_dist_to_trgt = dist_to_trgt/self.scaled_ovr_real
 
+        #Compute direction in which the robot needs to move
+        #Point object is used as a vector in this case to use utils.dot
+        #Vector from robot to left rail
+        robot_to_left = Point(self.left_rail_coord.x-self.robot_coord.x,
+                              self.left_rail_coord.y-self.robot_coord.y)
+        # #Vector from robot to right rail, probably don't need
+        # robot_to_rght = Point(self.rght_rail_coord.x-self.robot_coord.x,
+        #                       self.rght_rail_coord.y-self.robot_coord.y)
+        #Vector from robot to target
+        robot_to_trgt = Point(target_coord.x-self.robot_coord.x,
+                              target_coord.y-self.robot_coord.y)
+        #Use dot product to find if the direction is towards left or right
+        #Direction: -1->left, 1->right
+        direction = -1
+        if utils.dot(robot_to_left, robot_to_trgt) < 0:
+            direction = 1
+        if reverse_dir is 1:
+            direction = direction * -1
+        motor_dir = Adafruit_MotorHAT.FORWARD
+        if direction is 1:
+            motor_dir = Adafruit_MotorHAT.BACKWARD
 
+        #Compute how many steps the motor should move
+        steps = (real_dist_to_trgt/gear_circum)*self.motor_steps
+        if style = "MICROSTEP":
+            steps = steps * 8
 
-
-
-
-
-
-
-
-
-        
-
+        #Create the thread controlling the motor and run it
+        motor_thread = threading.Thread(target=motor_worker, 
+                                args=(self.motor, steps, motor_dir, style))
+        self.moving = True
+        motor_thread.start()
+        return motor_thread
