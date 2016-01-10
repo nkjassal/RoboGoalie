@@ -199,11 +199,11 @@ class TrajectoryPlanner:
       # return straight-line trajectory (as a 1-elem list for consistency) if
       # no bounces to be predicted
       if self.bounce is 0: # no bounce prediction
-        self.traj_list.append(ln)
+        self.traj_list.append(self.traj)
         return self.traj_list
 
 
-      #### BOUNCE ####
+      #### BOUNCE (broken) ####
       for wall in self.walls:
         # Determine where bounce occurs and add line up to bounce
         bounce_pt = utils.line_segment_intersect(self.traj, wall)

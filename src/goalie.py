@@ -36,7 +36,8 @@ def stream(tracker, camera=0):
   cv2.namedWindow(tracker.window_name)
 
   # create trajectory planner object
-  planner = TrajectoryPlanner(frames=4, bounce=1)
+  # value of bounce determines # of bounces. 0 is default (no bounces)
+  planner = TrajectoryPlanner(frames=4, bounce=0)
 
   # create FPS object for frame rate tracking
   fps_timer = FPS()
@@ -90,6 +91,7 @@ def stream(tracker, camera=0):
 
 
     # Get trajectory - list of elements for bounces, and final line traj
+    # Last line intersects with robot axis
     traj_list = planner.get_trajectory_list(colors.Cyan)
     traj = planner.traj
 
@@ -109,8 +111,8 @@ def stream(tracker, camera=0):
 
     # draw full set of trajectories, including bounces
     frame = gfx.draw_lines(img=frame, line_list=traj_list)
-    #frame = gfx.draw_line(img=frame, line=traj)
-    frame=gfx.draw_line(frame,planner.debug_line)
+    #frame = gfx.draw_line(img=frame, line=traj) # for no bounces
+    #frame=gfx.draw_line(frame,planner.debug_line) # for debug
 
 
 
