@@ -96,6 +96,16 @@ def stream(tracker, camera=0):
     traj = planner.traj
 
 
+    ######## MOTOR CONTROL ########
+    # First clamp final trajectory intersection to robot axis
+    axis_intersect = shapes.Point(planner.traj.x2, planner.traj.y2)
+    # The point to send the robot to during this frame
+    traj_axis_pt = clamp_point_to_line(axis_intersect, robot_axis)
+    
+    # motor code
+    #move_to_loc(robot, traj_axis_pt, INTERLEAVED, reverse_dir=0):
+
+
 
     ######## ANNOTATE FRAME FOR VISUALIZATION ########
     frame = gfx.draw_lines(img=frame, line_list=walls)
