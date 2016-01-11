@@ -179,3 +179,10 @@ class MotorController:
         self.moving = True
         motor_thread.start()
         return motor_thread
+
+    def is_moving(self):
+        """
+        @brief Returns whether or not the motor is currently in motion
+
+        """
+        return self.moving
