@@ -140,7 +140,7 @@ def stream(tracker, camera=0):
     fps_timer.display(frame)
 
     ######## DISPLAY FRAME ON SCREEN ########
-    cv2.imshow(tracker.window_name,frame)
+    #cv2.imshow(tracker.window_name,frame)
     # quit by pressing q
     if cv2.waitKey(1) & 0xFF == ord('q'):
       break
