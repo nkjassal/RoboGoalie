@@ -113,9 +113,9 @@ class BallTracker:
       h_scaled,w_scaled = tuple(scale * np.asarray(frame.shape[:2]))
       frame = cv2.resize(frame, (int(w_scaled), int(h_scaled)), 
         cv2.INTER_NEAREST)
-    cv2.flip(src=frame,dst=frame, flipCode=1) # flip over y for visual clarity
+    #cv2.flip(src=frame,dst=frame, flipCode=1) # flip over y for visual clarity
 
-    blur = cv2.GaussianBlur(frame, (blur_window,blur_window), 0) # -0 frames
+    #blur = cv2.GaussianBlur(frame, (blur_window,blur_window), 0) # -0 frames
     img_hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
     return frame, img_hsv
 
