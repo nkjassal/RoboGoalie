@@ -29,9 +29,9 @@ def stream(tracker, camera=0):
     camera=1 is generally the first webcam plugged in
   """
   # create video capture object for
-  #cap = cv2.VideoCapture(camera)
+  cap = cv2.VideoCapture(camera)
   #cap = cv2.VideoCapture('../media/goalie-test.mov')
-  cap = cv2.VideoCapture('../media/bounce.mp4')
+  #cap = cv2.VideoCapture('../media/bounce.mp4')
 
   cv2.namedWindow(tracker.window_name)
 
@@ -40,7 +40,7 @@ def stream(tracker, camera=0):
   planner = TrajectoryPlanner(frames=4, bounce=0)
 
   # create FPS object for frame rate tracking
-  fps_timer = FPS()
+  fps_timer = FPS(num_frames=20)
 
   while(True):
     # start fps timer
@@ -98,12 +98,20 @@ def stream(tracker, camera=0):
 
     ######## MOTOR CONTROL ########
     # First clamp final trajectory intersection to robot axis
-    axis_intersect = shapes.Point(planner.traj.x2, planner.traj.y2)
-    # The point to send the robot to during this frame
-    traj_axis_pt = clamp_point_to_line(axis_intersect, robot_axis)
+    if planner.traj is not None:
+      axis_intersect = shapes.Point(planner.traj.x2, planner.traj.y2)
+      # The point to send the robot to during this frame
+      traj_axis_pt = utils.clamp_point_to_line(axis_intersect, robot_axis)
     
     # motor code
-    #move_to_loc(robot, traj_axis_pt, INTERLEAVED, reverse_dir=0):
+    # move_to_loc(robot, traj_axis_pt, SINGLE, reverse_dir=0):
+
+
+
+    ######## SOLENOID CODE ########
+    # Checks when an object is within a threshold of the robot, then sends
+    # the solenoid a signal to push out to hit the ball.
+
 
 
 
