@@ -139,6 +139,10 @@ class MotorController:
 
         """
 
+        if self.moving = True:
+            print "Cannot move motor when motor is already moving"
+            return
+
         #Distances of the robot from the left or right rails, respectively
         dist_to_left = utils.get_pt2pt_dist(robot_coord, self.left_rail_coord)
         dist_to_rght = utils.get_pt2pt_dist(robot_coord, self.rght_rail_coord)
@@ -178,7 +182,6 @@ class MotorController:
                                 args=(self.motor, steps, motor_dir, style))
         self.moving = True
         motor_thread.start()
-        return motor_thread
 
     def is_moving(self):
         """
