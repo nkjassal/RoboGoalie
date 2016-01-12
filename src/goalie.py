@@ -31,10 +31,10 @@ def stream(tracker, camera=0):
   """
   # create video capture object for
   #cap = cv2.VideoCapture(camera)
-  cap = WebcamVideoStream(camera).start() # only for webcam testing
+  #cap = WebcamVideoStream(camera).start() # only for webcam testing
 
   #cap = cv2.VideoCapture('../media/goalie-test.mov')
-  #cap = cv2.VideoCapture('../media/bounce.mp4')
+  cap = cv2.VideoCapture('../media/bounce.mp4')
 
   cv2.namedWindow(tracker.window_name)
 
@@ -45,14 +45,17 @@ def stream(tracker, camera=0):
   # create FPS object for frame rate tracking
   fps_timer = FPS(num_frames=20)
 
+  fourcc = cv2.VideoWriter_fourcc(*'XVID')
+  out = cv2.VideoWriter('output.avi', fourcc, 20.0, (640,480))
+
   while(True):
     # start fps timer
     fps_timer.start_iteration()
 
     ######## CAPTURE AND PROCESS FRAME ########
     #frame = cv2.imread('../media/rails-1.png', 1) # for image testing
-    ret, frame = True, cap.read() # for webcam
-    #ret, frame = cap.read() # for non-webcam
+    #ret, frame = True, cap.read() # for webcam
+    ret, frame = cap.read() # for non-webcam
     if ret is False:
       print 'Frame not read'
       exit()
@@ -142,6 +145,8 @@ def stream(tracker, camera=0):
     fps_timer.get_fps()
     fps_timer.display(frame)
 
+    out.write(frame)
+
     ######## DISPLAY FRAME ON SCREEN ########
     cv2.imshow(tracker.window_name,frame)
     # quit by pressing q
@@ -149,8 +154,8 @@ def stream(tracker, camera=0):
       break
 
   # release capture
-  cap.stop() # webcam testing
-  #cap.release() # for testing w/o webcam
+  #cap.stop() # webcam testing
+  cap.release() # for testing w/o webcam
   cv2.destroyAllWindows()
 
 
