@@ -137,7 +137,7 @@ def stream(tracker, camera=0):
     ######## FPS COUNTER ########
     fps_timer.get_fps()
     print fps_timer.fps_val
-    fps_timer.display(frame)
+    #fps_timer.display(frame)
 
     ######## DISPLAY FRAME ON SCREEN ########
     #cv2.imshow(tracker.window_name,frame)
