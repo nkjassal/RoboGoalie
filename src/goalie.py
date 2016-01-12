@@ -116,31 +116,30 @@ def stream(tracker, camera=0):
 
 
     ######## ANNOTATE FRAME FOR VISUALIZATION ########
-    # frame = gfx.draw_lines(img=frame, line_list=walls)
+    frame = gfx.draw_lines(img=frame, line_list=walls)
 
-    # frame = gfx.draw_robot_axis(img=frame, line=robot_axis) # draw axis line
-    # frame = gfx.draw_robot(frame, robot) # draw robot
-    # frame = gfx.draw_robot_markers(frame, robot_markers) # draw markers
+    frame = gfx.draw_robot_axis(img=frame, line=robot_axis) # draw axis line
+    frame = gfx.draw_robot(frame, robot) # draw robot
+    frame = gfx.draw_robot_markers(frame, robot_markers) # draw markers
 
-    # frame = gfx.draw_circles(frame, object_list) # draw objects
+    frame = gfx.draw_circles(frame, object_list) # draw objects
 
-    # # eventually won't need to print this one
-    # frame = gfx.draw_line(img=frame, line=closest_line) # closest obj>axis
+    # eventually won't need to print this one
+    frame = gfx.draw_line(img=frame, line=closest_line) # closest obj>axis
 
-    # # draw full set of trajectories, including bounces
-    # frame = gfx.draw_lines(img=frame, line_list=traj_list)
-    # #frame = gfx.draw_line(img=frame, line=traj) # for no bounces
-    # #frame=gfx.draw_line(frame,planner.debug_line) # for debug
+    # draw full set of trajectories, including bounces
+    frame = gfx.draw_lines(img=frame, line_list=traj_list)
+    #frame = gfx.draw_line(img=frame, line=traj) # for no bounces
+    #frame=gfx.draw_line(frame,planner.debug_line) # for debug
 
 
 
     ######## FPS COUNTER ########
     fps_timer.get_fps()
-    print fps_timer.fps_val
-    #fps_timer.display(frame)
+    fps_timer.display(frame)
 
     ######## DISPLAY FRAME ON SCREEN ########
-    #cv2.imshow(tracker.window_name,frame)
+    cv2.imshow(tracker.window_name,frame)
     # quit by pressing q
     if cv2.waitKey(1) & 0xFF == ord('q'):
       break
