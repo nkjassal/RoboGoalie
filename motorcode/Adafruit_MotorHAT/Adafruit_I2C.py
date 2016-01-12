@@ -39,9 +39,10 @@ class Adafruit_I2C(object):
     # By default, the correct I2C bus is auto-detected using /proc/cpuinfo
     # Alternatively, you can hard-code the bus version below:
     # self.bus = smbus.SMBus(0); # Force I2C0 (early 256MB Pi's)
-    self.bus = smbus.SMBus(1); # Force I2C1 (512MB Pi's)
-    # print busnum
-    # self.bus = smbus.SMBus(busnum if busnum >= 0 else Adafruit_I2C.getPiI2CBusNumber())
+    # self.bus = smbus.SMBus(1); # Force I2C1 (512MB Pi's)
+    print busnum
+    print Adafruit_I2C.getPiI2CBusNumber()
+    self.bus = smbus.SMBus(busnum if busnum >= 0 else Adafruit_I2C.getPiI2CBusNumber())
     self.debug = debug
 
   def reverseByteOrder(self, data):
@@ -135,7 +136,7 @@ class Adafruit_I2C(object):
     "Reads an unsigned 16-bit value from the I2C device"
     try:
       result = self.bus.read_word_data(self.address,reg)
-      # Swap bytes if using big endian because read_word_data assumes little 
+      # Swap bytes if using big endian because read_word_data assumes little
       # endian on ARM (little endian) systems.
       if not little_endian:
         result = ((result << 8) & 0xFF00) + (result >> 8)
