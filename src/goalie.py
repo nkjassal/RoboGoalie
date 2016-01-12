@@ -52,7 +52,7 @@ def stream(tracker, camera=0):
     ######## CAPTURE AND PROCESS FRAME ########
     #frame = cv2.imread('../media/rails-1.png', 1) # for image testing
     ret, frame = True, cap.read() # for webcam
-    ret, frame = cap.read() # for non-webcam
+    #ret, frame = cap.read() # for non-webcam
     if ret is False:
       print 'Frame not read'
       exit()
