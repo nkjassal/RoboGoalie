@@ -30,8 +30,8 @@ def stream(tracker, camera=0):
     camera=1 is generally the first webcam plugged in
   """
   # create video capture object for
-  cap = cv2.VideoCapture(camera)
-  #cap = WebcamVideoStream(camera).start() # only for webcam testing
+  #cap = cv2.VideoCapture(camera)
+  cap = WebcamVideoStream(camera).start() # only for webcam testing
 
   #cap = cv2.VideoCapture('../media/goalie-test.mov')
   #cap = cv2.VideoCapture('../media/bounce.mp4')
@@ -51,7 +51,8 @@ def stream(tracker, camera=0):
 
     ######## CAPTURE AND PROCESS FRAME ########
     #frame = cv2.imread('../media/rails-1.png', 1) # for image testing
-    ret, frame = cap.read()
+    ret, frame = True, cap.read() # for webcam
+    ret, frame = cap.read() # for non-webcam
     if ret is False:
       print 'Frame not read'
       exit()
@@ -148,8 +149,8 @@ def stream(tracker, camera=0):
       break
 
   # release capture
-  #cap.stop() # webcam testing
-  cap.release() # for testing w/o webcam
+  cap.stop() # webcam testing
+  #cap.release() # for testing w/o webcam
   cv2.destroyAllWindows()
 
 
