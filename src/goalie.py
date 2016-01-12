@@ -163,7 +163,7 @@ def main():
   robot_marker_color = colors.Blue
   robot_color = colors.White
   rail_color = colors.Green
-  track_colors = [colors.Blue]
+  track_colors = [colors.Black]
   tracker = bt.BallTracker(
     window_name="Robot Goalie Tracking Display",
     robot_color=robot_color,
@@ -171,7 +171,7 @@ def main():
     rail_color=rail_color,
     track_colors=track_colors, 
     radius=13,
-    num_objects = 2) 
+    num_objects = 1) 
 
   stream(tracker, camera=0) # begin tracking and object detection
 
