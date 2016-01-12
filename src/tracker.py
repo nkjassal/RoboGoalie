@@ -115,7 +115,7 @@ class BallTracker:
         cv2.INTER_NEAREST)
     #cv2.flip(src=frame,dst=frame, flipCode=1) # flip over y for visual clarity
 
-    #blur = cv2.GaussianBlur(frame, (blur_window,blur_window), 0) # -0 frames
+    blur = frame #cv2.GaussianBlur(frame, (blur_window,blur_window), 0) # -0 frames
     img_hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
     return frame, img_hsv
 
