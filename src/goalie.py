@@ -34,7 +34,6 @@ def stream(tracker, camera=0):
   #cap = cv2.VideoCapture('../media/bounce.mp4')
 
   cv2.namedWindow(tracker.window_name)
-  cap.set(cv2.CAP_PROP_FPS,30)
 
   # create trajectory planner object
   # value of bounce determines # of bounces. 0 is default (no bounces)

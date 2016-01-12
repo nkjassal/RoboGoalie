@@ -52,7 +52,7 @@ class FPS:
     if self.count is self.num_frames:
       elapsed_time = time.time() - self.old_time # get elapsed time
 
-      self.fps_val = 1.8 * self.num_frames / elapsed_time
+      self.fps_val = 1.0 * self.num_frames / elapsed_time
       self.fps_str = str(round(self.fps_val, 1))
 
       self.count = 0 # reset count
