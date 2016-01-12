@@ -18,6 +18,7 @@ import tracker as bt
 import graphics as gfx
 from fps import FPS
 from trajectory import TrajectoryPlanner
+from videostream import WebcamVideoStream
 
 
 def stream(tracker, camera=0):
@@ -30,6 +31,8 @@ def stream(tracker, camera=0):
   """
   # create video capture object for
   cap = cv2.VideoCapture(camera)
+  #cap = WebcamVideoStream(camera).start() # only for webcam testing
+
   #cap = cv2.VideoCapture('../media/goalie-test.mov')
   #cap = cv2.VideoCapture('../media/bounce.mp4')
 
@@ -145,7 +148,8 @@ def stream(tracker, camera=0):
       break
 
   # release capture
-  cap.release()
+  #cap.stop() # webcam testing
+  cap.release() # for testing w/o webcam
   cv2.destroyAllWindows()
 
 
