@@ -155,6 +155,17 @@ class Cyan:
   lower1 = (0,0,0)  # no second range needed
   upper1 = (0,0,0)
 
+class Black:
+  """
+  @brief BGR and HSV range for black.
+  """
+  bgr = (0, 0, 0)
+
+  lower0 = (0, 0, 0)
+  upper0 = (255, 255, 80)
+  lower1 = (0,0,0)
+  upper1 = (0,0,0)
+
 
 
 
