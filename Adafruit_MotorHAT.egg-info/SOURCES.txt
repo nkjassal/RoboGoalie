@@ -1,0 +1,5 @@
+Adafruit_MotorHAT.egg-info/PKG-INFO
+Adafruit_MotorHAT.egg-info/SOURCES.txt
+Adafruit_MotorHAT.egg-info/dependency_links.txt
+Adafruit_MotorHAT.egg-info/requires.txt
+Adafruit_MotorHAT.egg-info/top_level.txt
