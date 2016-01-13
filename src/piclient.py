@@ -24,13 +24,12 @@ import socket
 
 import colors
 import shapes
-import motorcontroller
+#import motorcontroller
 
 def main():
   """ 
   @brief Continually polls server for packets, and processes
   """    
-  
   ### test code
   while 1:
     try:
@@ -38,9 +37,10 @@ def main():
       host = '169.254.16.91'
       port = 420
       s.connect((host, port))
+      print 'yay pi connected, prepare to receive:'
       print(s.recv(1024))
       s.close()
-    except ClientReceiveError:
+    except IOError:
       pass
 
 
