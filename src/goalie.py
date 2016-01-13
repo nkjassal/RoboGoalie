@@ -50,11 +50,11 @@ def stream(tracker, camera=0, server=0):
   ######## CV SETUP ########
 
   # create video capture object for
-  cap = cv2.VideoCapture(camera)
+  #cap = cv2.VideoCapture(camera)
   #cap = WebcamVideoStream(camera).start() # WEBCAM
 
   #cap = cv2.VideoCapture('../media/goalie-test.mov')
-  #cap = cv2.VideoCapture('../media/bounce.mp4')
+  cap = cv2.VideoCapture('../media/bounce.mp4')
 
   cv2.namedWindow(tracker.window_name)
 

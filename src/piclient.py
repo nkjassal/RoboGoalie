@@ -42,11 +42,9 @@ def main():
   start_t = time.time()
   while True:
     try:   
-      # Send data
+      # Receive data
       data = sock.recv(1024)
-      new_t = time.time()
-      print new_t - start_t
-      start_t = new_t
+
 
     except IOError:
       pass
