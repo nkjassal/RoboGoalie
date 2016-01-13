@@ -10,6 +10,7 @@ import time # for fps counter
 import cv2
 import numpy as np
 from IPython import embed # debugging
+import socket
 
 import colors # application specific
 import shapes
@@ -29,9 +30,19 @@ def stream(tracker, camera=0):
   @param camera The camera number (0 is default) for getting frame data
     camera=1 is generally the first webcam plugged in
   """
+
+  ######## SERVER SETUP ########
+  s = socket.socket()
+  host = '169.254.16.91'
+  s.bind((host,port))
+  s.listen(5)
+
+
+  ######## CV SETUP ########
+
   # create video capture object for
   cap = cv2.VideoCapture(camera)
-  #cap = WebcamVideoStream(camera).start() # only for webcam testing
+  #cap = WebcamVideoStream(camera).start() # WEBCAM
 
   #cap = cv2.VideoCapture('../media/goalie-test.mov')
   #cap = cv2.VideoCapture('../media/bounce.mp4')
@@ -52,7 +63,7 @@ def stream(tracker, camera=0):
 
     ######## CAPTURE AND PROCESS FRAME ########
     #frame = cv2.imread('../media/rails-1.png', 1) # for image testing
-    #ret, frame = True, cap.read() # for webcam
+    #ret, frame = True, cap.read() # WEBCAM
     ret, frame = cap.read() # for non-webcam
     if ret is False:
       print 'Frame not read'
@@ -119,6 +130,13 @@ def stream(tracker, camera=0):
 
 
 
+    ######## SEND DATA TO CLIENT ########
+    c, addr = s.accept()
+    print('Connected!')
+    c.send('Let\'s send data yay')
+    c.close()
+
+
 
     ######## ANNOTATE FRAME FOR VISUALIZATION ########
     frame = gfx.draw_lines(img=frame, line_list=walls)
@@ -151,7 +169,7 @@ def stream(tracker, camera=0):
       break
 
   # release capture
-  #cap.stop() # webcam testing
+  #cap.stop() # WEBCAM
   cap.release() # for testing w/o webcam
   cv2.destroyAllWindows()
 
@@ -163,7 +181,7 @@ def main():
   robot_marker_color = colors.Blue
   robot_color = colors.White
   rail_color = colors.Green
-  track_colors = [colors.Black]
+  track_colors = [colors.Red]
   tracker = bt.BallTracker(
     window_name="Robot Goalie Tracking Display",
     robot_color=robot_color,
