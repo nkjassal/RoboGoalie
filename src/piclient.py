@@ -21,6 +21,7 @@ D robot_pt target_pt
 @author Neil Jassal
 """
 import socket
+import time
 
 import colors
 import shapes
@@ -31,18 +32,27 @@ def main():
   @brief Continually polls server for packets, and processes
   """    
   ### test code
-  while 1:
-    try:
-      s = socket.socket()
-      host = '169.254.16.91'
-      port = 420
-      s.connect((host, port))
-      print 'yay pi connected, prepare to receive:'
-      print(s.recv(1024))
-      s.close()
+  # Create a TCP/IP socket
+  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+  # Connect the socket to the port where the server is listening
+  server_address = ('169.254.88.56', 10000)
+  sock.connect(server_address)
+
+  start_t = time.time()
+  while True:
+    try:   
+      # Send data
+      data = sock.recv(1024)
+      new_t = time.time()
+      print new_t - start_t
+      start_t = new_t
+
     except IOError:
       pass
 
+  print 'closing socket'
+  sock.close()
 
   # Wait for setup data packet before continuing
   # Use setup data packet to create motorcontroller object

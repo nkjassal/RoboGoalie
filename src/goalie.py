@@ -22,7 +22,7 @@ from trajectory import TrajectoryPlanner
 from videostream import WebcamVideoStream
 
 
-def stream(tracker, camera=0):
+def stream(tracker, camera=0, server=0):
   """ 
   @brief Captures video and runs tracking and moves robot accordingly
 
@@ -32,24 +32,29 @@ def stream(tracker, camera=0):
   """
 
   ######## SERVER SETUP ########
-  try:
-    s = socket.socket()
-    host = '169.254.16.91'
-    port = 420
-    s.bind((host,port))
-    s.listen(5)
-  except IOError:
-    pass
+  if server:
+    # Create a TCP/IP socket
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_address = ('169.254.88.56', 10000)
+    print 'starting up on %s port %s' % server_address
+    sock.bind(server_address)
+    sock.listen(1)
+    connection, client_address = None, None
+    while True:
+      # Wait for a connection
+      print 'waiting for a connection'
+      connection, client_address = sock.accept()
+      break
 
 
   ######## CV SETUP ########
 
   # create video capture object for
-  #cap = cv2.VideoCapture(camera)
+  cap = cv2.VideoCapture(camera)
   #cap = WebcamVideoStream(camera).start() # WEBCAM
 
   #cap = cv2.VideoCapture('../media/goalie-test.mov')
-  cap = cv2.VideoCapture('../media/bounce.mp4')
+  #cap = cv2.VideoCapture('../media/bounce.mp4')
 
   cv2.namedWindow(tracker.window_name)
 
@@ -135,14 +140,12 @@ def stream(tracker, camera=0):
 
 
     ######## SEND DATA TO CLIENT ########
-    try:
-      c, addr = s.accept()
-      print('Connected!')
-      c.send('This is data being sent yay')
-      c.close()
-    except IOError:
-      print 'Failed to send data'
-      pass
+    if server:
+      try:
+        data = 'DOES THIS SEND WTF'
+        connection.sendall(data)
+      except IOError:
+        pass
 
 
 
@@ -199,7 +202,7 @@ def main():
     radius=13,
     num_objects = 1) 
 
-  stream(tracker, camera=0) # begin tracking and object detection
+  stream(tracker, camera=0, server=0) # begin tracking and object detection
 
 
 
