@@ -32,6 +32,9 @@ def main():
   @brief Continually polls server for packets, and processes
   """    
   
+  # motorcontroller object, initialized once setup gets called
+  motorcontroller = None
+
   # Used to determine if should look to setup the motorcontroller, or if it's
   # already been done, then to poll for data
   setup_done = False
@@ -61,6 +64,9 @@ def main():
 
           # UPDATE TO PERFORM SETUP TASKS
           # PARSE ARGUMENTS AND SEND TO MOTORCONTROLLER SETUP
+
+          # motorcontroller = Motorcontroller(left_rail_coord=axis_pt1,
+            # right_rail_coord=axis_pt2, robot_coord=robot_pt)
           continue 
         else:
           continue
@@ -71,6 +77,9 @@ def main():
 
       # PARSE DATA PACKET AND SEND COMMAND TO MOTORCONTROLLER
       print 'data' + str(data)
+
+      # motorcontroller.move_to_loc(robot_coord=robot,
+        # target_coord=target, style=SINGLE)
 
 
 
