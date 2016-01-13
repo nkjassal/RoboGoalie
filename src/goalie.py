@@ -32,6 +32,7 @@ def stream(tracker, camera=0, server=0):
   """
 
   ######## SERVER SETUP ########
+  motorcontroller_setup = False
   if server:
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -142,10 +143,20 @@ def stream(tracker, camera=0, server=0):
     ######## SEND DATA TO CLIENT ########
     if server:
       try:
-        data = 'DOES THIS SEND WTF'
-        connection.sendall(data)
+        if motorcontroller_setup is False:
+          # send S packet for motorcontroller setup
+          motorcontroller_setup = True
+
+          data = 'S S PACKET YAY'
+          connection.sendall(data)
+
+        # setup is done, send D packet with movement data
+        else:
+          data = 'D PACKET YAY'
+          connection.sendall(data)
+
       except IOError:
-        pass
+        pass # don't send anything
 
 
 

@@ -31,10 +31,13 @@ def main():
   """ 
   @brief Continually polls server for packets, and processes
   """    
-  ### test code
+  
+  # Used to determine if should look to setup the motorcontroller, or if it's
+  # already been done, then to poll for data
+  setup_done = False
+
   # Create a TCP/IP socket
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
   # Connect the socket to the port where the server is listening
   server_address = ('169.254.88.56', 10000)
   sock.connect(server_address)
@@ -44,6 +47,34 @@ def main():
     try:   
       # Receive data
       data = sock.recv(1024)
+
+
+      # Checks to ensure setup has been done or not - this is accounted for
+      # on the server side, but check for redundancy
+
+      # only check for S packet, otherwise break
+      if setup_done is False:
+        if data[:1] == 'S':
+          print 'setup: ' + str(data)
+          setup_done = True
+
+          # UPDATE TO PERFORM SETUP TASKS
+          # PARSE ARGUMENTS AND SEND TO MOTORCONTROLLER SETUP
+          continue 
+        else:
+          continue
+      
+      # setup_done true, check for data
+      if data[:1] != 'D': # skip if not a data packet
+        continue
+
+      # PARSE DATA PACKET AND SEND COMMAND TO MOTORCONTROLLER
+      print 'data' + str(data)
+
+
+
+
+
 
 
     except IOError:
