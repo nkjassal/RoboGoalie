@@ -36,7 +36,8 @@ def stream(tracker, camera=0, server=0):
   if server:
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_address = ('169.254.88.56', 10000)
+    #server_address = ('169.254.88.56', 10000)
+    server_address = ('localhost', 10000) # for local testing
     print 'starting up on %s port %s' % server_address
     sock.bind(server_address)
     sock.listen(1)
@@ -213,7 +214,7 @@ def main():
     radius=13,
     num_objects = 1) 
 
-  stream(tracker, camera=0, server=0) # begin tracking and object detection
+  stream(tracker, camera=0, server=1) # begin tracking and object detection
 
 
 
