@@ -27,6 +27,13 @@ class Point:
     self.y = y
     self.color = color
 
+  def to_string(self):
+    """
+    @brief Gets a string of the form X,Y
+    @return A string of the form 'X,Y', X and Y being the coordinate value
+    """
+    return str(self.x) + ',' + str(self.y)
+
 class Circle:
   def __init__(self, x=0, y=0, radius=0, centroid=(0,0), color=colors.Green):
     """
@@ -47,6 +54,14 @@ class Circle:
     self.radius = radius
     self.centroid = centroid
     self.color = color
+
+  def to_string(self):
+    """
+    @brief Gets string of the form X,Y,radius
+    @return String of form 'X,Y,R', X and Y being coordinates of the center
+      and R being the radius
+    """
+    return str(self.x) + ',' + str(self.y) + ',' + str(self.radius)
 
 
 class Line:
