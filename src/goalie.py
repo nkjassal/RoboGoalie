@@ -32,10 +32,14 @@ def stream(tracker, camera=0):
   """
 
   ######## SERVER SETUP ########
-  s = socket.socket()
-  host = '169.254.16.91'
-  s.bind((host,port))
-  s.listen(5)
+  try:
+    s = socket.socket()
+    host = '169.254.16.91'
+    port = 420
+    s.bind((host,port))
+    s.listen(5)
+  except ServerSetupError:
+    pass
 
 
   ######## CV SETUP ########
@@ -131,10 +135,14 @@ def stream(tracker, camera=0):
 
 
     ######## SEND DATA TO CLIENT ########
-    c, addr = s.accept()
-    print('Connected!')
-    c.send('Let\'s send data yay')
-    c.close()
+    try:
+      c, addr = s.accept()
+      print('Connected!')
+      c.send('This is data being sent yay')
+      c.close()
+    except ServerSendError:
+      print 'Failed to send data'
+      pass
 
 
 

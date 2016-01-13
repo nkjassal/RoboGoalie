@@ -20,6 +20,7 @@ D robot_pt target_pt
 
 @author Neil Jassal
 """
+import socket
 
 import colors
 import shapes
@@ -30,8 +31,23 @@ def main():
   @brief Continually polls server for packets, and processes
   """    
   
+  ### test code
+  while 1:
+    try:
+      s = socket.socket()
+      host = '169.254.16.91'
+      port = 420
+      s.connect((host, port))
+      print(s.recv(1024))
+      s.close()
+    except ClientReceiveError:
+      pass
+
+
   # Wait for setup data packet before continuing
-  # Use setup data packet to process 
+  # Use setup data packet to create motorcontroller object
+
+  # Continually poll for data, adjusting motor whenever data is received
 
 
 
