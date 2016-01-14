@@ -148,7 +148,8 @@ def stream(tracker, camera=0, server=0):
           ######## SETUP MOTORCONTROLLER ########
           axis_pt1 = robot_markers[0].to_pt_string()
           axis_pt2 = robot_markers[1].to_pt_string()
-          data = 'S ' + axis_pt1 + ' ' + axis_pt2 + ' ' + robot.to_pt_string()
+          data = 'S '+axis_pt1+' '+axis_pt2+' '+robot.to_pt_string()
+          print data
           connection.sendall(data)
 
         # setup is done, send D packet with movement data
@@ -169,7 +170,7 @@ def stream(tracker, camera=0, server=0):
           #   connection.sendall(data)
 
           #### FOR CLOSEST POINT ON AXIS
-          if closest_pt is not None:
+          if closest_pt is not None and robot is not None:
             data = 'D ' + robot.to_pt_string() + ' ' + closest_pt.to_string()
             connection.sendall(data)
 

@@ -51,22 +51,34 @@ def main():
     try:   
       # Receive data
       data = sock.recv(1024)
-
+      data_list = data.split() # splits by ' ' by default
 
       # Checks to ensure setup has been done or not - this is accounted for
       # on the server side, but check for redundancy
 
       # only check for S packet, otherwise break
       if setup_done is False:
-        if data[:1] == 'S':
-          print str(data)
+        if data[:1] == 'S' and len(data_list) is 4:
+
           setup_done = True
+          # Parse arguments and send to motorcontroller setup
+          # create point objects from axis points and robot
+          axis_pt1_list = data_list[1].split(',')
+          axis_pt2_list = data_list[2].split(',')
+          robot_list = data_list[3].split(',')       
 
-          # UPDATE TO PERFORM SETUP TASKS
-          # PARSE ARGUMENTS AND SEND TO MOTORCONTROLLER SETUP
+          axis_pt1 = shapes.Point(int(axis_pt1_list[0]),
+            int(axis_pt1_list[1]))
+          axis_pt2 = shapes.Point(int(axis_pt2_list[0]),
+            int(axis_pt2_list[1]))   
+          robot_pt = shapes.Point(int(robot_list[0]),
+            int(robot_list[1]))
+          # print 'S '+axis_pt1.to_string() \
+          #   + ' ' + axis_pt2.to_string() + ' ' + robot_pt.to_string()
 
+          # instantiate motorcontroller object UNCOMMENT THIS
           # motorcontroller = Motorcontroller(left_rail_coord=axis_pt1,
-            # right_rail_coord=axis_pt2, robot_coord=robot_pt)
+          #   right_rail_coord=axis_pt2, robot_coord=robot_pt)
           continue 
         else:
           continue
@@ -75,9 +87,10 @@ def main():
       if data[:1] != 'D': # skip if not a data packet
         continue
 
-      # PARSE DATA PACKET AND SEND COMMAND TO MOTORCONTROLLER
-      print str(data)
+      # Parse data packet and send to motorcontroller
 
+
+      # send motorcontroller command UNCOMMENT THIS
       # motorcontroller.move_to_loc(robot_coord=robot,
         # target_coord=target, style=SINGLE)
 
