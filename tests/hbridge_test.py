@@ -1,3 +1,8 @@
+"""
+Taken directly from:
+https://www.raspberrypi.org/forums/viewtopic.php?f=49&t=55580
+"""
+
 import RPi.GPIO as GPIO
 import time
 
