@@ -84,40 +84,28 @@ def main():
           continue
       
       # setup_done true, check for data
-      if data[:1] != 'D' or len(data_list) is not 3: # skip if not D packet
-        continue
+      if data[:1] == 'D' and len(data_list) is 3: # D packet
+        # Parse data packet and send to motorcontroller
+        robot_pt_list = data_list[1].split(',')
+        target_pt_list = data_list[2].split(',')
 
-      # Parse data packet and send to motorcontroller
-      robot_pt_list = data_list[1].split(',')
-      target_pt_list = data_list[2].split(',')
+        robot_pt = shapes.Point(int(robot_pt_list[0]),
+          int(robot_pt_list[1]))
+        target_pt = shapes.Point(int(float(target_pt_list[0])),
+          int(float(target_pt_list[1])))
+        print 'D ' + robot_pt.to_string() + ' ' + target_pt.to_string()
 
-      robot_pt = shapes.Point(int(robot_pt_list[0]),
-        int(robot_pt_list[1]))
-      target_pt = shapes.Point(int(float(target_pt_list[0])),
-        int(float(target_pt_list[1])))
-      print 'D ' + robot_pt.to_string() + ' ' + target_pt.to_string()
-
-      # send motorcontroller command UNCOMMENT THIS
-      # motorcontroller.move_to_loc(robot_coord=robot,
-        # target_coord=target, style=SINGLE)
-
-
-
-
+        # send motorcontroller command UNCOMMENT THIS
+        # motorcontroller.move_to_loc(robot_coord=robot,
+          # target_coord=target, style=SINGLE)
 
 
 
     except IOError:
       pass
 
-  print 'closing socket'
+  print 'Closing socket...'
   sock.close()
-
-  # Wait for setup data packet before continuing
-  # Use setup data packet to create motorcontroller object
-
-  # Continually poll for data, adjusting motor whenever data is received
-
 
 
 if __name__ == "__main__":

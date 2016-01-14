@@ -123,14 +123,6 @@ def stream(tracker, camera=0, server=0):
     traj = planner.traj
 
 
-
- 
-    
-    # motor code
-    # move_to_loc(robot, traj_axis_pt, SINGLE, reverse_dir=0):
-
-
-
     ######## SOLENOID CODE ########
     # Checks when an object is within a threshold of the robot, then sends
     # the solenoid a signal to push out to hit the ball.
@@ -156,7 +148,7 @@ def stream(tracker, camera=0, server=0):
         else:
 
 
-          ####### MOTOR CONTROL ########
+          ######## MOTOR CONTROL ########
           # First clamp final trajectory intersection to robot axis
 
           #### FOR TRAJECTORY ESTIMATION
