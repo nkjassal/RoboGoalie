@@ -229,10 +229,7 @@ class MotorController:
 
     #Compute how many steps the motor should move
     steps = (real_dist_to_trgt/gear_circum)*self.motor_steps
-    
-    #### WHAT IS THIS IF STATEMENT AND DO WE STILL NEED IT
-    if style = "MICROSTEP":
-        steps = steps * 8
+  
 
 
 
