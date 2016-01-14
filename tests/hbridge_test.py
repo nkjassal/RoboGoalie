@@ -8,23 +8,24 @@ import time
 
 # Variables
 
-delay = 0.0055
+delay = 0.0055 # 0.0009 is the lower limit
 steps = 500
 
+GPIO.cleanup()
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
 # Enable GPIO pins for  ENA and ENB for stepper
 
-enable_a = 18
-enable_b = 22
+enable_a = 21
+enable_b = 18
 
 # Enable pins for IN1-4 to control step sequence
 
-coil_A_1_pin = 23
-coil_A_2_pin = 24
-coil_B_1_pin = 4
-coil_B_2_pin = 17
+coil_A_1_pin = 16
+coil_A_2_pin = 25
+coil_B_1_pin = 24
+coil_B_2_pin = 23
 
 # Set pin states
 
@@ -71,3 +72,5 @@ for i in range(0, steps):
     time.sleep(delay)
     setStep(1,0,1,0)
     time.sleep(delay)
+
+GPIO.cleanup()
