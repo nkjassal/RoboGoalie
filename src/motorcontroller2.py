@@ -123,9 +123,125 @@ class MotorController:
     GPIO.output(coil_B_1_pin, w3)
     GPIO.output(coil_B_2_pin, w4)
 
+  def stepForward(self, steps):
+    """
+    @brief Moves the motor in the forward direction steps # of steps
+    @param steps The number of steps
+    """
+    for i in range(0, steps):
+        setStep(1,0,1,0)
+        time.sleep(delay)
+        setStep(0,1,1,0)
+        time.sleep(delay)
+        setStep(0,1,0,1)
+        time.sleep(delay)
+        setStep(1,0,0,1)
+        time.sleep(delay)
+
+  def stepReverse(self, steps):
+    """
+    @brief Moves the motor in the reverse direction steps # of steps
+    @param steps The number of steps
+    """
+    for i in range(0, steps):
+      setStep(1,0,0,1)
+      time.sleep(delay)
+      setStep(0,1,0,1)
+      time.sleep(delay)
+      setStep(0,1,1,0)
+      time.sleep(delay)
+      setStep(1,0,1,0)
+      time.sleep(delay)
+
+
+  def motor_worker(self, numsteps, direction, style='SINGLE'):
+    """
+    @brief The worker function for the thread that will move the
+    stepper motor a certain numer of steps. If no style is given, or
+    an invalid style is give, the function will use the single step
+    style
+
+    @param numsteps The desired number of steps for the motor to spin
+    @param direction The desired direction for the motor to spin
+    """
+
+    if direction is 1:
+      stepForward(numsteps)
+    else:
+      stepReverse(numsteps)
+
+    self.moving = False
+
+
+  def move_to_loc(self, robot_coord, target_coord, style, reverse_dir=0):
+    """
+    @brief Moves the robot to a target coordinate by calling the 
+    motor_worker function. Returns the thread running motor_worker so 
+    the calling function can check if the motor is still moving with
+    the 'moving' field
+
+    @param robot_loc The current location of the robot in a Point object
+    @param target_loc The desired location for the robot in a Point object
+    @param style SINGLE: Standard steps
+                 DOUBLE: Two coils on, more power and more strength
+                 INTERLEAVE: Mix of single and double
+                 MICROSTEP: More precise, gives 8x more steps to motor
+    @param reverse_dir Whether or not to reverse the direction of the
+    motor, perhaps because of a change in mounting orientation
+
+    """
+
+    if self.moving = True:
+        print "Cannot move motor when motor is already moving"
+        return
+
+    #Distances of the robot from the left or right rails, respectively
+    dist_to_left = utils.get_pt2pt_dist(robot_coord, self.left_rail_coord)
+    dist_to_rght = utils.get_pt2pt_dist(robot_coord, self.rght_rail_coord)
+    dist_to_trgt = utils.get_pt2pt_dist(robot_coord, target_coord)
+    #Real distance to target in cm
+    real_dist_to_trgt = dist_to_trgt/self.scaled_ovr_real
+
+    #Compute direction in which the robot needs to move
+    #Point object is used as a vector in this case to use utils.dot
+    #Vector from robot to left rail
+    robot_to_left = Point(self.left_rail_coord.x-self.robot_coord.x,
+                          self.left_rail_coord.y-self.robot_coord.y)
+    # #Vector from robot to right rail, probably don't need
+    # robot_to_rght = Point(self.rght_rail_coord.x-self.robot_coord.x,
+    #                       self.rght_rail_coord.y-self.robot_coord.y)
+    #Vector from robot to target
+    robot_to_trgt = Point(target_coord.x-self.robot_coord.x,
+                          target_coord.y-self.robot_coord.y)
+    #Use dot product to find if the direction is towards left or right
+    #Direction: -1->left, 1->right
+    
 
 
 
+
+    direction = -1
+    if utils.dot(robot_to_left, robot_to_trgt) < 0:
+        direction = 1
+    if reverse_dir is 1:
+        direction = direction * -1
+    motor_dir = direction
+
+    #Compute how many steps the motor should move
+    steps = (real_dist_to_trgt/gear_circum)*self.motor_steps
+    
+    #### WHAT IS THIS IF STATEMENT AND DO WE STILL NEED IT
+    if style = "MICROSTEP":
+        steps = steps * 8
+
+
+
+
+    #Create the thread controlling the motor and run it
+    motor_thread = threading.Thread(target=motor_worker, 
+                            args=(self.motor, steps, motor_dir))
+    self.moving = True
+    motor_thread.start()
 
 
 
