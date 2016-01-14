@@ -73,8 +73,8 @@ def main():
             int(axis_pt2_list[1]))   
           robot_pt = shapes.Point(int(robot_list[0]),
             int(robot_list[1]))
-          # print 'S '+axis_pt1.to_string() \
-          #   + ' ' + axis_pt2.to_string() + ' ' + robot_pt.to_string()
+          print 'S '+axis_pt1.to_string() \
+            + ' ' + axis_pt2.to_string() + ' ' + robot_pt.to_string()
 
           # instantiate motorcontroller object UNCOMMENT THIS
           # motorcontroller = Motorcontroller(left_rail_coord=axis_pt1,
@@ -84,11 +84,18 @@ def main():
           continue
       
       # setup_done true, check for data
-      if data[:1] != 'D': # skip if not a data packet
+      if data[:1] != 'D' or len(data_list) is not 3: # skip if not D packet
         continue
 
       # Parse data packet and send to motorcontroller
+      robot_pt_list = data_list[1].split(',')
+      target_pt_list = data_list[2].split(',')
 
+      robot_pt = shapes.Point(int(robot_pt_list[0]),
+        int(robot_pt_list[1]))
+      target_pt = shapes.Point(int(float(target_pt_list[0])),
+        int(float(target_pt_list[1])))
+      print 'D ' + robot_pt.to_string() + ' ' + target_pt.to_string()
 
       # send motorcontroller command UNCOMMENT THIS
       # motorcontroller.move_to_loc(robot_coord=robot,

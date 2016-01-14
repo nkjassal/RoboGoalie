@@ -172,6 +172,7 @@ def stream(tracker, camera=0, server=0):
           #### FOR CLOSEST POINT ON AXIS
           if closest_pt is not None and robot is not None:
             data = 'D ' + robot.to_pt_string() + ' ' + closest_pt.to_string()
+            print data
             connection.sendall(data)
 
       except IOError:
