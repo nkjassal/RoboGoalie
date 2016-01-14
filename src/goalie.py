@@ -36,8 +36,10 @@ def stream(tracker, camera=0, server=0):
   if server:
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    # GET SERVER ADDRESS BY GOING TO NETWORK SETTINGS AND CHECKING ETHERNET
+    #server_address = ('169.254.242.33',10000)
     #server_address = ('169.254.88.56', 10000)
-    server_address = ('localhost', 10000) # for local testing
+    #server_address = ('localhost', 10000) # for local testing
     print 'starting up on %s port %s' % server_address
     sock.bind(server_address)
     sock.listen(1)
