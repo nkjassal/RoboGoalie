@@ -59,7 +59,7 @@ def main():
       # only check for S packet, otherwise break
       if setup_done is False:
         if data[:1] == 'S':
-          print 'setup: ' + str(data)
+          print str(data)
           setup_done = True
 
           # UPDATE TO PERFORM SETUP TASKS
@@ -76,7 +76,7 @@ def main():
         continue
 
       # PARSE DATA PACKET AND SEND COMMAND TO MOTORCONTROLLER
-      print 'data' + str(data)
+      print str(data)
 
       # motorcontroller.move_to_loc(robot_coord=robot,
         # target_coord=target, style=SINGLE)

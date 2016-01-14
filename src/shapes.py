@@ -55,6 +55,13 @@ class Circle:
     self.centroid = centroid
     self.color = color
 
+  def to_pt_string(self):
+    """
+    @brief Gets string of the x,y coords of the circle
+    @return String of 'X,Y' format - same as Point to_string() format
+    """
+    return str(self.x) + ',' + str(self.y)
+    
   def to_string(self):
     """
     @brief Gets string of the form X,Y,radius

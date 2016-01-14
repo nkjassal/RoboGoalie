@@ -123,12 +123,8 @@ def stream(tracker, camera=0, server=0):
     traj = planner.traj
 
 
-    ######## MOTOR CONTROL ########
-    # # First clamp final trajectory intersection to robot axis
-    # if planner.traj is not None:
-    #   axis_intersect = shapes.Point(planner.traj.x2, planner.traj.y2)
-    #   # The point to send the robot to during this frame
-    #   traj_axis_pt = utils.clamp_point_to_line(axis_intersect, robot_axis)
+
+ 
     
     # motor code
     # move_to_loc(robot, traj_axis_pt, SINGLE, reverse_dir=0):
@@ -148,13 +144,34 @@ def stream(tracker, camera=0, server=0):
           # send S packet for motorcontroller setup
           motorcontroller_setup = True
 
-          data = 'S S PACKET YAY'
+
+          ######## SETUP MOTORCONTROLLER ########
+          axis_pt1 = robot_markers[0].to_pt_string()
+          axis_pt2 = robot_markers[1].to_pt_string()
+          data = 'S ' + axis_pt1 + ' ' + axis_pt2 + ' ' + robot.to_pt_string()
           connection.sendall(data)
 
         # setup is done, send D packet with movement data
         else:
-          data = 'D PACKET YAY'
-          connection.sendall(data)
+
+
+          ####### MOTOR CONTROL ########
+          # First clamp final trajectory intersection to robot axis
+
+          #### FOR TRAJECTORY ESTIMATION
+          # if planner.traj is not None:
+          #   axis_intersect = shapes.Point(planner.traj.x2, planner.traj.y2)
+          #   # Clamp the point to send to the robot axis
+          #   traj_axis_pt = utils.clamp_point_to_line(
+          #     axis_intersect, robot_axis)
+
+          #   data = 'D ' + robot.to_pt_string() + ' ' + traj_axis_pt.to_string()
+          #   connection.sendall(data)
+
+          #### FOR CLOSEST POINT ON AXIS
+          if closest_pt is not None:
+            data = 'D ' + robot.to_pt_string() + ' ' + closest_pt.to_string()
+            connection.sendall(data)
 
       except IOError:
         pass # don't send anything
