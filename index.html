@@ -29,22 +29,38 @@
       <div class="inner clearfix">
         <section id="main-content">
           <h3>
-<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Team Members.</h3>
+<a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Team Members.</h2>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here <a href="https://guides.github.com/features/mastering-markdown/">using GitHub Flavored Markdown</a>, select a template crafted by a designer, and publish. After your page is generated, you can check out the new <code>gh-pages</code> branch locally. If you’re using GitHub Desktop, simply sync your repository and you’ll see the new branch.</p>
+<p><a href="https://www.linkedin.com/in/neil-jassal-243690106">Neil Jassal</a>, <a href=" 
+https://www.linkedin.com/in/donzheng">Don Zheng</a>, <a href="  
+https://www.linkedin.com/in/erinhsi">Erin Hsi</a>, 
+<a href="https://www.linkedin.com/in/annabandecca">Anna Bandecca</a></p>
+
+<h2>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Description</h2>
+
+<p>This project is a game of air hockey with a human facing off against a robot player. The robot, mounted on top of the air hockey "table," will block and return a puck launched by the human player. Computer vision is utilized to compute the trajectory of the incoming puck in real-time, while a motor-operated paddle deflects the ball. <br><br>
+
+Our initial design came from the simple idea of having a robot blocking/hitting a ball back to a person. From this, the air hockey idea was elaborated upon and more research was conducted to get the specificities to put the idea into actuality. From our research, <a href="http://jjrobots.com/air-hockey-robot-a-3d-printer-hack/">one other person</a> has done a similar project using a 3D printer for parts. We used this as a good reference on how to implement our own designs. </p>
+
+<h2>
+<a id="creating-pages-manually" class="anchor" href="#creating-pages-manually" aria-hidden="true"><span class="octicon octicon-link"></span></a>Project Design</h2>
 
 <h3>
-<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+</span></a>Mechanics for the Robot</h3>
 
-<p>We’ve crafted some handsome templates for you to use. Go ahead and click 'Continue to layouts' to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved.</p>
+<p>The system consists of a linear slide rail with a sliding carriage attached to a timing belt. The timing belt runs around a pulley system (two individual pulleys) at either end of the rail. This is driven by a stepper motor, chosen for its ability to run in two directions quickly and accurately. As the motor runs, the driving pulley and the idler pulley both spin, pulling the carriage along with it, ultimately moving the robot side-to-side.
 
-<h3>
-<a id="creating-pages-manually" class="anchor" href="#creating-pages-manually" aria-hidden="true"><span class="octicon octicon-link"></span></a>Creating pages manually</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+The paddle is powered by a push-pull solenoid. It is supported by two guide rails that slide in and out along with the solenoid as the paddle is pushed forward. The paddle itself hangs below the linear slide rail to allow space for the puck to pass under the whole robot, in case the player wins.</p>
 
 <h3>
-<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+</span></a>Computer Vision</h3>
+
+<p>Here is the goal of our initial vision code. We want to be able to detect the different pucks, which are represented by different colored circles. The two blue circles represent the "goal" and the location of the frame for the robot. <br><br>
+
+Based on the position of the incoming "pucks" our robot goalie will predict the trajectory of the pucks and react accordingly to block the puck from the goal.</p>
+
+<!--<a id="authors-and-contributors" class="anchor" href="#authors-and-contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
 
 <p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor’s GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
 
@@ -69,7 +85,7 @@
           <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
         </aside>
       </div>
-    </div>
+    </div>-->
 
   
   </body>
