@@ -32,8 +32,8 @@ def stream(tracker, camera=0, server=0):
   """
 
   ######## GENERAL PARAMETER SETUP ########
-  MOVE_DIST_THRESH = 212 # distance at which robot will stop moving
-  SOL_DIST_THRESH = 205 # distance at which solenoid fires
+  MOVE_DIST_THRESH = 240 # distance at which robot will stop moving
+  SOL_DIST_THRESH = 200 # distance at which solenoid fires
   PACKET_DELAY = 5 # number of frames between sending data packets to pi
   OBJECT_RADIUS = 13 # opencv radius for circle detection
   AXIS_SAFETY_PERCENT = 0.4 # robot stops if within this % dist of axis edges
@@ -64,8 +64,8 @@ def stream(tracker, camera=0, server=0):
   ######## CV SETUP ########
 
   # create video capture object for
-  cap = cv2.VideoCapture(camera)
-  #cap = WebcamVideoStream(camera).start() # WEBCAM
+  #cap = cv2.VideoCapture(camera)
+  cap = WebcamVideoStream(camera).start() # WEBCAM
 
   #cap = cv2.VideoCapture('../media/goalie-test.mov')
   #cap = cv2.VideoCapture('../media/bounce.mp4')
@@ -85,8 +85,8 @@ def stream(tracker, camera=0, server=0):
     fps_timer.start_iteration()
 
     ######## CAPTURE AND PROCESS FRAME ########
-    #ret, frame = True, cap.read() # WEBCAM
-    ret, frame = cap.read() # for non-webcam
+    ret, frame = True, cap.read() # WEBCAM
+    #ret, frame = cap.read() # for non-webcam
     if ret is False:
       print 'Frame not read'
       exit()
@@ -266,8 +266,8 @@ def stream(tracker, camera=0, server=0):
       break
 
   # release capture
-  #cap.stop() # WEBCAM
-  cap.release() # for testing w/o webcam
+  cap.stop() # WEBCAM
+  #cap.release() # for testing w/o webcam
   cv2.destroyAllWindows()
 
 
@@ -285,7 +285,7 @@ def main():
   # robot_color = colors.White
   # rail_color = colors.Green
   # track_colors = [colors.Red]
-  
+
   tracker = bt.BallTracker(
     window_name="Robot Goalie Tracking Display",
     robot_color=robot_color,
