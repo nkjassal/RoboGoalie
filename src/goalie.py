@@ -36,7 +36,7 @@ def stream(tracker, camera=0, server=0):
   SOL_DIST_THRESH = 205 # distance at which solenoid fires
   PACKET_DELAY = 5 # number of frames between sending data packets to pi
   OBJECT_RADIUS = 13 # opencv radius for circle detection
-  AXIS_SAFETY_PERCENT = 0.3 # robot stops if within this % dist of axis edges
+  AXIS_SAFETY_PERCENT = 0.4 # robot stops if within this % dist of axis edges
 
   packet_cnt = 0
   tracker.radius = OBJECT_RADIUS
@@ -64,11 +64,11 @@ def stream(tracker, camera=0, server=0):
   ######## CV SETUP ########
 
   # create video capture object for
-  #cap = cv2.VideoCapture(camera)
+  cap = cv2.VideoCapture(camera)
   #cap = WebcamVideoStream(camera).start() # WEBCAM
 
   #cap = cv2.VideoCapture('../media/goalie-test.mov')
-  cap = cv2.VideoCapture('../media/bounce.mp4')
+  #cap = cv2.VideoCapture('../media/bounce.mp4')
 
   cv2.namedWindow(tracker.window_name)
 
@@ -172,7 +172,7 @@ def stream(tracker, camera=0, server=0):
           #   pass
           else:
 
-            obj_robot_dist = utils.get_pt2pt_dist(robot, closest_pt)
+            obj_robot_dist = utils.get_pt2pt_dist(robot, closest_obj)
             print 'dist: ' + str(obj_robot_dist) # USE FOR CALIBRATION
 
             # get safety parameters
@@ -217,7 +217,8 @@ def stream(tracker, camera=0, server=0):
 
               #### FOR CLOSEST POINT ON AXIS ####
               if closest_pt is not None and robot is not None:
-                data = 'MM ' + robot.to_pt_string() + ' ' + closest_pt.to_string()
+                data = 'MM ' + robot.to_pt_string() + ' ' + \
+                  closest_obj.to_string()
                 print data
                 connection.sendall(data)
 
@@ -279,7 +280,7 @@ def main():
     radius=13,
     num_objects = 1) 
 
-  stream(tracker, camera=0, server=0) # begin tracking and object detection
+  stream(tracker, camera=0, server=1) # begin tracking and object detection
 
 
 
