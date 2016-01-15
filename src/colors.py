@@ -49,6 +49,7 @@ class Blue:
 
   # lower0 = (105, 90, 90) # rgb cyan/magenta/yellow
   # upper0 = (145, 255, 255)
+  
   lower0 = (85, 80, 80)
   upper0 = (175, 255, 255)
 
@@ -66,11 +67,11 @@ class Green:
   # lower0 = (16, 90, 90) # original
   # upper0 = (104, 255, 255)
 
-  # lower0 = (30, 90, 90) # rgb only
-  # upper0 = (90, 255, 255)
+  lower0 = (30, 90, 90) # rgb only
+  upper0 = (90, 255, 255)
 
-  lower0 = (45, 90, 90) # rgb cyan/magenta/yellow
-  upper0 = (75, 255, 255)
+  # lower0 = (45, 90, 90) # rgb cyan/magenta/yellow
+  # upper0 = (75, 255, 255)
 
   lower1 = (0,0,0)  # no second range needed
   upper1 = (0,0,0)
@@ -90,15 +91,15 @@ class Red:
   # lower1 = (160, 150, 150)
   # upper1 = (179,255, 255)
 
-  # lower0 = (0, 150, 150) # rgb only
-  # upper0 = (30, 255, 255)
-  # lower1 = (150, 150, 150)
-  # upper1 = (179, 255, 255)
-
-  lower0 = (0, 150, 150) #rgb cyan/magenta/yellow
-  upper0 = (15, 255, 255)
-  lower1 = (165, 150, 150)
+  lower0 = (0, 150, 150) # rgb only
+  upper0 = (30, 255, 255)
+  lower1 = (150, 150, 150)
   upper1 = (179, 255, 255)
+
+  # lower0 = (0, 150, 150) #rgb cyan/magenta/yellow
+  # upper0 = (15, 255, 255)
+  # lower1 = (165, 150, 150)
+  # upper1 = (179, 255, 255)
 
 class White:
   """
