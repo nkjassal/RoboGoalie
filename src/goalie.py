@@ -85,7 +85,6 @@ def stream(tracker, camera=0, server=0):
     fps_timer.start_iteration()
 
     ######## CAPTURE AND PROCESS FRAME ########
-    #frame = cv2.imread('../media/rails-1.png', 1) # for image testing
     #ret, frame = True, cap.read() # WEBCAM
     ret, frame = cap.read() # for non-webcam
     if ret is False:
@@ -126,7 +125,7 @@ def stream(tracker, camera=0, server=0):
       closest_pt = points[closest_obj_index]
       # only for viewing, eventually won't need this one (only display traj)
       closest_line = utils.get_line(closest_obj, closest_pt) # only for viewing
-      cv2.circle(frame, (int(closest_pt.x),int(closest_pt.y)), 10, colors.Magenta.bgr, -1) # center 
+      # cv2.circle(frame, (int(closest_pt.x),int(closest_pt.y)), 10, colors.Magenta.bgr, -1) # center 
 
       planner.add_point(closest_obj)
 
@@ -185,7 +184,7 @@ def stream(tracker, camera=0, server=0):
             if rob_ax1_dist/axis_length <= AXIS_SAFETY_PERCENT or \
               rob_ax2_dist/axis_length <= AXIS_SAFETY_PERCENT:
               # in danger zone, kill motor movement
-              print 'ROBOT OUT OF SAFE REGION: Stopping motor'
+              print 'INVALID ROBOT LOCATION: stopping motor'
               data = 'KM'
               connection.sendall(data)
 
@@ -197,8 +196,8 @@ def stream(tracker, camera=0, server=0):
             # check if robot should stop moving
             elif obj_robot_dist <= MOVE_DIST_THRESH: # obj close to robot
               # Send stop command, obj is close enough to motor to hit
-              print 'Stopping motor'
               data = 'KM'
+              print data
               connection.sendall(data)
               pass 
 
@@ -217,10 +216,17 @@ def stream(tracker, camera=0, server=0):
 
               #### FOR CLOSEST POINT ON AXIS ####
               if closest_pt is not None and robot is not None:
-                data = 'MM ' + robot.to_pt_string() + ' ' + \
-                  closest_obj.to_string()
-                print data
-                connection.sendall(data)
+                # if try to move more than length of axis, stop instead
+                if utils.get_pt2pt_dist(robot,closest_pt) > axis_length:
+                  print 'TRYING TO MOVE OUT OF RANGE'
+                  data = 'KM'
+                  print data
+                  connection.sendall(data)
+                else:
+                  data = 'MM ' + robot.to_pt_string() + ' ' + \
+                    closest_pt.to_string()
+                  print data
+                  connection.sendall(data)
 
         except IOError:
           pass # don't send anything
@@ -240,8 +246,10 @@ def stream(tracker, camera=0, server=0):
     frame = gfx.draw_line(img=frame, line=closest_line) # closest obj>axis
 
     # draw full set of trajectories, including bounces
-    frame = gfx.draw_lines(img=frame, line_list=traj_list)
+    #frame = gfx.draw_lines(img=frame, line_list=traj_list)
     #frame = gfx.draw_line(img=frame, line=traj) # for no bounces
+
+    frame = gfx.draw_point(img=frame, pt=closest_pt)
     #frame=gfx.draw_line(frame,planner.debug_line) # for debug
 
 
@@ -267,10 +275,17 @@ def main():
   """ 
   @brief Initializes the tracker object and runs goalie script
   """    
-  robot_marker_color = colors.Blue
+  robot_marker_color = colors.Black
   robot_color = colors.Green
   rail_color = colors.Yellow
-  track_colors = [colors.Black]
+  track_colors = [colors.Red]
+
+  # bounce.mp4 colors
+  # robot_marker_color = colors.Blue
+  # robot_color = colors.White
+  # rail_color = colors.Green
+  # track_colors = [colors.Red]
+  
   tracker = bt.BallTracker(
     window_name="Robot Goalie Tracking Display",
     robot_color=robot_color,

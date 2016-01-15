@@ -42,6 +42,23 @@ def draw_lines(img, line_list):
   return img
 
 
+def draw_point(img, pt, radius=10, color=colors.Magenta):
+  """
+  @brief Draws a point object as a circle with a specified radius
+  @param img The image to annotate
+  @param pt The Point object to draw_line
+  @param radius The desired radius of the drawn point
+  @param color Able to specify a color if desired
+
+  @return The annotated image
+  """
+  if pt is None:
+    return img
+  radius = int(radius)
+  x,y = int(pt.x), int(pt.y)
+  cv2.circle(img, (x,y), radius, color.bgr, -1)
+  return img
+
 def draw_circle(img, c):
   """
   @brief Draws a single Circle object to the given image
