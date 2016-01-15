@@ -32,11 +32,11 @@ def stream(tracker, camera=0, server=0):
   """
 
   ######## GENERAL PARAMETER SETUP ########
-  MOVE_DIST_THRESH = 100 # distance at which robot will stop moving
+  MOVE_DIST_THRESH = 20 # distance at which robot will stop moving
   SOL_DIST_THRESH = 150 # distance at which solenoid fires
-  PACKET_DELAY = 5 # number of frames between sending data packets to pi
+  PACKET_DELAY = 1 # number of frames between sending data packets to pi
   OBJECT_RADIUS = 13 # opencv radius for circle detection
-  AXIS_SAFETY_PERCENT = 0.1 # robot stops if within this % dist of axis edges
+  AXIS_SAFETY_PERCENT = 0.05 # robot stops if within this % dist of axis edges
 
   packet_cnt = 0
   tracker.radius = OBJECT_RADIUS
@@ -198,10 +198,10 @@ def stream(tracker, camera=0, server=0):
             # if in danger zone near axis edge, move towards other edge
             if rob_ax1_dist/axis_length <= AXIS_SAFETY_PERCENT:
               print 'INVALID ROBOT LOCATION'
-              data = 'MM '+robot.to_pt_string()+' '+rob_ax2_dist.to_pt_string()
+              data = 'MM '+robot.to_pt_string()+' '+robot_markers[1].to_pt_string()
             elif rob_ax2_dist/axis_length <= AXIS_SAFETY_PERCENT:
               print 'INVALID ROBOT LOCATION'
-              data = 'MM '+robot.to_pt_string()+' '+rob_ax1_dist.to_pt_string()
+              data = 'MM '+robot.to_pt_string()+' '+robot_markers[0].to_pt_string()
 
             # check if robot should stop moving
             elif obj_robot_dist <= MOVE_DIST_THRESH: # obj close to robot
