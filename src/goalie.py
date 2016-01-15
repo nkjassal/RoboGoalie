@@ -36,7 +36,7 @@ def stream(tracker, camera=0, server=0):
   SOL_DIST_THRESH = 200 # distance at which solenoid fires
   PACKET_DELAY = 5 # number of frames between sending data packets to pi
   OBJECT_RADIUS = 13 # opencv radius for circle detection
-  AXIS_SAFETY_PERCENT = 0.4 # robot stops if within this % dist of axis edges
+  AXIS_SAFETY_PERCENT = 0.2 # robot stops if within this % dist of axis edges
 
   packet_cnt = 0
   tracker.radius = OBJECT_RADIUS

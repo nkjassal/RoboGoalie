@@ -44,7 +44,7 @@ def main():
   
   # motorcontroller object, initialized once setup gets called
   motorcontroller = None
-  solenoid
+  solenoid = None
 
   # Used to determine if should look to setup the motorcontroller, or if it's
   # already been done, then to poll for data
@@ -106,6 +106,7 @@ def main():
           solenoid_init = True
          # solenoid = solenoid.SolenoidController() #UNCOMMENT THIS
         else:
+          pass
          # solenoid.turn_on(solenoid_time) # UNCOMMENT THIS
 
 
