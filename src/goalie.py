@@ -174,6 +174,14 @@ def stream(tracker, camera=0, server=0):
             obj_robot_dist = utils.get_pt2pt_dist(robot, closest_obj)
             print 'dist: ' + str(obj_robot_dist) # USE FOR CALIBRATION
 
+            ######## SOLENOID ACTIVATION CODE ########
+            # check if solenoid should fire
+            if obj_robot_dist <= SOL_DIST_THRESH: # fire solenoid, dont move
+              print 'activate solenoid!'
+              # TODO SEND SOLENOID ACTIVATE
+
+
+            ######## MOTOR CONTROL ########
             # get safety parameters
             rob_ax1_dist = utils.get_pt2pt_dist(robot_markers[0],robot)
             rob_ax2_dist = utils.get_pt2pt_dist(robot_markers[1],robot)
@@ -187,11 +195,6 @@ def stream(tracker, camera=0, server=0):
               print 'INVALID ROBOT LOCATION: stopping motor'
               data = 'KM'
               connection.sendall(data)
-
-            # check if solenoid should fire
-            elif obj_robot_dist <= SOL_DIST_THRESH: # fire solenoid, dont move
-              print 'activate solenoid!'
-              pass # TODO SEND SOLENOID ACTIVATE
 
             # check if robot should stop moving
             elif obj_robot_dist <= MOVE_DIST_THRESH: # obj close to robot

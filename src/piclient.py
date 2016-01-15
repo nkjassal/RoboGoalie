@@ -23,6 +23,10 @@ KM
   KM = Kill Motor
   No arguments
 
+Activate solenoid - causes the solenoid to activate/spring forward
+AS time
+  AS = Activate solenoid 
+  time is time in ms for the solenoid to be on for
 
 @author Neil Jassal
 """
@@ -91,6 +95,14 @@ def main():
       
       # setup_done true, check for data
 
+      ######## SOLENOID CONTROL ########
+      if data[:1] == 'AS':
+        print data
+        solenoid_time = int(data[1])
+        
+
+
+      ######## MOTOR CONTROL ########
       # check for stop command
       if data[:1] == 'KM':
         print data
