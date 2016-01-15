@@ -31,6 +31,15 @@ def stream(tracker, camera=0, server=0):
     camera=1 is generally the first webcam plugged in
   """
 
+  ######## GENERAL PARAMETER SETUP ########
+  MOVE_DIST_THRESH = 212 # distance at which robot will stop moving
+  SOL_DIST_THRESH = 210 # distance at which solenoid fires
+  PACKET_DELAY = 5 # number of frames between sending data packets to pi
+  OBJECT_RADIUS = 13 # opencv radius for circle detection
+
+  packet_cnt = 0
+  tracker.radius = OBJECT_RADIUS
+
   ######## SERVER SETUP ########
   motorcontroller_setup = False
   if server:
@@ -39,7 +48,7 @@ def stream(tracker, camera=0, server=0):
     # GET SERVER ADDRESS BY GOING TO NETWORK SETTINGS AND CHECKING ETHERNET
     #server_address = ('169.254.242.33',10000)
     #server_address = ('169.254.88.56', 10000)
-    #server_address = ('localhost', 10000) # for local testing
+    server_address = ('localhost', 10000) # for local testing
     print 'starting up on %s port %s' % server_address
     sock.bind(server_address)
     sock.listen(1)
@@ -132,45 +141,60 @@ def stream(tracker, camera=0, server=0):
 
 
     ######## SEND DATA TO CLIENT ########
-    if server:
-      try:
-        if motorcontroller_setup is False:
-          # send S packet for motorcontroller setup
-          motorcontroller_setup = True
+    if packet_cnt != PACKET_DELAY:
+      packet_cnt = packet_cnt + 1
+    else:
+      packet_cnt = 0 # reset packet counter
+
+      if server:
+        try:
+          if motorcontroller_setup is False:
+            # send S packet for motorcontroller setup
+            motorcontroller_setup = True
 
 
-          ######## SETUP MOTORCONTROLLER ########
-          axis_pt1 = robot_markers[0].to_pt_string()
-          axis_pt2 = robot_markers[1].to_pt_string()
-          data = 'S '+axis_pt1+' '+axis_pt2+' '+robot.to_pt_string()
-          print data
-          connection.sendall(data)
-
-        # setup is done, send D packet with movement data
-        else:
-
-
-          ######## MOTOR CONTROL ########
-          # First clamp final trajectory intersection to robot axis
-
-          #### FOR TRAJECTORY ESTIMATION
-          # if planner.traj is not None:
-          #   axis_intersect = shapes.Point(planner.traj.x2, planner.traj.y2)
-          #   # Clamp the point to send to the robot axis
-          #   traj_axis_pt = utils.clamp_point_to_line(
-          #     axis_intersect, robot_axis)
-
-          #   data = 'D ' + robot.to_pt_string() + ' ' + traj_axis_pt.to_string()
-          #   connection.sendall(data)
-
-          #### FOR CLOSEST POINT ON AXIS
-          if closest_pt is not None and robot is not None:
-            data = 'D ' + robot.to_pt_string() + ' ' + closest_pt.to_string()
+            ######## SETUP MOTORCONTROLLER ########
+            axis_pt1 = robot_markers[0].to_pt_string()
+            axis_pt2 = robot_markers[1].to_pt_string()
+            data = 'S '+axis_pt1+' '+axis_pt2+' '+robot.to_pt_string()
             print data
             connection.sendall(data)
 
-      except IOError:
-        pass # don't send anything
+          # setup is done, send D packet with movement data
+          else:
+
+
+            ######## MOTOR CONTROL ########
+            # First clamp final trajectory intersection to robot axis
+
+            #### FOR TRAJECTORY ESTIMATION
+            # if planner.traj is not None:
+            #   axis_intersect = shapes.Point(planner.traj.x2, planner.traj.y2)
+            #   # Clamp the point to send to the robot axis
+            #   traj_axis_pt = utils.clamp_point_to_line(
+            #     axis_intersect, robot_axis)
+
+            #   data = 'D ' + robot.to_pt_string() + ' ' + traj_axis_pt.to_string()
+            #   connection.sendall(data)
+
+            #### FOR CLOSEST POINT ON AXIS ####
+            obj_robot_dist = utils.get_pt2pt_dist(robot, closest_pt)
+            print obj_robot_dist # USE FOR CALIBRATION
+
+            if obj_robot_dist <= SOL_DIST_THRESH: # fire solenoid, dont move
+              print 'activate solenoid!'
+              pass # TODO SEND SOLENOID ACTIVATE
+            elif obj_robot_dist <= MOVE_DIST_THRESH: # obj close to robot
+              print 'don\'t activate, but don\'t move either'
+              pass 
+            else: # far enough so robot should move
+              if closest_pt is not None and robot is not None:
+                data = 'D ' + robot.to_pt_string() + ' ' + closest_pt.to_string()
+                print data
+                connection.sendall(data)
+
+        except IOError:
+          pass # don't send anything
 
 
 
