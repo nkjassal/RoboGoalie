@@ -84,6 +84,7 @@ class MotorController:
     #Since the motor is being controlled with threads, two threads cannot
     #be controlling the motor at the same time
     self.moving = False 
+    self.stop = False
 
     self.delay = delay
 
@@ -139,6 +140,12 @@ class MotorController:
         setStep(1,0,0,1)
         time.sleep(delay)
 
+        #If the thread has to stop
+        if self.stop is True:
+            self.moving = False
+            self.stop = False
+            break
+
   def stepReverse(self, steps):
     """
     @brief Moves the motor in the reverse direction steps # of steps
@@ -153,6 +160,12 @@ class MotorController:
       time.sleep(delay)
       setStep(1,0,1,0)
       time.sleep(delay)
+
+      #If the thread has to stop
+      if self.stop is True:
+          self.stop = False
+          self.moving = False
+          break
 
 
   def motor_worker(self, numsteps, direction, style='SINGLE'):
@@ -173,6 +186,15 @@ class MotorController:
 
     self.moving = False
 
+  def stop(self):
+    """
+    @brief Stops the motor
+    """
+
+    self.stop = True
+    #Wait till the motor has actually stopped moving
+    while(self.moving is True):
+        pass
 
   def move_to_loc(self, robot_coord, target_coord, style, reverse_dir=0):
     """
@@ -216,10 +238,6 @@ class MotorController:
                           target_coord.y-self.robot_coord.y)
     #Use dot product to find if the direction is towards left or right
     #Direction: -1->left, 1->right
-    
-
-
-
 
     direction = -1
     if utils.dot(robot_to_left, robot_to_trgt) < 0:
@@ -230,9 +248,6 @@ class MotorController:
 
     #Compute how many steps the motor should move
     steps = (real_dist_to_trgt/gear_circum)*self.motor_steps
-  
-
-
 
 
     #Create the thread controlling the motor and run it
