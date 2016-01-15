@@ -33,10 +33,10 @@ def stream(tracker, camera=0, server=0):
 
   ######## GENERAL PARAMETER SETUP ########
   MOVE_DIST_THRESH = 212 # distance at which robot will stop moving
-  SOL_DIST_THRESH = 210 # distance at which solenoid fires
+  SOL_DIST_THRESH = 205 # distance at which solenoid fires
   PACKET_DELAY = 5 # number of frames between sending data packets to pi
   OBJECT_RADIUS = 13 # opencv radius for circle detection
-  AXIS_SAFETY_PERCENT = 0.1 # robot stops if within this % dist of axis edges
+  AXIS_SAFETY_PERCENT = 0.3 # robot stops if within this % dist of axis edges
 
   packet_cnt = 0
   tracker.radius = OBJECT_RADIUS
@@ -120,11 +120,13 @@ def stream(tracker, camera=0, server=0):
     # get closest object and associated point, generate trajectory
     closest_obj_index = utils.min_index(distances) # index of min value
     closest_line = None
+    closest_pt = None
     if closest_obj_index is not None:
       closest_obj = object_list[closest_obj_index]
       closest_pt = points[closest_obj_index]
       # only for viewing, eventually won't need this one (only display traj)
       closest_line = utils.get_line(closest_obj, closest_pt) # only for viewing
+      cv2.circle(frame, (int(closest_pt.x),int(closest_pt.y)), 10, colors.Magenta.bgr, -1) # center 
 
       planner.add_point(closest_obj)
 
@@ -147,7 +149,10 @@ def stream(tracker, camera=0, server=0):
     else:
       packet_cnt = 0 # reset packet counter
 
-      if server:
+      # error checking to ensure will run properly
+      if len(robot_markers) is not 2 or robot is None or closest_pt is None:
+        pass
+      elif server:
         try:
           if motorcontroller_setup is False:
             # send S packet for motorcontroller setup
@@ -157,37 +162,47 @@ def stream(tracker, camera=0, server=0):
             ######## SETUP MOTORCONTROLLER ########
             axis_pt1 = robot_markers[0].to_pt_string()
             axis_pt2 = robot_markers[1].to_pt_string()
-            data = 'S '+axis_pt1+' '+axis_pt2+' '+robot.to_pt_string()
+            data = 'SM '+axis_pt1+' '+axis_pt2+' '+robot.to_pt_string()
             print data
             connection.sendall(data)
 
           # setup is done, send packet with movement data
+          # # error checking to ensure runs properly
+          # elif closest_pt:
+          #   pass
           else:
 
-
-            ######## MOTOR CONTROL ########
-            # First clamp final trajectory intersection to robot axis
-
-
-
             obj_robot_dist = utils.get_pt2pt_dist(robot, closest_pt)
-            print obj_robot_dist # USE FOR CALIBRATION
+            print 'dist: ' + str(obj_robot_dist) # USE FOR CALIBRATION
 
-            # ensure safety parameters
+            # get safety parameters
             rob_ax1_dist = utils.get_pt2pt_dist(robot_markers[0],robot)
             rob_ax2_dist = utils.get_pt2pt_dist(robot_markers[1],robot)
             axis_length = utils.get_pt2pt_dist(robot_markers[0],
               robot_markers[1])
-            if rob_ax1_dist/axis_length >= AXIS_SAFETY_PERCENT or \
-              rob_ax2_dist/axis_length >= AXIS_SAFETY_PERCENT:
-              # SEND STOP COMMAND
 
+            # ensure within safe bounds of motion relative to axis
+            if rob_ax1_dist/axis_length <= AXIS_SAFETY_PERCENT or \
+              rob_ax2_dist/axis_length <= AXIS_SAFETY_PERCENT:
+              # in danger zone, kill motor movement
+              print 'ROBOT OUT OF SAFE REGION: Stopping motor'
+              data = 'KM'
+              connection.sendall(data)
+
+            # check if solenoid should fire
             elif obj_robot_dist <= SOL_DIST_THRESH: # fire solenoid, dont move
               print 'activate solenoid!'
               pass # TODO SEND SOLENOID ACTIVATE
+
+            # check if robot should stop moving
             elif obj_robot_dist <= MOVE_DIST_THRESH: # obj close to robot
-              print 'don\'t activate, but don\'t move either'
+              # Send stop command, obj is close enough to motor to hit
+              print 'Stopping motor'
+              data = 'KM'
+              connection.sendall(data)
               pass 
+
+            # Movement code
             else: # far enough so robot should move
 
               #### FOR TRAJECTORY ESTIMATION
@@ -202,7 +217,7 @@ def stream(tracker, camera=0, server=0):
 
               #### FOR CLOSEST POINT ON AXIS ####
               if closest_pt is not None and robot is not None:
-                data = 'D ' + robot.to_pt_string() + ' ' + closest_pt.to_string()
+                data = 'MM ' + robot.to_pt_string() + ' ' + closest_pt.to_string()
                 print data
                 connection.sendall(data)
 
@@ -252,9 +267,9 @@ def main():
   @brief Initializes the tracker object and runs goalie script
   """    
   robot_marker_color = colors.Blue
-  robot_color = colors.White
-  rail_color = colors.Green
-  track_colors = [colors.Red]
+  robot_color = colors.Green
+  rail_color = colors.Yellow
+  track_colors = [colors.Black]
   tracker = bt.BallTracker(
     window_name="Robot Goalie Tracking Display",
     robot_color=robot_color,
@@ -264,7 +279,7 @@ def main():
     radius=13,
     num_objects = 1) 
 
-  stream(tracker, camera=0, server=1) # begin tracking and object detection
+  stream(tracker, camera=0, server=0) # begin tracking and object detection
 
 
 

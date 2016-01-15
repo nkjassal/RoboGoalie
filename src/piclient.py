@@ -4,18 +4,24 @@
 Accepts data over ethernet cable from computer, and processes to send the 
 motor controller
 
-There are two data formats: setup, and data:
-Setup format:
-S axis_pt1 axis_pt2 robot_pt
-  S is the letter S, for denoting the message as setup
+There are a few data packets that can be sent:
+
+Setup Motor runs setup and intitializes motorcontroller object
+SM axis_pt1 axis_pt2 robot_pt
+  SM = Setup Motor
   axis_pt1 is a Point object representing one edge of the robot axis
   axis_pt2 is a Point object representing the other edge of the robot axis
 
-Data format:
-D robot_pt target_pt
-  D is the letter D, denoting the message as data
+Move Motor - sends command to move from robot point to target point
+MM robot_pt target_pt
+  MM = Move Motor
   robot_pt is a Point object representing the robot's position
   target_pt is a Point object representing the target position to move to
+
+Kill Motor - stops motor movement
+KM
+  KM = Kill Motor
+  No arguments
 
 
 @author Neil Jassal
@@ -25,7 +31,7 @@ import time
 
 import colors
 import shapes
-#import motorcontroller
+#import motorcontroller2
 
 def main():
   """ 
@@ -58,7 +64,7 @@ def main():
 
       # only check for S packet, otherwise break
       if setup_done is False:
-        if data[:1] == 'S':
+        if data[:1] == 'SM':
 
           setup_done = True
           # Parse arguments and send to motorcontroller setup
@@ -84,7 +90,15 @@ def main():
           continue
       
       # setup_done true, check for data
-      if data[:1] == 'D' and len(data_list) is 3: # D packet
+
+      # check for stop command
+      if data[:1] == 'KM':
+        print data
+        # UNCOMMENT MOTORCONTROLLER COMMAND
+        #motorcontroller.stop()
+
+      # check for motor movement command
+      if data[:1] == 'MM' and len(data_list) is 3: # MM packet
         # Parse data packet and send to motorcontroller
         robot_pt_list = data_list[1].split(',')
         target_pt_list = data_list[2].split(',')
@@ -98,6 +112,7 @@ def main():
         # send motorcontroller command UNCOMMENT THIS
         # motorcontroller.move_to_loc(robot_coord=robot,
           # target_coord=target, style=SINGLE)
+      
 
 
 

@@ -277,7 +277,7 @@ def line_intersect(ln1, ln2):
     return a[0] * b[1] - a[1] * b[0]
 
   div = det(xdiff, ydiff)
-  if div is 0: # no intersection
+  if div < 0.0001: # no intersection
     return None
 
   ln1_list = [(ln1.x1,ln1.y1), (ln1.x2,ln1.y2)]
