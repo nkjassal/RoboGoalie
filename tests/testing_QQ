@@ -1,0 +1,26 @@
+import RPi.GPIO as GPIO
+import time
+
+GPIO.cleanup()
+GPIO.setmode(GPIO.BCM)
+
+GPIO.setup(18, GPIO.OUT) #cw/ccw
+GPIO.setup(23, GPIO.OUT) #clock
+GPIO.setup(25, GPIO.OUT) #half/full
+GPIO.setup(17, GPIO.OUT) #enable
+GPIO.setup(24, GPIO.OUT) #reset
+GPIO.setup(22, GPIO.OUT) #control
+
+GPIO.output(18, GPIO.HIGH)
+GPIO.output(23, GPIO.HIGH)
+GPIO.output(25, GPIO.LOW)
+GPIO.output(17, GPIO.HIGH)
+GPIO.output(24, GPIO.HIGH)
+GPIO.output(22, GPIO.HIGH)
+
+while True:
+    GPIO.output(23, GPIO.LOW)
+    time.delay(0.005)
+    GPIO.output(23, GPIO.HIGH)
+    time.delay(0.005)
+
