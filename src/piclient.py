@@ -70,7 +70,7 @@ def main():
 
       # only check for S packet, otherwise break
       if setup_done is False:
-        if data[:1] == 'SM':
+        if data_list[0] == 'SM':
 
           setup_done = True
           # Parse arguments and send to motorcontroller setup
@@ -85,8 +85,7 @@ def main():
             int(axis_pt2_list[1]))   
           robot_pt = shapes.Point(int(robot_list[0]),
             int(robot_list[1]))
-          print 'S '+axis_pt1.to_string() \
-            + ' ' + axis_pt2.to_string() + ' ' + robot_pt.to_string()
+          print data
 
           # instantiate motorcontroller object UNCOMMENT THIS
           # motorcontroller = Motorcontroller(left_rail_coord=axis_pt1,
@@ -98,7 +97,7 @@ def main():
       # setup_done true, check for data
 
       ######## SOLENOID CONTROL ########
-      if data[:1] == 'AS':
+      if data_list[0] == 'AS':
         print data
         solenoid_time = int(data[1])
 
@@ -112,14 +111,15 @@ def main():
 
       ######## MOTOR CONTROL ########
       # check for stop command
-      if data[:1] == 'KM':
+      if data_list[0] == 'KM':
         print data
         # UNCOMMENT MOTORCONTROLLER COMMAND
         #motorcontroller.stop()
 
       # check for motor movement command
-      if data[:1] == 'MM' and len(data_list) is 3: # MM packet
+      if data_list[0] == 'MM' and len(data_list) is 3: # MM packet
         # Parse data packet and send to motorcontroller
+        print data
         robot_pt_list = data_list[1].split(',')
         target_pt_list = data_list[2].split(',')
 
@@ -127,7 +127,6 @@ def main():
           int(robot_pt_list[1]))
         target_pt = shapes.Point(int(float(target_pt_list[0])),
           int(float(target_pt_list[1])))
-        print 'D ' + robot_pt.to_string() + ' ' + target_pt.to_string()
 
         # send motorcontroller command UNCOMMENT THIS
         # motorcontroller.move_to_loc(robot_coord=robot,
