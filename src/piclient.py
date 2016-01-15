@@ -44,10 +44,12 @@ def main():
   
   # motorcontroller object, initialized once setup gets called
   motorcontroller = None
+  solenoid
 
   # Used to determine if should look to setup the motorcontroller, or if it's
   # already been done, then to poll for data
   setup_done = False
+  solenoid_init = False
 
   # Create a TCP/IP socket
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -99,7 +101,12 @@ def main():
       if data[:1] == 'AS':
         print data
         solenoid_time = int(data[1])
-        
+
+        if solenoid_init is False:
+          solenoid_init = True
+          solenoid = solenoid.SolenoidController()
+        else:
+          solenoid.turn_on(solenoid_time)
 
 
       ######## MOTOR CONTROL ########
