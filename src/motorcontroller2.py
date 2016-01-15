@@ -14,7 +14,6 @@ single motor using the functios outlined below.
  
 import time
 import atexit
-import threading
 
 import utils
 import RPi.GPIO as GPIO
@@ -74,32 +73,36 @@ class MotorController:
     GPIO.setwarnings(False)
 
     # Enable GPIO pins for  ENA and ENB for stepper
-    self.enable_a = 21
-    self.enable_b = 18
+    enable_a = 21
+    enable_b = 18
 
     # Enable pins for IN1-4 to control step sequence
-    self.coil_A_1_pin = 16
-    self.coil_A_2_pin = 25
-    self.coil_B_1_pin = 24
-    self.coil_B_2_pin = 23
+    coil_A_1_pin = 16
+    coil_A_2_pin = 25
+    coil_B_1_pin = 24
+    coil_B_2_pin = 23
 
     # Set pin states
-    GPIO.setup(self.enable_a, GPIO.OUT)
-    GPIO.setup(self.enable_b, GPIO.OUT)
-    GPIO.setup(self.coil_A_1_pin, GPIO.OUT)
-    GPIO.setup(self.coil_A_2_pin, GPIO.OUT)
-    GPIO.setup(self.coil_B_1_pin, GPIO.OUT)
-    GPIO.setup(self.coil_B_2_pin, GPIO.OUT)
+    GPIO.setup(enable_a, GPIO.OUT)
+    GPIO.setup(enable_b, GPIO.OUT)
+    GPIO.setup(coil_A_1_pin, GPIO.OUT)
+    GPIO.setup(coil_A_2_pin, GPIO.OUT)
+    GPIO.setup(coil_B_1_pin, GPIO.OUT)
+    GPIO.setup(coil_B_2_pin, GPIO.OUT)
+
+    # Set ENA and ENB to high to enable stepper
+    GPIO.output(enable_a, True)
+    GPIO.output(enable_b, True)
 
 
   def setStep(w1, w2, w3, w4):
     """
     @brief Moves the motor a single step
     """
-    GPIO.output(self.coil_A_1_pin, w1)
-    GPIO.output(self.coil_A_2_pin, w2)
-    GPIO.output(self.coil_B_1_pin, w3)
-    GPIO.output(self.coil_B_2_pin, w4)
+    GPIO.output(coil_A_1_pin, w1)
+    GPIO.output(coil_A_2_pin, w2)
+    GPIO.output(coil_B_1_pin, w3)
+    GPIO.output(coil_B_2_pin, w4)
 
   def stepForward(self, steps):
     """
@@ -118,8 +121,6 @@ class MotorController:
 
         #If the thread has to stop
         if self.stop is True:
-            GPIO.output(self.enable_a, False)
-            GPIO.output(self.enable_b, False)
             self.moving = False
             self.stop = False
             break
@@ -141,8 +142,6 @@ class MotorController:
 
       #If the thread has to stop
       if self.stop is True:
-          GPIO.output(self.enable_a, False)
-          GPIO.output(self.enable_b, False)
           self.stop = False
           self.moving = False
           break
@@ -176,6 +175,10 @@ class MotorController:
     while(self.moving is True):
         pass
 
+  def safe_to_move(self, dist_to_left, dist_to_rght, 
+    robot_to_left, robot_to_rght):
+
+
   def move_to_loc(self, robot_coord, target_coord, style, reverse_dir=0):
     """
     @brief Moves the robot to a target coordinate by calling the 
@@ -194,7 +197,7 @@ class MotorController:
 
     """
 
-    if self.moving is True:
+    if self.moving = True:
         print "Cannot move motor when motor is already moving"
         return
 
@@ -225,13 +228,11 @@ class MotorController:
 
     #Compute how many steps the motor should move
     steps = (real_dist_to_trgt/gear_circum)*self.motor_steps
-    # Set ENA and ENB to high to enable stepper
-    GPIO.output(self.enable_a, True)
-    GPIO.output(self.enable_b, True)
+
 
     #Create the thread controlling the motor and run it
-    motor_thread = threading.Thread(target=self.motor_worker, 
-                            args=(self.motor, 10, motor_dir))
+    motor_thread = threading.Thread(target=motor_worker, 
+                            args=(self.motor, steps, motor_dir))
     self.moving = True
     motor_thread.start()
 

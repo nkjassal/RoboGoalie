@@ -47,14 +47,10 @@ class Blue:
   """
   bgr = (255,0,0)
 
-  # lower0 = (75, 90, 90) # original
-  # upper0 = (163, 255, 255)
-
-  # lower0 = (90, 90, 90) #rgb only
-  # upper0 = (150, 255, 255)
-
-  lower0 = (105, 90, 90) # rgb cyan/magenta/yellow
-  upper0 = (145, 255, 255)
+  # lower0 = (105, 90, 90) # rgb cyan/magenta/yellow
+  # upper0 = (145, 255, 255)
+  lower0 = (85, 80, 80)
+  upper0 = (175, 255, 255)
 
 
   lower1 = (0,0,0) # no second range needed

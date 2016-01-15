@@ -32,11 +32,11 @@ def stream(tracker, camera=0, server=0):
   """
 
   ######## GENERAL PARAMETER SETUP ########
-  MOVE_DIST_THRESH = 240 # distance at which robot will stop moving
-  SOL_DIST_THRESH = 200 # distance at which solenoid fires
+  MOVE_DIST_THRESH = 100 # distance at which robot will stop moving
+  SOL_DIST_THRESH = 150 # distance at which solenoid fires
   PACKET_DELAY = 5 # number of frames between sending data packets to pi
   OBJECT_RADIUS = 13 # opencv radius for circle detection
-  AXIS_SAFETY_PERCENT = 0.3 # robot stops if within this % dist of axis edges
+  AXIS_SAFETY_PERCENT = 0.1 # robot stops if within this % dist of axis edges
 
   packet_cnt = 0
   tracker.radius = OBJECT_RADIUS
@@ -47,9 +47,8 @@ def stream(tracker, camera=0, server=0):
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # GET SERVER ADDRESS BY GOING TO NETWORK SETTINGS AND CHECKING ETHERNET
-    #server_address = ('169.254.242.33',10000)
-    #server_address = ('169.254.88.56', 10000)
-    server_address = ('localhost', 10000) # for local testing
+    server_address = ('169.254.171.10',10000) # CHANGE THIS
+    #server_address = ('localhost', 10000) # for local testing
     print 'starting up on %s port %s' % server_address
     sock.bind(server_address)
     sock.listen(1)
