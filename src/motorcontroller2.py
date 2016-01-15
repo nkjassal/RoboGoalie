@@ -9,6 +9,7 @@ An instance of Motorcontroller contains information on and controls a
 single motor using the functios outlined below.
 
 @author Neil Jassal
+@author Zhaodong Zheng
 """
 
  

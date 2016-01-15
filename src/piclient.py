@@ -58,7 +58,7 @@ def main():
 
       # only check for S packet, otherwise break
       if setup_done is False:
-        if data[:1] == 'S' and len(data_list) is 4:
+        if data[:1] == 'S':
 
           setup_done = True
           # Parse arguments and send to motorcontroller setup
