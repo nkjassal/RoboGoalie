@@ -46,7 +46,7 @@ def stream(tracker, camera=0, server=0):
   if server:
     # Create a TCP/IP socket
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    # GET SERVER ADDRESS BY GOING TO NETWORK SETTINGS AND CHECKING ETHERNET
+    # Obtain server address by going to network settings and getting eth ip
     server_address = ('169.254.171.10',10000) # CHANGE THIS
     #server_address = ('localhost', 10000) # for local testing
     print 'starting up on %s port %s' % server_address
@@ -65,7 +65,6 @@ def stream(tracker, camera=0, server=0):
   # create video capture object for
   #cap = cv2.VideoCapture(camera)
   cap = WebcamVideoStream(camera).start() # WEBCAM
-
   #cap = cv2.VideoCapture('../media/goalie-test.mov')
   #cap = cv2.VideoCapture('../media/bounce.mp4')
 
@@ -73,6 +72,7 @@ def stream(tracker, camera=0, server=0):
 
   # create trajectory planner object
   # value of bounce determines # of bounces. 0 is default (no bounces)
+  # bounce not currently working correctly
   planner = TrajectoryPlanner(frames=4, bounce=0)
 
   # create FPS object for frame rate tracking
@@ -85,7 +85,7 @@ def stream(tracker, camera=0, server=0):
 
     ######## CAPTURE AND PROCESS FRAME ########
     ret, frame = True, cap.read() # WEBCAM
-    #ret, frame = cap.read() # for non-webcam
+    #ret, frame = cap.read() # for non-webcam testing
     if ret is False:
       print 'Frame not read'
       exit()
@@ -122,10 +122,8 @@ def stream(tracker, camera=0, server=0):
     if closest_obj_index is not None:
       closest_obj = object_list[closest_obj_index]
       closest_pt = points[closest_obj_index]
-      # only for viewing, eventually won't need this one (only display traj)
-      closest_line = utils.get_line(closest_obj, closest_pt) # only for viewing
-      # cv2.circle(frame, (int(closest_pt.x),int(closest_pt.y)), 10, colors.Magenta.bgr, -1) # center 
 
+      closest_line = utils.get_line(closest_obj, closest_pt) # only for viewing
       planner.add_point(closest_obj)
 
 
@@ -133,12 +131,6 @@ def stream(tracker, camera=0, server=0):
     # Last line intersects with robot axis
     traj_list = planner.get_trajectory_list(colors.Cyan)
     traj = planner.traj
-
-
-    ######## SOLENOID CODE ########
-    # Checks when an object is within a threshold of the robot, then sends
-    # the solenoid a signal to push out to hit the ball.
-
 
 
     ######## SEND DATA TO CLIENT ########
@@ -165,11 +157,7 @@ def stream(tracker, camera=0, server=0):
             connection.sendall(data)
 
           # setup is done, send packet with movement data
-          # # error checking to ensure runs properly
-          # elif closest_pt:
-          #   pass
           else:
-
             obj_robot_dist = utils.get_pt2pt_dist(robot, closest_obj)
             print 'dist: ' + str(obj_robot_dist) # USE FOR CALIBRATION
 
@@ -289,12 +277,6 @@ def main():
   robot_color = colors.Blue
   rail_color = colors.Magenta # ignoring this for now...
   track_colors = [colors.Red]
-
-  # bounce.mp4 colors
-  # robot_marker_color = colors.Blue
-  # robot_color = colors.White
-  # rail_color = colors.Green
-  # track_colors = [colors.Red]
 
   tracker = bt.BallTracker(
     window_name="Robot Goalie Tracking Display",
