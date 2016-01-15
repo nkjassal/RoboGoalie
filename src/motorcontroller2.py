@@ -11,7 +11,6 @@ single motor using the functios outlined below.
 @author Neil Jassal
 @author Zhaodong Zheng
 """
-
  
 import time
 import atexit
@@ -19,20 +18,18 @@ import atexit
 import utils
 import RPi.GPIO as GPIO
 
+#If the target is within SAFETY_PERCENTAGE of the full edge distance away from
+#the edge, then do not move towards target
+SAFETY_PERCENTAGE = 0.1
+
 class MotorController:
   #Have PID control stuff in here, might not need it
   def __init__(self,  
     motor_steps=200,
-    gear_radius=0.3,
+    gear_radius=1.29413,
     left_rail_coord,
     rght_rail_coord,
     edge_length=0.0,
-    KP=1,
-    KI=1,
-    KD=1,
-    robot_coord,
-    KI_error_thresh=0.2,
-    error_thresh=0.2,
     delay=.0055
     ):
     """
@@ -48,14 +45,6 @@ class MotorController:
     does not collide with the right rail (Point object)
     @param edge_length The length of the edge on which the robot traverses
     in cm
-    @param KP The proportional constant for PID control
-    @param KI The integral constant for PID control
-    @param KD The derivative constant for PID control
-    @param robot_coord The location of the robot in a Point object
-    @param KI_error_thresh The error value less than which KI is considered
-    zero for PID control
-    @param error_thresh The error value less than which the robot is 
-    considered to reach its target location
     @delay The delay between each step
     """
     self.motor_steps = motor_steps
@@ -71,16 +60,6 @@ class MotorController:
     self.edge_length = edge_length
     self.scaled_ovr_real = self.scaled_edge_length/self.edge_length
 
-    #PID control stuff, might not need at all
-    self.KP=KP
-    self.KI=KI
-    self.KD=KD
-    self.KI=KI_error_thresh = KI_error_thresh
-    self.error_thresh = error_thresh
-    #The accumulated error for the PID controller
-    self.iState = 0.0 
-    #The previous position of the robot
-    self.dState = robot_coord 
     #Since the motor is being controlled with threads, two threads cannot
     #be controlling the motor at the same time
     self.moving = False 
@@ -196,6 +175,10 @@ class MotorController:
     while(self.moving is True):
         pass
 
+  def safe_to_move(self, dist_to_left, dist_to_rght, 
+    robot_to_left, robot_to_rght):
+
+
   def move_to_loc(self, robot_coord, target_coord, style, reverse_dir=0):
     """
     @brief Moves the robot to a target coordinate by calling the 
@@ -230,9 +213,6 @@ class MotorController:
     #Vector from robot to left rail
     robot_to_left = Point(self.left_rail_coord.x-self.robot_coord.x,
                           self.left_rail_coord.y-self.robot_coord.y)
-    # #Vector from robot to right rail, probably don't need
-    # robot_to_rght = Point(self.rght_rail_coord.x-self.robot_coord.x,
-    #                       self.rght_rail_coord.y-self.robot_coord.y)
     #Vector from robot to target
     robot_to_trgt = Point(target_coord.x-self.robot_coord.x,
                           target_coord.y-self.robot_coord.y)
