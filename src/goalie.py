@@ -188,12 +188,20 @@ def stream(tracker, camera=0, server=0):
               robot_markers[1])
 
             # ensure within safe bounds of motion relative to axis
-            if rob_ax1_dist/axis_length <= AXIS_SAFETY_PERCENT or \
-              rob_ax2_dist/axis_length <= AXIS_SAFETY_PERCENT:
-              # in danger zone, kill motor movement
-              print 'INVALID ROBOT LOCATION: stopping motor'
-              data = 'KM'
-              connection.sendall(data)
+            # if rob_ax1_dist/axis_length <= AXIS_SAFETY_PERCENT or \
+            #   rob_ax2_dist/axis_length <= AXIS_SAFETY_PERCENT:
+            #   # in danger zone, kill motor movement
+            #   print 'INVALID ROBOT LOCATION: stopping motor'
+            #   data = 'KM'
+            #   connection.sendall(data)
+
+            # if in danger zone near axis edge, move towards other edge
+            if rob_ax1_dist/axis_length <= AXIS_SAFETY_PERCENT:
+              print 'INVALID ROBOT LOCATION'
+              data = 'MM '+robot.to_pt_string()+' '+rob_ax2_dist.to_pt_string()
+            elif rob_ax2_dist/axis_length <= AXIS_SAFETY_PERCENT:
+              print 'INVALID ROBOT LOCATION'
+              data = 'MM '+robot.to_pt_string()+' '+rob_ax1_dist.to_pt_string()
 
             # check if robot should stop moving
             elif obj_robot_dist <= MOVE_DIST_THRESH: # obj close to robot
