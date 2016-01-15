@@ -36,6 +36,7 @@ def stream(tracker, camera=0, server=0):
   SOL_DIST_THRESH = 210 # distance at which solenoid fires
   PACKET_DELAY = 5 # number of frames between sending data packets to pi
   OBJECT_RADIUS = 13 # opencv radius for circle detection
+  AXIS_SAFETY_PERCENT = 0.1 # robot stops if within this % dist of axis edges
 
   packet_cnt = 0
   tracker.radius = OBJECT_RADIUS
@@ -160,34 +161,46 @@ def stream(tracker, camera=0, server=0):
             print data
             connection.sendall(data)
 
-          # setup is done, send D packet with movement data
+          # setup is done, send packet with movement data
           else:
 
 
             ######## MOTOR CONTROL ########
             # First clamp final trajectory intersection to robot axis
 
-            #### FOR TRAJECTORY ESTIMATION
-            # if planner.traj is not None:
-            #   axis_intersect = shapes.Point(planner.traj.x2, planner.traj.y2)
-            #   # Clamp the point to send to the robot axis
-            #   traj_axis_pt = utils.clamp_point_to_line(
-            #     axis_intersect, robot_axis)
 
-            #   data = 'D ' + robot.to_pt_string() + ' ' + traj_axis_pt.to_string()
-            #   connection.sendall(data)
 
-            #### FOR CLOSEST POINT ON AXIS ####
             obj_robot_dist = utils.get_pt2pt_dist(robot, closest_pt)
             print obj_robot_dist # USE FOR CALIBRATION
 
-            if obj_robot_dist <= SOL_DIST_THRESH: # fire solenoid, dont move
+            # ensure safety parameters
+            rob_ax1_dist = utils.get_pt2pt_dist(robot_markers[0],robot)
+            rob_ax2_dist = utils.get_pt2pt_dist(robot_markers[1],robot)
+            axis_length = utils.get_pt2pt_dist(robot_markers[0],
+              robot_markers[1])
+            if rob_ax1_dist/axis_length >= AXIS_SAFETY_PERCENT or \
+              rob_ax2_dist/axis_length >= AXIS_SAFETY_PERCENT:
+              # SEND STOP COMMAND
+
+            elif obj_robot_dist <= SOL_DIST_THRESH: # fire solenoid, dont move
               print 'activate solenoid!'
               pass # TODO SEND SOLENOID ACTIVATE
             elif obj_robot_dist <= MOVE_DIST_THRESH: # obj close to robot
               print 'don\'t activate, but don\'t move either'
               pass 
             else: # far enough so robot should move
+
+              #### FOR TRAJECTORY ESTIMATION
+              # if planner.traj is not None:
+              #   axis_intersect=shapes.Point(planner.traj.x2,planner.traj.y2)
+              #   # Clamp the point to send to the robot axis
+              #   traj_axis_pt = utils.clamp_point_to_line(
+              #     axis_intersect, robot_axis)
+
+              #   data = 'D '+robot.to_pt_string()+' '+traj_axis_pt.to_string()
+              #   connection.sendall(data)
+
+              #### FOR CLOSEST POINT ON AXIS ####
               if closest_pt is not None and robot is not None:
                 data = 'D ' + robot.to_pt_string() + ' ' + closest_pt.to_string()
                 print data
