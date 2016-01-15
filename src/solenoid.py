@@ -3,7 +3,7 @@
 
 @brief Contains the SolenoidController class
 
-An instance of Solenoid contains information on and controls a 
+An instance of Solenoid contains information on and controls a
 single solenoid using the functios outlined below.
 
 @author Zhaodong Zheng
@@ -11,6 +11,7 @@ single solenoid using the functios outlined below.
 
 import RPi.GPIO as GPIO
 import time
+import threading
 
 class SolenoidController:
     """
@@ -20,9 +21,9 @@ class SolenoidController:
     uses threads to make solenoid operations non-blocking
     """
 
-    def __init__(self, pin_num=18):
+    def __init__(self, pin_num=4):
         """
-        @brief Initializes the SolenoidController with the necessary 
+        @brief Initializes the SolenoidController with the necessary
         information
 
         @param pin_num The GPIO pin (using BCM) that the solenoid is
@@ -32,6 +33,7 @@ class SolenoidController:
         GPIO.setup(pin_num, GPIO.OUT)
         self.pin_num = pin_num
         self.on = False
+        self.extend_duration = 0
 
     def turn_on_worker(self, duration):
         """
@@ -43,19 +45,27 @@ class SolenoidController:
         """
         GPIO.output(self.pin_num, GPIO.HIGH)
         time.sleep(duration * 0.001)
-        GPIO.output(18, GPIO.LOW)
+        GPIO.output(self.pin_num, GPIO.LOW)
+        #GPIO.cleanup()
         self.on = False
 
     def turn_on(self, duration):
+        """
+        @brief Launches the thread to engage the solenoid
+
+        @param duration The desired duration for the solenoid to enage,
+        in millisecionds
+        """
         #Create the thread controlling the solenoid and run it
-        if self.on is True:
-            print "Cannot turn on solenoid when it is already on"
-            return
-        solenoid_thread = threading.Thread(target=turn_on_worker, 
-                                args=(duration))
+        #if another thread is not already running
+        solenoid_thread = threading.Thread(target=self.turn_on_worker,
+                                args=(duration,))
         self.on = True
         solenoid_thread.start()
 
     def is_on(self):
+        """
+        @brief Returns whether or not the solenoid is on
+        """
         return self.on
 
