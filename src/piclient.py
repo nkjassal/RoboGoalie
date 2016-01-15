@@ -104,9 +104,9 @@ def main():
 
         if solenoid_init is False:
           solenoid_init = True
-          solenoid = solenoid.SolenoidController()
+         # solenoid = solenoid.SolenoidController() #UNCOMMENT THIS
         else:
-          solenoid.turn_on(solenoid_time)
+         # solenoid.turn_on(solenoid_time) # UNCOMMENT THIS
 
 
       ######## MOTOR CONTROL ########
